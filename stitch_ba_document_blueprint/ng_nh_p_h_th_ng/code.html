@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Đăng nhập - Terra &amp; Leaf</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&amp;family=Libre+Caslon+Text:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "inverse-surface": "#31302d",
+                        "surface-tint": "#9d422b",
+                        "primary-container": "#9a4029",
+                        "on-tertiary": "#ffffff",
+                        "on-surface": "#1c1c19",
+                        "outline": "#89726c",
+                        "on-primary-fixed": "#3c0800",
+                        "on-surface-variant": "#56423d",
+                        "on-tertiary-container": "#ffc9bb",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed": "#c8ebd0",
+                        "on-tertiary-fixed": "#3c0700",
+                        "secondary-container": "#c8ebd0",
+                        "surface": "#fdf9f4",
+                        "on-primary-fixed-variant": "#7e2b16",
+                        "primary-fixed": "#ffdad2",
+                        "tertiary-fixed-dim": "#ffb4a2",
+                        "outline-variant": "#dcc0ba",
+                        "on-tertiary-fixed-variant": "#7e2b16",
+                        "inverse-primary": "#ffb4a2",
+                        "on-background": "#1c1c19",
+                        "surface-container-low": "#f7f3ee",
+                        "secondary": "#466550",
+                        "on-primary-container": "#ffc9bb",
+                        "error": "#ba1a1a",
+                        "background": "#fdf9f4",
+                        "surface-variant": "#e6e2dd",
+                        "primary-fixed-dim": "#ffb4a2",
+                        "surface-bright": "#fdf9f4",
+                        "on-error": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "surface-container-high": "#ebe8e3",
+                        "tertiary-fixed": "#ffdad2",
+                        "tertiary-container": "#9a4029",
+                        "surface-dim": "#ddd9d5",
+                        "surface-container-highest": "#e6e2dd",
+                        "on-primary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed-variant": "#2f4d3a",
+                        "primary": "#7b2914",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-container": "#4c6b56",
+                        "tertiary": "#7b2914",
+                        "inverse-on-surface": "#f4f0eb",
+                        "surface-container": "#f1ede8",
+                        "secondary-fixed-dim": "#accfb5",
+                        "on-secondary-fixed": "#022110"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "container-max-width": "1200px",
+                        "unit": "4px",
+                        "gutter-mobile": "16px",
+                        "gutter-desktop": "24px",
+                        "margin-edge": "24px"
+                    },
+                    fontFamily: {
+                        "headline-lg-mobile": ["Libre Caslon Text", "serif"],
+                        "display-lg": ["Libre Caslon Text", "serif"],
+                        "headline-lg": ["Libre Caslon Text", "serif"],
+                        "label-md": ["Be Vietnam Pro", "sans-serif"],
+                        "headline-md": ["Libre Caslon Text", "serif"],
+                        "body-md": ["Be Vietnam Pro", "sans-serif"],
+                        "body-lg": ["Be Vietnam Pro", "sans-serif"],
+                        "label-sm": ["Be Vietnam Pro", "sans-serif"]
+                    },
+                    fontSize: {
+                        "headline-lg-mobile": ["28px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "headline-md": ["24px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "1.2", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex items-center justify-center relative overflow-hidden font-body-md">
+<!-- Background Image with Overlay -->
+<div class="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-40 mix-blend-multiply" data-alt="A misty, artistic landscape of Tay Ninh province in Vietnam at dawn. The scene features rolling hills covered in dense forest green vegetation, subtly blending with warm, terracotta-colored earth tones. The lighting is soft and ethereal, filtering through the morning fog to create a premium, tranquil, and minimalist natural aesthetic. The composition emphasizes whitespace and calm energy, characteristic of a high-end natural retreat." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAsUgDJkw1OeldCmRa4ljHCWlxGQPfrBEnvgumnhmLWxyQyiQfQDmXh0R8lF46djSN_wc8pkJixG1Tpa8sj2sP4mxdIWEnlpYNnsxWqw24onW3rtCLL_VlArUnFm5-tIH_mXSZ9tt4gOFUaVLYFpANsavqwn5qMABSVgsjxZuPOFrld_QsR_w4j40nPtPxVC6RSumnnGuQBRi5p2R9j7Sg_5M1uDgN3zMJZy7WVlQ_h-ngalPrxPiXjzCO3IChmZoZHTjyUElZ2SH7d');">
+</div>
+<!-- Gradient Overlay for readability -->
+<div class="absolute inset-0 z-10 bg-gradient-to-br from-surface/80 via-surface/60 to-surface/90 backdrop-blur-[2px]"></div>
+<!-- Login Container -->
+<main class="relative z-20 w-full max-w-md px-gutter-mobile py-12 md:px-gutter-desktop">
+<!-- Glassmorphism Card -->
+<div class="bg-surface/90 backdrop-blur-md rounded-xl border border-outline/20 p-8 md:p-10 shadow-2xl shadow-primary/5 flex flex-col items-center text-center">
+<!-- Brand Logo -->
+<div class="mb-8 flex flex-col items-center">
+<span class="material-symbols-outlined text-primary text-5xl mb-3 fill">spa</span>
+<h1 class="font-headline-lg text-headline-lg text-primary tracking-tight">Terra &amp; Leaf</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2">Nơi bình yên gõ cửa</p>
+</div>
+<!-- Google Login Button -->
+<button class="w-full flex items-center justify-center gap-3 bg-surface border border-outline-variant hover:bg-surface-container-low hover:border-outline text-on-surface font-label-md text-label-md py-3 px-6 rounded-lg transition-all duration-300 mb-6 group">
+<svg class="w-5 h-5 group-hover:scale-110 transition-transform" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+<path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path>
+<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
+</svg>
+                Đăng nhập với Google
+            </button>
+<!-- Divider -->
+<div class="w-full flex items-center gap-4 mb-6 opacity-60">
+<div class="h-px bg-outline-variant flex-1"></div>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">hoặc</span>
+<div class="h-px bg-outline-variant flex-1"></div>
+</div>
+<!-- Traditional Login Form -->
+<form action="#" class="w-full space-y-4" method="POST">
+<div class="space-y-1 text-left">
+<label class="font-label-sm text-label-sm text-on-surface block ml-1" for="email">Email</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-xl">mail</span>
+<input class="w-full pl-10 pr-4 py-3 bg-surface border border-outline-variant rounded-lg text-on-surface font-body-md text-body-md placeholder-outline focus:border-secondary focus:ring-1 focus:ring-secondary focus:outline-none transition-colors" id="email" name="email" placeholder="nhap@email.com" required="" type="email"/>
+</div>
+</div>
+<div class="space-y-1 text-left">
+<div class="flex justify-between items-center ml-1">
+<label class="font-label-sm text-label-sm text-on-surface" for="password">Mật khẩu</label>
+<a class="font-label-sm text-label-sm text-primary hover:text-tertiary transition-colors" href="#">Quên mật khẩu?</a>
+</div>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-xl">lock</span>
+<input class="w-full pl-10 pr-4 py-3 bg-surface border border-outline-variant rounded-lg text-on-surface font-body-md text-body-md placeholder-outline focus:border-secondary focus:ring-1 focus:ring-secondary focus:outline-none transition-colors" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+<button class="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface-variant transition-colors" onclick="togglePassword()" type="button">
+<span class="material-symbols-outlined text-xl" id="toggle-icon">visibility</span>
+</button>
+</div>
+</div>
+<button class="w-full bg-primary hover:bg-tertiary text-on-primary font-label-md text-label-md py-3.5 px-6 rounded-lg transition-colors mt-2 shadow-sm flex items-center justify-center gap-2" type="submit">
+                    Đăng nhập
+                    <span class="material-symbols-outlined text-lg">arrow_forward</span>
+</button>
+</form>
+<!-- Sign up link -->
+<div class="mt-8 pt-6 border-t border-outline-variant w-full">
+<p class="font-body-md text-body-md text-on-surface-variant">
+                    Chưa có tài khoản? 
+                    <a class="text-primary hover:text-tertiary font-label-md text-label-md ml-1 transition-colors underline decoration-primary/30 underline-offset-4 hover:decoration-primary" href="#">
+                        Đăng ký tài khoản mới
+                    </a>
+</p>
+</div>
+</div>
+<!-- Subtle Footer -->
+<div class="mt-8 text-center">
+<p class="font-label-sm text-label-sm text-on-surface-variant/70">
+                © 2024 Terra &amp; Leaf. Tây Ninh.
+            </p>
+</div>
+</main>
+<script>
+        function togglePassword() {
+            const pwdInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggle-icon');
+            if (pwdInput.type === 'password') {
+                pwdInput.type = 'text';
+                toggleIcon.textContent = 'visibility_off';
+            } else {
+                pwdInput.type = 'password';
+                toggleIcon.textContent = 'visibility';
+            }
+        }
+    </script>
+</body></html>

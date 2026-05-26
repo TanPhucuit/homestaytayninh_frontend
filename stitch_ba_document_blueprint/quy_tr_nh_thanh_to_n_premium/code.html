@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Terra &amp; Leaf - Booking Checkout</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:wght@400;700&amp;family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#9a4029",
+                        "on-primary-fixed-variant": "#7e2b16",
+                        "tertiary-fixed-dim": "#ffb4a2",
+                        "on-error": "#ffffff",
+                        "inverse-on-surface": "#f4f0eb",
+                        "primary-container": "#9a4029",
+                        "on-error-container": "#93000a",
+                        "secondary-container": "#c8ebd0",
+                        "primary-fixed-dim": "#ffb4a2",
+                        "on-tertiary-container": "#ffc9bb",
+                        "on-primary-fixed": "#3c0800",
+                        "secondary-fixed-dim": "#accfb5",
+                        "surface-container-high": "#ebe8e3",
+                        "on-secondary-fixed": "#022110",
+                        "surface-container-highest": "#e6e2dd",
+                        "surface-tint": "#9d422b",
+                        "surface-dim": "#ddd9d5",
+                        "primary-fixed": "#ffdad2",
+                        "on-tertiary-fixed": "#3c0700",
+                        "on-tertiary-fixed-variant": "#7e2b16",
+                        "surface-bright": "#fdf9f4",
+                        "surface-container-lowest": "#ffffff",
+                        "surface": "#fdf9f4",
+                        "inverse-primary": "#ffb4a2",
+                        "on-surface": "#1c1c19",
+                        "tertiary": "#7b2914",
+                        "surface-variant": "#e6e2dd",
+                        "secondary-fixed": "#c8ebd0",
+                        "on-secondary-fixed-variant": "#2f4d3a",
+                        "on-secondary-container": "#4c6b56",
+                        "on-primary-container": "#ffc9bb",
+                        "inverse-surface": "#31302d",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#56423d",
+                        "background": "#fdf9f4",
+                        "secondary": "#466550",
+                        "surface-container-low": "#f7f3ee",
+                        "tertiary-fixed": "#ffdad2",
+                        "on-secondary": "#ffffff",
+                        "on-background": "#1c1c19",
+                        "error-container": "#ffdad6",
+                        "error": "#ba1a1a",
+                        "outline": "#89726c",
+                        "on-primary": "#ffffff",
+                        "surface-container": "#f1ede8",
+                        "primary": "#7b2914",
+                        "outline-variant": "#dcc0ba"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max-width": "1200px",
+                        "unit": "4px",
+                        "gutter-desktop": "24px",
+                        "gutter-mobile": "16px",
+                        "margin-edge": "24px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Be Vietnam Pro"],
+                        "headline-md": ["Libre Caslon Text"],
+                        "display-lg": ["Libre Caslon Text"],
+                        "headline-lg": ["Libre Caslon Text"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "label-md": ["Be Vietnam Pro"],
+                        "headline-lg-mobile": ["Libre Caslon Text"],
+                        "body-md": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; }
+        .font-headline { font-family: 'Libre Caslon Text', serif; }
+        .step-hidden { display: none; }
+        .step-active { display: block; animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Minimal custom styles to ensure radio/checkbox look aligned */
+        input[type="radio"]:checked, input[type="checkbox"]:checked {
+            background-color: #7b2914; /* primary */
+            border-color: #7b2914;
+        }
+        input[type="radio"]:focus, input[type="checkbox"]:focus {
+            --tw-ring-color: #7b2914;
+        }
+        .form-input:focus {
+            border-color: #466550; /* secondary (Forest Green) */
+            --tw-ring-color: #466550;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+<!-- TopNavBar: Minimal version for checkout flow -->
+<header class="bg-background/80 backdrop-blur-md border-b border-outline-variant sticky top-0 w-full z-50 flex justify-between items-center px-6 py-4 max-w-container-max-width mx-auto">
+<a class="font-headline-md text-headline-md font-bold text-primary flex items-center gap-2" href="#">
+            Terra &amp; Leaf
+        </a>
+<div class="flex items-center gap-4 text-on-surface-variant font-label-md text-label-md">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined" style="font-size: 18px;">lock</span> Bảo mật thông tin</span>
+</div>
+</header>
+<main class="flex-grow w-full max-w-container-max-width mx-auto px-4 md:px-6 py-8 md:py-12">
+<div class="mb-8">
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-background mb-2">Hoàn tất đặt phòng</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Terra Leaf Núi Bà • 2 đêm • 14 Th12 - 16 Th12</p>
+</div>
+<div class="flex flex-col lg:flex-row gap-gutter-desktop">
+<!-- Main Content Area: Steps -->
+<div class="flex-grow lg:w-2/3">
+<!-- Stepper Progress -->
+<div class="flex items-center mb-8 relative">
+<div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-px bg-outline-variant -z-10"></div>
+<div class="absolute left-0 top-1/2 -translate-y-1/2 h-px bg-primary transition-all duration-300 -z-10" id="progress-bar" style="width: 0%;"></div>
+<div class="flex-1 flex flex-col items-center relative z-10" id="step-indicator-1">
+<div class="w-8 h-8 rounded-full flex items-center justify-center bg-primary text-on-primary font-label-sm text-label-sm mb-2 transition-colors border border-primary shadow-sm" id="step-circle-1">1</div>
+<span class="font-label-sm text-label-sm text-primary text-center">Thông tin</span>
+</div>
+<div class="flex-1 flex flex-col items-center relative z-10" id="step-indicator-2">
+<div class="w-8 h-8 rounded-full flex items-center justify-center bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm mb-2 transition-colors border border-outline-variant" id="step-circle-2">2</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant text-center" id="step-label-2">Dịch vụ</span>
+</div>
+<div class="flex-1 flex flex-col items-center relative z-10" id="step-indicator-3">
+<div class="w-8 h-8 rounded-full flex items-center justify-center bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm mb-2 transition-colors border border-outline-variant" id="step-circle-3">3</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant text-center" id="step-label-3">Thanh toán</span>
+</div>
+</div>
+<!-- STEP 1: Guest Information -->
+<div class="step-active bg-surface-container-lowest border border-outline-variant rounded-xl p-6 mb-6" id="step-1">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">person</span>
+                        Thông tin khách hàng
+                    </h2>
+<form class="space-y-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-2" for="fullName">Họ và tên *</label>
+<input class="form-input w-full rounded-md border-outline-variant bg-surface-bright text-on-surface px-4 py-3 font-body-md text-body-md focus:ring-secondary focus:border-secondary transition-colors" id="fullName" placeholder="Nhập họ tên đầy đủ" type="text" value="Nguyễn Văn A"/>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-2" for="phone">Số điện thoại *</label>
+<input class="form-input w-full rounded-md border-outline-variant bg-surface-bright text-on-surface px-4 py-3 font-body-md text-body-md focus:ring-secondary focus:border-secondary transition-colors" id="phone" placeholder="Nhập số điện thoại" type="tel" value="0912345678"/>
+</div>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-2" for="email">Email *</label>
+<input class="form-input w-full rounded-md border-outline-variant bg-surface-bright text-on-surface px-4 py-3 font-body-md text-body-md focus:ring-secondary focus:border-secondary transition-colors" id="email" placeholder="Nhập địa chỉ email để nhận xác nhận" type="email" value="nguyenvana@example.com"/>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-2" for="notes">Ghi chú đặc biệt (Tùy chọn)</label>
+<textarea class="form-input w-full rounded-md border-outline-variant bg-surface-bright text-on-surface px-4 py-3 font-body-md text-body-md focus:ring-secondary focus:border-secondary transition-colors" id="notes" placeholder="Ví dụ: Cần chuẩn bị cũi cho em bé, ăn chay..." rows="3"></textarea>
+</div>
+</form>
+<div class="mt-8 flex justify-end">
+<button class="bg-primary hover:bg-tertiary-container text-on-primary font-label-md text-label-md px-8 py-3 rounded-lg transition-colors flex items-center gap-2" onclick="nextStep(2)">
+                            Tiếp tục <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- STEP 2: Additional Services -->
+<div class="step-hidden bg-surface-container-lowest border border-outline-variant rounded-xl p-6 mb-6" id="step-2">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">room_service</span>
+                        Dịch vụ tại Homestay
+                    </h2>
+<!-- Included Services (Disabled) -->
+<div class="mb-8">
+<h3 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-4">Dịch vụ đã bao gồm</h3>
+<div class="space-y-3">
+<div class="flex items-center justify-between p-4 bg-surface-container-high rounded-lg opacity-80">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">wifi</span>
+<div>
+<p class="font-body-md text-body-md text-on-surface font-medium">Wi-Fi Tốc độ cao</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Không giới hạn thiết bị</p>
+</div>
+</div>
+<span class="font-label-md text-label-md text-secondary">Miễn phí</span>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-container-high rounded-lg opacity-80">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">local_cafe</span>
+<div>
+<p class="font-body-md text-body-md text-on-surface font-medium">Trà &amp; Cà phê sáng</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Phục vụ tại sảnh hoặc phòng</p>
+</div>
+</div>
+<span class="font-label-md text-label-md text-secondary">Miễn phí</span>
+</div>
+</div>
+</div>
+<!-- Add-on Services -->
+<div>
+<h3 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-4">Dịch vụ đặt thêm</h3>
+<div class="space-y-4">
+<!-- Add-on Item 1 -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-outline-variant rounded-lg bg-surface-bright hover:border-outline transition-colors">
+<div class="flex items-start gap-3 mb-3 sm:mb-0">
+<div class="w-12 h-12 bg-secondary-container rounded-md flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-secondary-container">directions_car</span>
+</div>
+<div>
+<p class="font-body-md text-body-md text-on-surface font-medium">Đưa đón sân bay/bến xe</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1">Xe 4 chỗ riêng tư, an toàn</p>
+<p class="font-label-md text-label-md text-primary">350,000 VND <span class="text-on-surface-variant text-sm font-normal">/ lượt</span></p>
+</div>
+</div>
+<div class="flex items-center border border-outline-variant rounded-md overflow-hidden self-start sm:self-center">
+<button class="px-3 py-1 bg-surface-container hover:bg-surface-container-high text-on-surface transition-colors" onclick="updateQty('qty-car', -1)">-</button>
+<input class="w-10 text-center font-body-md text-body-md bg-surface-bright border-none focus:ring-0 p-1" id="qty-car" readonly="" type="text" value="0"/>
+<button class="px-3 py-1 bg-surface-container hover:bg-surface-container-high text-on-surface transition-colors" onclick="updateQty('qty-car', 1)">+</button>
+</div>
+</div>
+<!-- Add-on Item 2 -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-outline-variant rounded-lg bg-surface-bright hover:border-outline transition-colors">
+<div class="flex items-start gap-3 mb-3 sm:mb-0">
+<div class="w-12 h-12 bg-tertiary-fixed rounded-md flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-tertiary-fixed-variant">local_fire_department</span>
+</div>
+<div>
+<p class="font-body-md text-body-md text-on-surface font-medium">Set BBQ sân vườn</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1">Bao gồm than, bếp, nguyên liệu tẩm ướp</p>
+<p class="font-label-md text-label-md text-primary">450,000 VND <span class="text-on-surface-variant text-sm font-normal">/ người</span></p>
+</div>
+</div>
+<div class="flex items-center border border-outline-variant rounded-md overflow-hidden self-start sm:self-center">
+<button class="px-3 py-1 bg-surface-container hover:bg-surface-container-high text-on-surface transition-colors" onclick="updateQty('qty-bbq', -1)">-</button>
+<input class="w-10 text-center font-body-md text-body-md bg-surface-bright border-none focus:ring-0 p-1" id="qty-bbq" readonly="" type="text" value="2"/>
+<button class="px-3 py-1 bg-surface-container hover:bg-surface-container-high text-on-surface transition-colors" onclick="updateQty('qty-bbq', 1)">+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-8 flex justify-between">
+<button class="text-secondary hover:text-on-secondary-fixed-variant font-label-md text-label-md px-6 py-3 rounded-lg transition-colors flex items-center gap-2 border border-outline-variant bg-surface-container-lowest" onclick="nextStep(1)">
+<span class="material-symbols-outlined">arrow_back</span> Quay lại
+                        </button>
+<button class="bg-primary hover:bg-tertiary-container text-on-primary font-label-md text-label-md px-8 py-3 rounded-lg transition-colors flex items-center gap-2" onclick="nextStep(3)">
+                            Tiếp tục <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- STEP 3: Payment -->
+<div class="step-hidden bg-surface-container-lowest border border-outline-variant rounded-xl p-6 mb-6" id="step-3">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">credit_card</span>
+                        Thanh toán
+                    </h2>
+<div class="bg-surface-container-low border border-outline-variant rounded-xl p-5 mb-6">
+<div class="flex items-start gap-4">
+<div class="mt-1">
+<input checked="" class="w-5 h-5 text-primary border-outline-variant focus:ring-primary" id="pay-card" name="payment_method" type="radio"/>
+</div>
+<div class="flex-grow">
+<label class="font-body-md text-body-md text-on-surface font-medium cursor-pointer block mb-1" for="pay-card">Thẻ Tín dụng / Ghi nợ (ApiPay)</label>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-4">Thanh toán an toàn, mã hóa bảo mật 256-bit.</p>
+<!-- Mock Credit Card Input Area -->
+<div class="bg-surface-bright border border-outline-variant rounded-lg p-4 space-y-4">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Số thẻ</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline">credit_card</span>
+<input class="form-input w-full rounded border-outline-variant bg-surface-container-lowest text-on-surface pl-10 py-2 font-body-md focus:ring-secondary focus:border-secondary" placeholder="0000 0000 0000 0000" type="text"/>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Ngày hết hạn</label>
+<input class="form-input w-full rounded border-outline-variant bg-surface-container-lowest text-on-surface px-3 py-2 font-body-md focus:ring-secondary focus:border-secondary" placeholder="MM/YY" type="text"/>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">CVC</label>
+<input class="form-input w-full rounded border-outline-variant bg-surface-container-lowest text-on-surface px-3 py-2 font-body-md focus:ring-secondary focus:border-secondary" placeholder="123" type="text"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low border border-outline-variant rounded-xl p-5 mb-8 opacity-70 hover:opacity-100 transition-opacity">
+<div class="flex items-center gap-4">
+<input class="w-5 h-5 text-primary border-outline-variant focus:ring-primary" id="pay-transfer" name="payment_method" type="radio"/>
+<label class="font-body-md text-body-md text-on-surface font-medium cursor-pointer" for="pay-transfer">Chuyển khoản ngân hàng</label>
+</div>
+</div>
+<div class="flex items-center gap-2 mb-8 text-on-surface-variant bg-secondary-container/30 p-3 rounded-md border border-secondary-fixed">
+<span class="material-symbols-outlined text-secondary" style="font-size: 20px;">lock_person</span>
+<p class="font-label-sm text-label-sm">Thông tin của bạn được bảo vệ mã hóa đầu cuối. Terra &amp; Leaf không lưu trữ thông tin thẻ của bạn.</p>
+</div>
+<div class="flex justify-between">
+<button class="text-secondary hover:text-on-secondary-fixed-variant font-label-md text-label-md px-6 py-3 rounded-lg transition-colors flex items-center gap-2 border border-outline-variant bg-surface-container-lowest" onclick="nextStep(2)">
+<span class="material-symbols-outlined">arrow_back</span> Quay lại
+                        </button>
+<button class="bg-primary hover:bg-tertiary-container text-on-primary font-label-md text-label-md px-8 py-3 rounded-lg transition-colors flex items-center gap-2 shadow-sm" onclick="showSuccess()">
+                            Xác nhận &amp; Thanh toán
+                        </button>
+</div>
+</div>
+<!-- SUCCESS STATE -->
+<div class="step-hidden text-center py-12 px-4 bg-surface-container-lowest border border-outline-variant rounded-xl" id="step-success">
+<div class="w-20 h-20 bg-secondary-container rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-surface-bright shadow-sm">
+<span class="material-symbols-outlined text-on-secondary-container" style="font-size: 40px;">check_circle</span>
+</div>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-2">Thanh toán thành công!</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-6">Cảm ơn bạn đã lựa chọn Terra &amp; Leaf Homestay Tây Ninh.</p>
+<div class="inline-block bg-surface-container-high rounded-lg p-6 mb-8 text-left max-w-sm w-full mx-auto border border-outline-variant/50">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-1 text-center">Mã Đặt Phòng Của Bạn</p>
+<p class="font-headline-md text-headline-md text-primary font-bold tracking-widest text-center mb-6">TL-98A4X2</p>
+<div class="space-y-3 font-body-md text-body-md">
+<div class="flex justify-between">
+<span class="text-on-surface-variant">Khách hàng:</span>
+<span class="text-on-surface font-medium">Nguyễn Văn A</span>
+</div>
+<div class="flex justify-between">
+<span class="text-on-surface-variant">Ngày nhận:</span>
+<span class="text-on-surface font-medium">14/12/2024</span>
+</div>
+<div class="flex justify-between">
+<span class="text-on-surface-variant">Ngày trả:</span>
+<span class="text-on-surface font-medium">16/12/2024</span>
+</div>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-8 max-w-md mx-auto">
+                        Thông tin chi tiết về đặt phòng đã được gửi đến email <span class="font-medium text-on-surface">nguyenvana@example.com</span>.
+                    </p>
+<div class="flex flex-col sm:flex-row justify-center gap-4">
+<button class="bg-primary hover:bg-tertiary-container text-on-primary font-label-md text-label-md px-8 py-3 rounded-lg transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">download</span> Tải hóa đơn
+                        </button>
+<button class="text-primary border border-primary hover:bg-primary-fixed hover:text-on-primary-fixed-variant font-label-md text-label-md px-8 py-3 rounded-lg transition-colors flex items-center justify-center" onclick="location.reload()">
+                            Về trang chủ
+                        </button>
+</div>
+</div>
+</div>
+<!-- Sidebar: Order Summary -->
+<div class="lg:w-1/3">
+<div class="sticky top-24 bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm">
+<!-- Small Thumbnail Header -->
+<div class="h-32 bg-surface-container-high relative">
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10"></div>
+<img alt="Homestay room" class="w-full h-full object-cover" data-alt="A bright, minimalist homestay bedroom featuring a large window looking out into a lush forest. The room is styled with natural terracotta clay accents, warm wood furniture, and soft white linens. Natural sunlight streams in, creating a serene, earthy, and highly tactile environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLsuV2yuXB-Rgd9p1RwJZZkiAPEh3iJbHNhPvSFWRwSRkwKGXmnLjg2xMgtZhZmrz7F1X8pomSrqA_XtdCkJHCCc1tCnXjoerjThj-mZfkHgmrjC__S9x5aOy1ULSllid1-UQiZZT_uQJM-qSvqGcrNQYcHbDkUSpUb8KWxErRRAB0tbrQ79oEU9AcYBadwIf3IZWfUgwGvXarf1wCq3jXerfwzdN1epm5kMAWOjqKjc6Pl54u3Xco8zTUWvzTRBNtm1qC3BvXx8dr"/>
+<div class="absolute bottom-4 left-4 z-20">
+<h3 class="font-headline-md text-headline-md text-white">Terra Leaf Núi Bà</h3>
+<p class="font-label-sm text-label-sm text-white/80">Deluxe Bungalow View Rừng</p>
+</div>
+</div>
+<div class="p-6">
+<div class="flex gap-4 mb-6 pb-6 border-b border-outline-variant border-dashed">
+<div class="flex-1 bg-surface-bright border border-outline-variant/50 rounded-lg p-3 text-center">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-1">Nhận phòng</p>
+<p class="font-body-md text-body-md text-on-surface font-medium">14 Th12</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">14:00 - 18:00</p>
+</div>
+<div class="flex-1 bg-surface-bright border border-outline-variant/50 rounded-lg p-3 text-center">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-1">Trả phòng</p>
+<p class="font-body-md text-body-md text-on-surface font-medium">16 Th12</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Trước 12:00</p>
+</div>
+</div>
+<h4 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-4">Chi tiết thanh toán</h4>
+<div class="space-y-3 font-body-md text-body-md mb-6 pb-6 border-b border-outline-variant border-dashed">
+<div class="flex justify-between">
+<span class="text-on-surface-variant">Tiền phòng (2 đêm x 1,200,000)</span>
+<span class="text-on-surface text-right">2,400,000 VND</span>
+</div>
+<div class="flex justify-between">
+<span class="text-on-surface-variant">Tổng dịch vụ thêm</span>
+<span class="text-on-surface text-right" id="summary-addons">900,000 VND</span>
+</div>
+<div class="flex justify-between">
+<span class="text-on-surface-variant">Thuế &amp; Phí (10%)</span>
+<span class="text-on-surface text-right" id="summary-tax">330,000 VND</span>
+</div>
+</div>
+<div class="flex justify-between items-end mb-6">
+<div>
+<span class="block font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Tổng hóa đơn</span>
+<span class="block font-label-sm text-label-sm text-on-surface-variant mt-1">Đã bao gồm thuế phí</span>
+</div>
+<span class="font-headline-md text-headline-md text-primary font-bold" id="summary-total">3,630,000 VND</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer: Shared Component Execution -->
+<footer class="w-full py-12 px-margin-edge grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter-desktop max-w-container-max-width mx-auto bg-surface-container-highest dark:bg-surface-container-highest border-t border-outline-variant full-width mt-auto flat no shadows">
+<div class="col-span-1 md:col-span-2 lg:col-span-1">
+<a class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed mb-4 inline-block" href="#">Terra &amp; Leaf</a>
+<p class="font-body-md text-body-md text-on-surface dark:text-on-surface opacity-80 mt-2">Nơi giao thoa giữa hơi thở đất sét và sự tĩnh lặng của đại ngàn Tây Ninh.</p>
+</div>
+<div class="col-span-1">
+<h4 class="font-label-sm text-label-sm text-on-surface dark:text-on-surface uppercase tracking-wider mb-4 opacity-70">Liên kết</h4>
+<ul class="space-y-2 font-body-md text-body-md">
+<li><a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed hover:underline transition-all opacity-80 hover:opacity-100" href="#">Privacy Policy</a></li>
+<li><a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed hover:underline transition-all opacity-80 hover:opacity-100" href="#">Terms of Service</a></li>
+</ul>
+</div>
+<div class="col-span-1">
+<h4 class="font-label-sm text-label-sm text-on-surface dark:text-on-surface uppercase tracking-wider mb-4 opacity-70">Khách hàng</h4>
+<ul class="space-y-2 font-body-md text-body-md">
+<li><a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed hover:underline transition-all opacity-80 hover:opacity-100" href="#">Support Center</a></li>
+<li><a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed hover:underline transition-all opacity-80 hover:opacity-100" href="#">Local Guide</a></li>
+</ul>
+</div>
+<div class="col-span-1 md:col-span-2 lg:col-span-4 mt-8 pt-8 border-t border-outline-variant/30 text-center font-label-sm text-label-sm text-on-surface dark:text-on-surface opacity-70">
+            © 2024 Terra &amp; Leaf Homestay Tây Ninh. All rights reserved.
+        </div>
+</footer>
+<script>
+        // Simple logic to handle step navigation and progress bar
+        function nextStep(step) {
+            // Hide all steps
+            document.getElementById('step-1').classList.add('step-hidden');
+            document.getElementById('step-1').classList.remove('step-active');
+            document.getElementById('step-2').classList.add('step-hidden');
+            document.getElementById('step-2').classList.remove('step-active');
+            document.getElementById('step-3').classList.add('step-hidden');
+            document.getElementById('step-3').classList.remove('step-active');
+            
+            // Show target step
+            document.getElementById('step-' + step).classList.remove('step-hidden');
+            document.getElementById('step-' + step).classList.add('step-active');
+            
+            // Update progress bar
+            let progress = 0;
+            if(step === 1) progress = 0;
+            if(step === 2) progress = 50;
+            if(step === 3) progress = 100;
+            document.getElementById('progress-bar').style.width = progress + '%';
+            
+            // Update step indicators styling
+            for(let i=1; i<=3; i++) {
+                const circle = document.getElementById('step-circle-' + i);
+                const label = document.getElementById('step-label-' + i);
+                
+                if(i < step) {
+                    // Completed step
+                    circle.className = 'w-8 h-8 rounded-full flex items-center justify-center bg-primary text-on-primary font-label-sm text-label-sm mb-2 transition-colors border border-primary shadow-sm';
+                    circle.innerHTML = '<span class="material-symbols-outlined" style="font-size: 16px;">check</span>';
+                    if(label) label.className = 'font-label-sm text-label-sm text-primary text-center';
+                } else if(i === step) {
+                    // Current step
+                    circle.className = 'w-8 h-8 rounded-full flex items-center justify-center bg-primary text-on-primary font-label-sm text-label-sm mb-2 transition-colors border border-primary shadow-sm';
+                    circle.innerHTML = i;
+                    if(label) label.className = 'font-label-sm text-label-sm text-primary text-center';
+                } else {
+                    // Future step
+                    circle.className = 'w-8 h-8 rounded-full flex items-center justify-center bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm mb-2 transition-colors border border-outline-variant';
+                    circle.innerHTML = i;
+                    if(label) label.className = 'font-label-sm text-label-sm text-on-surface-variant text-center';
+                }
+            }
+            
+            // Scroll to top of form area slightly smoothly
+            window.scrollTo({ top: 100, behavior: 'smooth' });
+        }
+
+        function showSuccess() {
+            // Hide step 3
+            document.getElementById('step-3').classList.add('step-hidden');
+            document.getElementById('step-3').classList.remove('step-active');
+            
+            // Hide stepper UI entirely
+            document.querySelector('.flex.items-center.mb-8.relative').style.display = 'none';
+            
+            // Show success screen
+            document.getElementById('step-success').classList.remove('step-hidden');
+            document.getElementById('step-success').classList.add('step-active');
+            window.scrollTo({ top: 100, behavior: 'smooth' });
+        }
+
+        function updateQty(id, change) {
+            const input = document.getElementById(id);
+            let val = parseInt(input.value) + change;
+            if(val < 0) val = 0;
+            if(val > 10) val = 10;
+            input.value = val;
+            
+            // In a real app, you'd calculate prices here and update the summary panel.
+            // Keeping it simple for UI demonstration.
+        }
+    </script>
+</body></html>

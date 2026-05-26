@@ -1,0 +1,119 @@
+﻿@import "tailwindcss";
+
+:root {
+  --terracotta: #9a4029;
+  --soft-sand: #fdf9f4;
+  --forest: #466550;
+  --ink: #2b211d;
+  --muted: #75675f;
+  --line: #eadfd3;
+  --surface: #fffaf4;
+  --leaf-soft: #e8f0eb;
+  --clay-soft: #f8e7e0;
+  --radius-control: 12px;
+  --radius-card: 16px;
+  --shadow-card: 0 18px 55px rgba(43, 33, 29, 0.08);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--soft-sand);
+  color: var(--ink);
+  font-family: var(--font-body), system-ui, sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-heading), Georgia, serif;
+}
+
+.card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: var(--shadow-card);
+}
+
+.btn-primary {
+  border-radius: var(--radius-control);
+  background: var(--terracotta);
+  color: white;
+  padding: 0.8rem 1.2rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+  box-shadow: 0 10px 24px rgba(154, 64, 41, 0.18);
+}
+
+.btn-primary:hover {
+  background: #7b2914;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  border-radius: var(--radius-control);
+  border: 1px solid rgba(70, 101, 80, 0.25);
+  color: var(--forest);
+  padding: 0.75rem 1.1rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.72);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.btn-secondary:hover {
+  border-color: rgba(70, 101, 80, 0.45);
+  background: white;
+  transform: translateY(-1px);
+}
+
+.eyebrow {
+  color: var(--terracotta);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.field {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  background: white;
+  padding: 0.85rem 1rem;
+  color: var(--muted);
+  outline: none;
+}
+
+.field:focus,
+.field:focus-within {
+  border-color: var(--forest);
+  box-shadow: 0 0 0 3px rgba(70, 101, 80, 0.12);
+}
+
+.table-card {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: white;
+  box-shadow: 0 16px 45px rgba(43, 33, 29, 0.06);
+}
+
+.surface-panel {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+
+.text-muted {
+  color: var(--muted);
+}
+

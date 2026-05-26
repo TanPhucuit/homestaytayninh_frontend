@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Terra &amp; Leaf Homestay - Tây Ninh</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&amp;family=Libre+Caslon+Text:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary-fixed-dim": "#ffb4a2",
+                      "on-secondary-fixed-variant": "#2f4d3a",
+                      "on-secondary-container": "#4c6b56",
+                      "on-background": "#1c1c19",
+                      "on-secondary-fixed": "#022110",
+                      "surface-container-low": "#f7f3ee",
+                      "on-surface": "#1c1c19",
+                      "on-primary-fixed": "#3c0800",
+                      "surface-container": "#f1ede8",
+                      "on-secondary": "#ffffff",
+                      "surface-container-highest": "#e6e2dd",
+                      "on-tertiary-fixed-variant": "#7e2b16",
+                      "surface-variant": "#e6e2dd",
+                      "outline-variant": "#dcc0ba",
+                      "primary": "#7b2914",
+                      "on-tertiary": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "surface-container-high": "#ebe8e3",
+                      "on-error-container": "#93000a",
+                      "surface-dim": "#ddd9d5",
+                      "tertiary-fixed-dim": "#ffb4a2",
+                      "surface-tint": "#9d422b",
+                      "outline": "#89726c",
+                      "surface-bright": "#fdf9f4",
+                      "secondary-fixed-dim": "#accfb5",
+                      "error": "#ba1a1a",
+                      "on-primary-fixed-variant": "#7e2b16",
+                      "inverse-primary": "#ffb4a2",
+                      "on-primary-container": "#ffc9bb",
+                      "surface-container-lowest": "#ffffff",
+                      "surface": "#fdf9f4",
+                      "primary-fixed": "#ffdad2",
+                      "on-error": "#ffffff",
+                      "tertiary": "#7b2914",
+                      "background": "#fdf9f4",
+                      "secondary": "#466550",
+                      "inverse-on-surface": "#f4f0eb",
+                      "on-tertiary-container": "#ffc9bb",
+                      "inverse-surface": "#31302d",
+                      "error-container": "#ffdad6",
+                      "secondary-fixed": "#c8ebd0",
+                      "primary-container": "#9a4029",
+                      "on-surface-variant": "#56423d",
+                      "tertiary-fixed": "#ffdad2",
+                      "on-tertiary-fixed": "#3c0700",
+                      "tertiary-container": "#9a4029",
+                      "secondary-container": "#c8ebd0"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-edge": "24px",
+                      "container-max-width": "1200px",
+                      "gutter-mobile": "16px",
+                      "unit": "4px",
+                      "gutter-desktop": "24px"
+              },
+              "fontFamily": {
+                      "label-md": [
+                              "Be Vietnam Pro"
+                      ],
+                      "body-lg": [
+                              "Be Vietnam Pro"
+                      ],
+                      "headline-md": [
+                              "Libre Caslon Text"
+                      ],
+                      "display-lg": [
+                              "Libre Caslon Text"
+                      ],
+                      "body-md": [
+                              "Be Vietnam Pro"
+                      ],
+                      "headline-lg-mobile": [
+                              "Libre Caslon Text"
+                      ],
+                      "label-sm": [
+                              "Be Vietnam Pro"
+                      ],
+                      "headline-lg": [
+                              "Libre Caslon Text"
+                      ]
+              },
+              "fontSize": {
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fdf9f4;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #dcc0ba;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #9a4029;
+        }
+
+        /* Glassmorphism utility */
+        .glass-panel {
+            background: rgba(253, 249, 244, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md text-body-md antialiased overflow-x-hidden">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface-container w-full top-0 sticky border-b border-outline-variant dark:border-outline z-50">
+<div class="flex justify-between items-center px-margin-edge h-20 max-w-container-max-width mx-auto">
+<!-- Brand -->
+<div class="font-display-lg text-display-lg text-primary dark:text-primary-fixed-dim tracking-tight">
+                Terra &amp; Leaf
+            </div>
+<!-- Navigation Links (Web) -->
+<nav class="hidden md:flex space-x-8 items-center h-full">
+<a class="text-primary dark:text-primary-fixed-dim border-b-2 border-primary pb-1 h-full flex items-center hover:text-primary dark:hover:text-primary-fixed-dim transition-colors font-label-md text-label-md" href="#">Khám phá</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant h-full flex items-center hover:text-primary dark:hover:text-primary-fixed-dim transition-colors font-label-md text-label-md" href="#">Cẩm nang</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant h-full flex items-center hover:text-primary dark:hover:text-primary-fixed-dim transition-colors font-label-md text-label-md" href="#">Về chúng tôi</a>
+</nav>
+<!-- Actions -->
+<div class="flex items-center space-x-4">
+<div class="flex space-x-2 text-on-surface-variant">
+<button class="p-2 hover:text-primary transition-colors hover:opacity-80">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 hover:text-primary transition-colors hover:opacity-80">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+<button class="hidden md:block bg-primary text-on-primary px-6 py-2 rounded-lg font-label-md text-label-md hover:bg-primary-container transition-colors shadow-sm">
+                    Đặt phòng ngay
+                </button>
+<!-- Mobile Menu Toggle -->
+<button class="md:hidden p-2 text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main>
+<!-- Hero Section -->
+<section class="relative w-full h-[819px] min-h-[600px] flex items-center justify-center">
+<!-- Background Image -->
+<div class="absolute inset-0 w-full h-full bg-cover bg-center z-0" data-alt="A breathtaking, cinematic photograph of Núi Bà Đen mountain at sunrise, viewed from a slightly elevated vantage point. The scene captures the majestic, rugged peak emerging from a sea of soft, golden mist. Warm terracotta and soft sand morning light bathes the lush forest green landscape in the foreground, creating a tranquil, premium, and deeply emotional atmosphere. The sky is a gradient of pale peach to soft blue, emphasizing the 'Minimalism combined with Premium Tactile' aesthetic of the Terra &amp; Leaf brand. High-quality editorial hospitality photography." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBUhHb1qGmbyWWvuPHbp-gTClxglQUmpyxGfj72dpImTw-agU6GwV23YiF7DJJ3mg8HCxpswWViU6jAnaFMR_pOdKNB1rc7QJlAYY-8QlbXzjoiB_jeI_CfD76keGRtyavSiz4UzPJ8mYaaF6-z3NYECYlc08WRqMLm02og00PvWEx1r1atqQfe990kOpr58gh7YBr5_ji2Jp02KHOmN_qBvt-bsfRyCl_aUSMzonGH8rifocXjTiu2D6qHJDTBuf5xLd-DOuL0Rsbs');">
+<!-- Overlay to ensure text legibility while keeping it bright/light-mode -->
+<div class="absolute inset-0 bg-gradient-to-b from-surface/30 via-transparent to-surface/80"></div>
+</div>
+<!-- Hero Content -->
+<div class="relative z-10 text-center px-margin-edge max-w-container-max-width w-full flex flex-col items-center">
+<span class="font-label-md text-label-md text-surface uppercase tracking-widest mb-4 bg-surface-tint/60 px-4 py-1 rounded-full backdrop-blur-sm border border-surface/20">Khám phá Tây Ninh</span>
+<h1 class="font-display-lg text-display-lg md:text-[64px] text-surface drop-shadow-md mb-6 leading-tight max-w-3xl">
+                    Hành Trình Về <br class="hidden md:block"/>Miền Đất Thánh
+                </h1>
+<p class="font-body-lg text-body-lg text-surface/90 max-w-2xl mb-12 drop-shadow-sm">
+                    Tìm về sự tĩnh lặng giữa đại ngàn và hơi ấm của đất nung. Trải nghiệm lưu trú chân thực, mang đậm bản sắc địa phương tại những homestay độc bản.
+                </p>
+</div>
+</section>
+<!-- Floating Search Panel -->
+<section class="relative z-20 -mt-24 px-margin-edge">
+<div class="max-w-container-max-width mx-auto">
+<div class="glass-panel border border-outline-variant/50 rounded-xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+<form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+<!-- Dates -->
+<div class="lg:col-span-1">
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Ngày nhận - trả phòng</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-secondary transition-colors" data-icon="calendar_month">calendar_month</span>
+<input class="w-full pl-10 pr-3 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface font-body-md text-body-md focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors cursor-pointer outline-none" placeholder="Thêm ngày" type="text"/>
+</div>
+</div>
+<!-- Guests -->
+<div class="lg:col-span-1">
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Số khách</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-secondary transition-colors" data-icon="group">group</span>
+<input class="w-full pl-10 pr-3 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface font-body-md text-body-md focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors cursor-pointer outline-none" placeholder="2 khách" type="text"/>
+</div>
+</div>
+<!-- Type -->
+<div class="lg:col-span-1">
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Loại hình</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-secondary transition-colors" data-icon="house">house</span>
+<select class="w-full pl-10 pr-8 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface font-body-md text-body-md focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors outline-none appearance-none cursor-pointer">
+<option>Tất cả</option>
+<option>Phòng riêng</option>
+<option>Lều Glamping</option>
+<option>Nhà nguyên căn</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+<!-- Filters -->
+<div class="lg:col-span-1 flex space-x-2">
+<button class="flex-1 py-3 px-4 bg-surface-container border border-outline-variant rounded-lg text-on-surface-variant font-label-md text-label-md hover:bg-surface-container-high transition-colors flex items-center justify-center gap-2" type="button">
+<span class="material-symbols-outlined" data-icon="tune">tune</span>
+                                Bộ lọc
+                            </button>
+</div>
+<!-- Submit -->
+<div class="lg:col-span-1">
+<button class="w-full py-3 bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:bg-surface-tint transition-colors flex items-center justify-center gap-2 shadow-sm" type="submit">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+                                Tìm kiếm
+                            </button>
+</div>
+</form>
+<!-- Trust Indicators -->
+<div class="mt-6 pt-4 border-t border-outline-variant/30 flex flex-wrap gap-4 items-center justify-center md:justify-start">
+<div class="flex items-center gap-1.5 text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-secondary" data-icon="verified" data-weight="fill" style="font-variation-settings: 'FILL' 1;">verified</span>
+                            Homestay đã kiểm duyệt
+                        </div>
+<div class="w-1 h-1 rounded-full bg-outline-variant hidden md:block"></div>
+<div class="flex items-center gap-1.5 text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-secondary" data-icon="shield" data-weight="fill" style="font-variation-settings: 'FILL' 1;">shield</span>
+                            Thanh toán an toàn ApiPay
+                        </div>
+<div class="w-1 h-1 rounded-full bg-outline-variant hidden md:block"></div>
+<div class="flex items-center gap-1.5 text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-secondary" data-icon="support_agent" data-weight="fill" style="font-variation-settings: 'FILL' 1;">support_agent</span>
+                            Hỗ trợ 24/7
+                        </div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-highest dark:bg-surface-dim w-full py-12 border-t border-outline-variant mt-24">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8 px-margin-edge max-w-container-max-width mx-auto">
+<div class="col-span-1 md:col-span-4 mb-4">
+<div class="font-headline-lg text-headline-lg text-primary dark:text-primary-fixed-dim">
+                    Terra &amp; Leaf
+                </div>
+</div>
+<div class="col-span-1 md:col-span-2">
+<p class="font-body-md text-body-md text-on-surface dark:text-on-surface max-w-md">
+                    © 2024 Terra &amp; Leaf Homestay. Bản sắc Tây Ninh trong từng nhịp thở.
+                </p>
+</div>
+<div class="col-span-1">
+<ul class="space-y-3 font-label-sm text-label-sm">
+<li><a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Hướng dẫn núi Bà Đen</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Ẩm thực bản địa</a></li>
+</ul>
+</div>
+<div class="col-span-1">
+<ul class="space-y-3 font-label-sm text-label-sm">
+<li><a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Chính sách bảo mật</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Liên hệ</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Hợp tác chủ nhà</a></li>
+</ul>
+</div>
+</div>
+</footer>
+</body></html>

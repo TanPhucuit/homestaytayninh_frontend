@@ -1,0 +1,13 @@
+node_modules
+.agents
+.next
+dist
+coverage
+.env
+.env.*
+!.env.example
+*.log
+.turbo
+.vercel
+apikey.txt
+skills-lock.json

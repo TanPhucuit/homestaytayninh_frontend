@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Quản lý Đặt phòng của tôi - Terra &amp; Leaf</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&amp;family=Libre+Caslon+Text:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-container": "#4c6b56",
+                    "secondary-container": "#c8ebd0",
+                    "primary": "#7b2914",
+                    "error": "#ba1a1a",
+                    "on-tertiary-fixed-variant": "#7e2b16",
+                    "on-primary-container": "#ffc9bb",
+                    "error-container": "#ffdad6",
+                    "inverse-on-surface": "#f4f0eb",
+                    "tertiary-fixed-dim": "#ffb4a2",
+                    "primary-container": "#9a4029",
+                    "tertiary-fixed": "#ffdad2",
+                    "on-tertiary-container": "#ffc9bb",
+                    "surface-container": "#f1ede8",
+                    "outline-variant": "#dcc0ba",
+                    "surface-dim": "#ddd9d5",
+                    "outline": "#89726c",
+                    "surface-container-highest": "#e6e2dd",
+                    "surface-container-lowest": "#ffffff",
+                    "on-error": "#ffffff",
+                    "tertiary-container": "#9a4029",
+                    "on-tertiary": "#ffffff",
+                    "background": "#fdf9f4",
+                    "tertiary": "#7b2914",
+                    "inverse-primary": "#ffb4a2",
+                    "on-secondary": "#ffffff",
+                    "primary-fixed": "#ffdad2",
+                    "on-secondary-fixed-variant": "#2f4d3a",
+                    "on-surface-variant": "#56423d",
+                    "on-primary-fixed": "#3c0800",
+                    "surface": "#fdf9f4",
+                    "on-tertiary-fixed": "#3c0700",
+                    "inverse-surface": "#31302d",
+                    "secondary": "#466550",
+                    "on-background": "#1c1c19",
+                    "on-secondary-fixed": "#022110",
+                    "surface-container-low": "#f7f3ee",
+                    "surface-bright": "#fdf9f4",
+                    "on-primary": "#ffffff",
+                    "secondary-fixed": "#c8ebd0",
+                    "surface-variant": "#e6e2dd",
+                    "surface-container-high": "#ebe8e3",
+                    "on-primary-fixed-variant": "#7e2b16",
+                    "secondary-fixed-dim": "#accfb5",
+                    "on-surface": "#1c1c19",
+                    "surface-tint": "#9d422b",
+                    "primary-fixed-dim": "#ffb4a2",
+                    "on-error-container": "#93000a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter-mobile": "16px",
+                    "gutter-desktop": "24px",
+                    "unit": "4px",
+                    "margin-edge": "24px",
+                    "container-max-width": "1200px"
+            },
+            "fontFamily": {
+                    "label-sm": [
+                            "Be Vietnam Pro"
+                    ],
+                    "headline-lg-mobile": [
+                            "Libre Caslon Text"
+                    ],
+                    "body-lg": [
+                            "Be Vietnam Pro"
+                    ],
+                    "label-md": [
+                            "Be Vietnam Pro"
+                    ],
+                    "body-md": [
+                            "Be Vietnam Pro"
+                    ],
+                    "headline-md": [
+                            "Libre Caslon Text"
+                    ],
+                    "headline-lg": [
+                            "Libre Caslon Text"
+                    ],
+                    "display-lg": [
+                            "Libre Caslon Text"
+                    ]
+            },
+            "fontSize": {
+                    "label-sm": [
+                            "12px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "headline-lg-mobile": [
+                            "28px",
+                            {
+                                    "lineHeight": "1.3",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "1.6",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "label-md": [
+                            "14px",
+                            {
+                                    "lineHeight": "1.4",
+                                    "letterSpacing": "0.01em",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "1.6",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-md": [
+                            "24px",
+                            {
+                                    "lineHeight": "1.4",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "headline-lg": [
+                            "32px",
+                            {
+                                    "lineHeight": "1.3",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "display-lg": [
+                            "48px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "700"
+                            }
+                    ]
+            }
+    },
+        },
+      }
+    </script>
+<style>
+        .hover-lift {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(123, 41, 20, 0.04), 0 8px 10px -6px rgba(123, 41, 20, 0.04);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="bg-background dark:bg-inverse-surface border-b border-outline-variant dark:border-outline flat no shadows docked full-width top sticky z-50">
+<div class="flex justify-between items-center w-full px-gutter-mobile md:px-gutter-desktop max-w-container-width mx-auto h-16">
+<div class="font-headline-md text-headline-md text-primary dark:text-inverse-primary tracking-tight font-bold">
+                Terra &amp; Leaf
+            </div>
+<nav class="hidden md:flex gap-8">
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors text-label-md font-label-md" href="#">Explore</a>
+<a class="text-primary dark:text-inverse-primary border-b-2 border-primary pb-1 opacity-80 transition-all duration-200 text-label-md font-label-md" href="#">My Bookings</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors text-label-md font-label-md" href="#">Host Mode</a>
+</nav>
+<div class="flex items-center gap-4 text-primary dark:text-inverse-primary">
+<button aria-label="Notifications" class="hover:text-primary-container transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-variant overflow-hidden border border-outline-variant">
+<img alt="User profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDXuI5z_DpVFmvDcBquM0hBw0Xf-EDj1fnCXseJrNMvFJVqJcmpFvnmsRstmpjU3w1T4YMCd5m0Ps-ZNxiRDzALbnnsnWYg35WeHDKk1CK-RIX9e9f04_5XFOEDOwToqox_H7dhnyvkKbSLTiDV3LW1Bgl6oRRdCUeVPbl5tnJwFyXu9-LJMPjzX-SUTpNHvIFvQL8Mp-NmahpqTzQzFUiEt4MX-7tquu2lbkm6DOF3RsxP9W0BAo3lCX2qTzt9GAY8ZS_F1cBb6zA"/>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-grow px-gutter-mobile md:px-gutter-desktop py-8 max-w-container-width mx-auto w-full">
+<div class="mb-8">
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-6">Chuyến đi của bạn</h1>
+<!-- Tabs -->
+<div class="flex gap-6 border-b border-outline-variant overflow-x-auto pb-2 scrollbar-hide">
+<button class="text-on-surface-variant hover:text-primary text-label-md font-label-md whitespace-nowrap transition-colors">Sắp tới</button>
+<button class="text-primary border-b-2 border-primary pb-2 -mb-[9px] text-label-md font-label-md whitespace-nowrap opacity-100 font-semibold">Đang trải nghiệm</button>
+<button class="text-on-surface-variant hover:text-primary text-label-md font-label-md whitespace-nowrap transition-colors">Đã hoàn thành</button>
+<button class="text-on-surface-variant hover:text-primary text-label-md font-label-md whitespace-nowrap transition-colors">Đã hủy</button>
+</div>
+</div>
+<!-- Bento Grid Layout for Active Stay -->
+<section class="mb-16">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-min">
+<!-- Main Image Card -->
+<div class="md:col-span-8 md:row-span-2 rounded-xl overflow-hidden relative group h-[300px] md:h-[500px]">
+<img alt="The Hidden Forest Villa" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A luxurious, minimalist forest villa blending natural wood and terracotta elements. Surrounded by lush, dense tropical greenery in Tây Ninh. The lighting is soft and warm, casting gentle dappled sunlight across a pristine private pool and modern outdoor seating area. The aesthetic is serene, premium hospitality with a distinct connection to nature." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXwPbcxlHspZ7IAY1ac8oPEwUbwqtnKLifvoqDjf9rx0W_QYXtkJ0ASoc8L4xAWL1zMLQOPMvb5eVw6i4CdC1uKt2PFwVLMNrw_r2u1HUlHUzL1vMw-u6KMR5Sb0V9GEeTLbBS9hIeCNOB_l_i3LEkvl3iUy-wnMB-8kJ5XJUYWjQbs0-0PG0iEt_IJmOD27wj8IVbPfTU8VyWsYa6t6Rjp7o2mRK_3Yg7nTvjDTjBf3EwDyaY0GTwkUyaw8yp1xeQtYENUzaAwyw4"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute top-4 left-4 bg-secondary-container/90 backdrop-blur-sm text-on-secondary-container px-3 py-1 rounded-full text-label-sm font-label-sm flex items-center gap-1 border border-secondary/20">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+                        Đang trải nghiệm (In-stay)
+                    </div>
+<div class="absolute bottom-6 left-6 text-white">
+<h2 class="font-headline-md text-headline-md mb-2">The Hidden Forest Villa</h2>
+<div class="flex items-center gap-2 text-label-md font-label-md opacity-90">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+                            Tây Ninh, Việt Nam
+                        </div>
+</div>
+</div>
+<!-- Stay Details Bento Box -->
+<div class="md:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-6 hover-lift flex flex-col justify-between h-full min-h-[240px]">
+<div>
+<h3 class="font-headline-md text-headline-md text-primary mb-4">Chi tiết đặt phòng</h3>
+<div class="space-y-4">
+<div class="flex justify-between items-center pb-3 border-b border-surface-container-highest">
+<div class="text-on-surface-variant text-label-md font-label-md">Thời gian</div>
+<div class="font-label-md text-label-md text-on-surface">12 Th04 - 15 Th04</div>
+</div>
+<div class="flex justify-between items-center pb-3 border-b border-surface-container-highest">
+<div class="text-on-surface-variant text-label-md font-label-md">Khách</div>
+<div class="font-label-md text-label-md text-on-surface">2 Người lớn</div>
+</div>
+<div class="flex justify-between items-center">
+<div class="text-on-surface-variant text-label-md font-label-md">Mã đặt phòng</div>
+<div class="font-label-md text-label-md text-primary bg-primary/10 px-2 py-1 rounded">#TL-8492</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Services & Add-ons Bento Box -->
+<div class="md:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-6 hover-lift flex flex-col h-full min-h-[240px]">
+<h3 class="font-headline-md text-headline-md text-primary mb-4">Dịch vụ &amp; Tiện ích</h3>
+<div class="mb-4">
+<div class="text-label-sm font-label-sm text-on-surface-variant mb-2 uppercase tracking-wider">Đã bao gồm</div>
+<div class="flex flex-wrap gap-2">
+<span class="inline-flex items-center gap-1 bg-surface-variant text-on-surface px-3 py-1.5 rounded-full text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[16px]">wifi</span> Wifi tốc độ cao
+                            </span>
+<span class="inline-flex items-center gap-1 bg-surface-variant text-on-surface px-3 py-1.5 rounded-full text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[16px]">restaurant</span> Bữa sáng bản địa
+                            </span>
+</div>
+</div>
+<div class="mt-auto">
+<div class="text-label-sm font-label-sm text-on-surface-variant mb-2 uppercase tracking-wider">Yêu cầu thêm</div>
+<div class="space-y-2">
+<div class="flex justify-between items-center bg-surface-container-low p-2 rounded-lg border border-surface-container-highest">
+<span class="text-label-md font-label-md">Tiệc nướng BBQ tối</span>
+<span class="text-label-sm font-label-sm bg-secondary/10 text-secondary px-2 py-0.5 rounded">Đã phục vụ</span>
+</div>
+<div class="flex justify-between items-center bg-surface-container-low p-2 rounded-lg border border-surface-container-highest">
+<span class="text-label-md font-label-md">Thuê xe máy</span>
+<span class="text-label-sm font-label-sm bg-outline-variant/30 text-on-surface-variant px-2 py-0.5 rounded">Đang chờ</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Actions Action Box -->
+<div class="md:col-span-12 lg:col-span-12 flex gap-4 mt-2">
+<button class="flex-1 bg-primary text-on-primary hover:bg-tertiary-container transition-colors py-3 px-4 rounded-lg font-label-md text-label-md flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+                        Yêu cầu thêm dịch vụ
+                    </button>
+<button class="flex-1 border border-secondary text-secondary hover:bg-secondary-container transition-colors py-3 px-4 rounded-lg font-label-md text-label-md flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">chat_bubble</span>
+                        Nhắn tin cho Homestay
+                    </button>
+</div>
+</div>
+</section>
+<!-- Other Trips Section -->
+<section>
+<h2 class="font-headline-md text-headline-md text-primary mb-6">Chuyến đi khác</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Upcoming Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden hover-lift flex flex-col">
+<div class="h-40 relative">
+<img alt="Clay &amp; Sun Retreat" class="w-full h-full object-cover" data-alt="A warm, rustic homestay exterior featuring natural terracotta clay walls and wooden details. Sunlight streams across a small, tranquil garden filled with native Vietnamese flora. The aesthetic is earthy, minimal, and inviting, perfect for a relaxing getaway." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGo_5aEKxLrEjNEJLDTu1RrSokowEG2YAM6AcgkVmXrdAO8T94_zsdmT0wrDfGhyE9HtzZm4EFm-yRHPCYjnOYNGFWCxa4E9viTRgE9zJVG4hWM63_Ne8y57h4tKaQc8iGk0WjgRsQxkcidUyxKNLGbGJo9eUYdDFq1x65RuxgIi2owfWQ4RNcT7_TmtTefCwa5_2-2YNLQnj4Og95_y3swmtlkYVblzwjLSuApbr71qONSqvogy9sMzVSZq_gyU98Y2upb3nyiVZT"/>
+<div class="absolute top-2 left-2 bg-surface-container-lowest/90 backdrop-blur-sm text-on-surface px-2 py-1 rounded text-label-sm font-label-sm">
+                            Sắp tới
+                        </div>
+</div>
+<div class="p-4 flex-grow flex flex-col">
+<h3 class="font-label-md text-label-md font-semibold mb-1">Clay &amp; Sun Retreat</h3>
+<p class="text-label-sm font-label-sm text-on-surface-variant mb-4">20 Th05 - 22 Th05 • 3 khách</p>
+<div class="mt-auto flex justify-between items-center border-t border-surface-container-highest pt-3">
+<span class="text-primary font-label-md text-label-md">Xem chi tiết</span>
+<span class="material-symbols-outlined text-primary">arrow_forward</span>
+</div>
+</div>
+</div>
+<!-- Completed Card -->
+<div class="bg-surface-container-highest border border-outline-variant rounded-xl overflow-hidden flex flex-col opacity-80 hover:opacity-100 transition-opacity">
+<div class="h-40 relative grayscale-[30%]">
+<img alt="Lotus Pond Bungalow" class="w-full h-full object-cover" data-alt="A cozy, serene wooden bungalow overlooking a quiet lotus pond. The setting is peaceful with muted, natural colors dominating the scene. The architecture is simple and elegant, reflecting a completed, restorative stay in nature." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGLXFcfMiCg6GdkbVWz_gpJdHW6IxCSdUlnQqm3DRhHw4ymGJ3O2gvHC88DMHOHc3qrPBc_nsqvpiZ4ROrRcY8B4ryxSpf4K3de3l8zk4Fsc1aSKhFDwjOs0IRucSG5Ua0GUqJDjalA46wEGvuMeVbk7bvjHJ2h0jPrnVmziK6k3-H3U7Whal3tmpS6oDppo-ZKT48YrNRlMqXF3LxDukSS_iUqDMi13TDBn_T1w_uYe89-mfFK2OdhgaKCdOrKZocTybKf5QgkHVo"/>
+<div class="absolute top-2 left-2 bg-surface-variant/90 backdrop-blur-sm text-on-surface-variant px-2 py-1 rounded text-label-sm font-label-sm">
+                            Đã hoàn thành
+                        </div>
+</div>
+<div class="p-4 flex-grow flex flex-col">
+<h3 class="font-label-md text-label-md font-semibold mb-1">Lotus Pond Bungalow</h3>
+<p class="text-label-sm font-label-sm text-on-surface-variant mb-4">05 Th01 - 07 Th01 • 2 khách</p>
+<div class="mt-auto flex justify-between items-center border-t border-surface-dim pt-3">
+<span class="text-on-surface-variant font-label-md text-label-md">Đặt lại</span>
+<span class="material-symbols-outlined text-on-surface-variant">replay</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer Component Generated from JSON -->
+<footer class="bg-surface-container-highest dark:bg-inverse-surface border-t border-outline-variant dark:border-outline w-full flat no shadows mt-16">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8 py-12 px-gutter-mobile md:px-gutter-desktop max-w-container-width mx-auto">
+<div class="col-span-1 md:col-span-2">
+<h4 class="font-headline-md text-headline-md text-primary dark:text-inverse-primary mb-4">Terra &amp; Leaf</h4>
+<p class="text-body-md font-body-md text-on-surface-variant dark:text-surface-variant mb-6 max-w-md">Trải nghiệm nghỉ dưỡng đậm chất bản địa, giao hòa giữa kiến trúc đương đại và thiên nhiên hoang sơ.</p>
+<p class="text-label-sm font-label-sm text-on-surface-variant dark:text-surface-variant">© 2024 Terra &amp; Leaf Homestay. All rights reserved.</p>
+</div>
+<div class="col-span-1">
+<h5 class="text-label-md font-label-md font-semibold text-primary dark:text-inverse-primary mb-4">Về chúng tôi</h5>
+<ul class="space-y-3">
+<li><a class="text-body-md font-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200" href="#">About Us</a></li>
+<li><a class="text-body-md font-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200" href="#">Local Guide</a></li>
+<li><a class="text-body-md font-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200" href="#">Sustainability</a></li>
+</ul>
+</div>
+<div class="col-span-1">
+<h5 class="text-label-md font-label-md font-semibold text-primary dark:text-inverse-primary mb-4">Pháp lý</h5>
+<ul class="space-y-3">
+<li><a class="text-body-md font-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200" href="#">Privacy Policy</a></li>
+<li><a class="text-body-md font-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200" href="#">Terms of Service</a></li>
+</ul>
+</div>
+</div>
+</footer>
+</body></html>

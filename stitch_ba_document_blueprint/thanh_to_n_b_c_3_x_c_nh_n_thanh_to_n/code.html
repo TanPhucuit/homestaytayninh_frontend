@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Thanh toán - Terra &amp; Leaf</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-container": "#4c6b56",
+                        "secondary-container": "#c8ebd0",
+                        "primary": "#7b2914",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed-variant": "#7e2b16",
+                        "on-primary-container": "#ffc9bb",
+                        "error-container": "#ffdad6",
+                        "inverse-on-surface": "#f4f0eb",
+                        "tertiary-fixed-dim": "#ffb4a2",
+                        "primary-container": "#9a4029",
+                        "tertiary-fixed": "#ffdad2",
+                        "on-tertiary-container": "#ffc9bb",
+                        "surface-container": "#f1ede8",
+                        "outline-variant": "#dcc0ba",
+                        "surface-dim": "#ddd9d5",
+                        "outline": "#89726c",
+                        "surface-container-highest": "#e6e2dd",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "tertiary-container": "#9a4029",
+                        "on-tertiary": "#ffffff",
+                        "background": "#fdf9f4",
+                        "tertiary": "#7b2914",
+                        "inverse-primary": "#ffb4a2",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed": "#ffdad2",
+                        "on-secondary-fixed-variant": "#2f4d3a",
+                        "on-surface-variant": "#56423d",
+                        "on-primary-fixed": "#3c0800",
+                        "surface": "#fdf9f4",
+                        "on-tertiary-fixed": "#3c0700",
+                        "inverse-surface": "#31302d",
+                        "secondary": "#466550",
+                        "on-background": "#1c1c19",
+                        "on-secondary-fixed": "#022110",
+                        "surface-container-low": "#f7f3ee",
+                        "surface-bright": "#fdf9f4",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed": "#c8ebd0",
+                        "surface-variant": "#e6e2dd",
+                        "surface-container-high": "#ebe8e3",
+                        "on-primary-fixed-variant": "#7e2b16",
+                        "secondary-fixed-dim": "#accfb5",
+                        "on-surface": "#1c1c19",
+                        "surface-tint": "#9d422b",
+                        "primary-fixed-dim": "#ffb4a2",
+                        "on-error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter-mobile": "16px",
+                        "gutter-desktop": "24px",
+                        "unit": "4px",
+                        "margin-edge": "24px",
+                        "container-max-width": "1200px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Be Vietnam Pro"],
+                        "headline-lg-mobile": ["Libre Caslon Text"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "label-md": ["Be Vietnam Pro"],
+                        "body-md": ["Be Vietnam Pro"],
+                        "headline-md": ["Libre Caslon Text"],
+                        "headline-lg": ["Libre Caslon Text"],
+                        "display-lg": ["Libre Caslon Text"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md antialiased selection:bg-primary-container selection:text-on-primary-container min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="bg-background border-b border-outline-variant flex justify-between items-center w-full px-gutter-mobile md:px-gutter-desktop max-w-[1200px] mx-auto h-16">
+<div class="flex items-center gap-4">
+<span class="font-headline-md text-headline-md text-primary font-bold">Terra &amp; Leaf</span>
+</div>
+<div class="flex items-center">
+<!-- Navigation suppressed for transactional page -->
+<button class="text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center p-2 rounded-full hover:bg-surface-variant">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow w-full max-w-[1200px] mx-auto px-gutter-mobile md:px-gutter-desktop py-8 md:py-12">
+<!-- Stepper -->
+<div class="mb-12 max-w-2xl mx-auto">
+<div class="flex items-center justify-between relative">
+<div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-px bg-outline-variant -z-10"></div>
+<div class="flex flex-col items-center bg-background px-4">
+<div class="w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-label-md text-label-md mb-2">
+<span class="material-symbols-outlined text-sm" data-icon="check">check</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Chi tiết</span>
+</div>
+<div class="flex flex-col items-center bg-background px-4">
+<div class="w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-label-md text-label-md mb-2">
+<span class="material-symbols-outlined text-sm" data-icon="check">check</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Dịch vụ</span>
+</div>
+<div class="flex flex-col items-center bg-background px-4">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-label-md text-label-md mb-2 shadow-[0_4px_14px_rgba(123,41,20,0.3)]">
+                        3
+                    </div>
+<span class="font-label-sm text-label-sm text-primary">Thanh toán</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+<!-- Left Column: Payment Details -->
+<div class="lg:col-span-7 xl:col-span-8 flex flex-col gap-8">
+<div>
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-background mb-2">Thanh toán</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Hoàn tất đặt phòng của bạn an toàn và nhanh chóng.</p>
+</div>
+<!-- Payment Method Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 md:p-8 hover:shadow-[0_8px_30px_rgba(123,41,20,0.04)] transition-shadow duration-300">
+<h2 class="font-headline-md text-headline-md text-on-background mb-6 flex items-center gap-2">
+                        Phương thức thanh toán
+                    </h2>
+<div class="border-2 border-primary rounded-lg p-4 bg-surface-container-low flex items-center justify-between cursor-pointer relative overflow-hidden group">
+<div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex items-center gap-4 relative z-10">
+<div class="w-5 h-5 rounded-full border-2 border-primary flex items-center justify-center">
+<div class="w-2.5 h-2.5 rounded-full bg-primary"></div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-12 h-8 bg-[#00457C] rounded flex items-center justify-center text-white font-bold text-xs shadow-sm">
+                                    ApiPay
+                                </div>
+<span class="font-label-md text-label-md text-on-background">Thanh toán an toàn qua ApiPay</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary relative z-10" data-icon="lock">lock</span>
+</div>
+<div class="mt-6 flex items-start gap-3 bg-surface-container-low p-4 rounded-lg">
+<span class="material-symbols-outlined text-secondary mt-0.5" data-icon="verified_user">verified_user</span>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">
+                            Thanh toán được xử lý an toàn qua ApiPay. Thông tin của bạn được mã hóa 256-bit và không được lưu trữ trên máy chủ của chúng tôi.
+                        </p>
+</div>
+</div>
+<!-- Policies -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 md:p-8">
+<h3 class="font-headline-md text-headline-md text-on-background mb-4">Chính sách &amp; Điều khoản</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 text-sm">
+                        Bằng việc nhấp vào nút "Thanh toán", bạn xác nhận rằng bạn đã đọc và đồng ý với các chính sách của chúng tôi.
+                    </p>
+<label class="flex items-start gap-3 cursor-pointer group">
+<div class="relative flex items-center justify-center mt-1">
+<input class="peer sr-only" type="checkbox"/>
+<div class="w-5 h-5 border-2 border-outline rounded flex items-center justify-center peer-checked:bg-primary peer-checked:border-primary transition-colors group-hover:border-primary">
+<span class="material-symbols-outlined text-white text-[16px] opacity-0 peer-checked:opacity-100 transition-opacity" data-icon="check">check</span>
+</div>
+</div>
+<span class="font-body-md text-body-md text-on-background">
+                            Tôi đồng ý với <a class="text-primary underline hover:text-tertiary transition-colors" href="#">Chính sách hủy phòng</a> và <a class="text-primary underline hover:text-tertiary transition-colors" href="#">Điều khoản dịch vụ</a> của Terra &amp; Leaf.
+                        </span>
+</label>
+</div>
+<!-- Actions -->
+<div class="flex flex-col-reverse md:flex-row gap-4 items-center justify-between mt-4">
+<button class="w-full md:w-auto px-6 py-3 rounded-lg border border-outline text-on-surface-variant font-label-md text-label-md hover:bg-surface-variant transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="arrow_back">arrow_back</span>
+                        Quay lại dịch vụ
+                    </button>
+<button class="w-full md:w-auto px-8 py-3 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:bg-tertiary transition-colors shadow-sm flex items-center justify-center gap-2">
+                        Thanh toán qua ApiPay
+                        <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Right Column: Order Summary Sidebar -->
+<div class="lg:col-span-5 xl:col-span-4">
+<div class="sticky top-24 bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(123,41,20,0.02)]">
+<!-- Property Mini Card -->
+<div class="p-6 border-b border-outline-variant flex gap-4">
+<img alt="Homestay" class="w-24 h-24 object-cover rounded-lg" data-alt="A warm, inviting A-frame wooden cabin nestled in a lush, misty forest in Tay Ninh. Soft, natural sunlight filters through the trees, illuminating the rich terracotta wood tones and forest green surroundings. Minimalist exterior design, cozy and premium aesthetic, high-end architectural photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaM6UIZFzIwLWy_LX0HmtZdqyoQJRKQBMWwKDe8ETiIu_o8a74pqPrmebnF4N_oIHxqzLl3uVitX3FD6JGlVqLjTFyiFtDrcx1z5Ikj5qPmrICDKozrw25nxuxHtW26EhT6MUV-8fSSWPrqelFpCOwd6R6gNvU16uUTgZTQKiTsoIgj5fwmSGufUDA8DsvYBp0yspwMUMrZHRRqHPww4O-SWc6L7j2NdkcBWmHDKkfzL7FOK9P4a94sUrvRJR3pSJzOBHsC38oKywL"/>
+<div class="flex flex-col justify-center">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider mb-1">Toàn bộ nhà</span>
+<h3 class="font-headline-md text-headline-md text-on-background text-lg leading-tight mb-2">The Pine Retreat</h3>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]" data-icon="star">star</span>
+<span class="font-label-sm text-label-sm">4.96 (128 đánh giá)</span>
+</div>
+</div>
+</div>
+<div class="p-6 bg-surface-container-low/50">
+<h4 class="font-label-md text-label-md text-on-background mb-4">Chi tiết giá</h4>
+<div class="space-y-3 mb-6">
+<div class="flex justify-between items-center text-on-surface-variant font-body-md text-body-md text-sm">
+<span>1.200.000 ₫ x 2 đêm</span>
+<span>2.400.000 ₫</span>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant font-body-md text-body-md text-sm">
+<span>Phí dọn dẹp</span>
+<span>200.000 ₫</span>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant font-body-md text-body-md text-sm">
+<span>Dịch vụ BBQ (2 người)</span>
+<span>500.000 ₫</span>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant font-body-md text-body-md text-sm">
+<span>Thuế &amp; Phí dịch vụ (10%)</span>
+<span>310.000 ₫</span>
+</div>
+</div>
+<div class="pt-4 border-t border-outline-variant">
+<div class="flex justify-between items-center">
+<span class="font-label-md text-label-md text-on-background text-base">Tổng thanh toán</span>
+<span class="font-headline-md text-headline-md text-primary text-xl">3.410.000 ₫</span>
+</div>
+<p class="text-right text-xs text-on-surface-variant mt-1">Đã bao gồm thuế</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>
