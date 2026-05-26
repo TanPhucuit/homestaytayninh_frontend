@@ -32,12 +32,12 @@ export async function getHomestay(id: string, role: UserRole = "CUSTOMER"): Prom
 }
 
 export async function getBookings(role: UserRole = "CUSTOMER"): Promise<Booking[]> {
-  return withMockFallback(() => apiGet<Booking[]>(endpoints.bookings.mine, role), bookingsForRole(role));
+  return withMockFallback(() => apiGet<Booking[]>(endpoints.bookings.mine, role, { cache: "no-store" }), bookingsForRole(role));
 }
 
 export async function getBooking(id: string, role: UserRole = "CUSTOMER"): Promise<Booking> {
   const fallback = findMockBooking(id);
-  const booking = await withMockFallback(() => apiGet<Booking>(endpoints.bookings.detail(id), role), fallback);
+  const booking = await withMockFallback(() => apiGet<Booking>(endpoints.bookings.detail(id), role, { cache: "no-store" }), fallback);
   const homestay = findMockHomestay(booking.homestayId);
   return {
     ...booking,
@@ -111,7 +111,7 @@ export async function initiatePayment(bookingId: string, role: UserRole = "CUSTO
 
 export async function getPaymentStatus(bookingId: string, role: UserRole = "CUSTOMER"): Promise<NonNullable<Booking["payment"]> | null> {
   return withMockFallback(
-    () => apiGet<NonNullable<Booking["payment"]> | null>(endpoints.payments.status(bookingId), role),
+    () => apiGet<NonNullable<Booking["payment"]> | null>(endpoints.payments.status(bookingId), role, { cache: "no-store" }),
     findMockBooking(bookingId).payment ?? { id: `mock-${bookingId}`, status: "PENDING" as PaymentStatus, amount: findMockBooking(bookingId).grandTotal }
   );
 }
@@ -121,7 +121,7 @@ export async function getOwnerHomestays(role: UserRole = "OWNER"): Promise<Homes
 }
 
 export async function getOwnerBookings(role: UserRole = "OWNER_STAFF"): Promise<Booking[]> {
-  return withMockFallback(() => apiGet<Booking[]>(endpoints.owner.bookings, role), bookingsForRole(role));
+  return withMockFallback(() => apiGet<Booking[]>(endpoints.owner.bookings, role, { cache: "no-store" }), bookingsForRole(role));
 }
 
 export async function createOwnerHomestay(input: Partial<Homestay>, role: UserRole = "OWNER"): Promise<Homestay> {

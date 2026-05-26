@@ -95,10 +95,11 @@ async function apiFetch<T>(path: string, role: UserRole, init?: NextRequestInit)
 }
 
 export async function apiGet<T>(path: string, role: UserRole = "CUSTOMER", init?: NextRequestInit): Promise<T> {
+  const noStore = init?.cache === "no-store";
   return apiFetch<T>(path, role, {
     ...init,
     method: "GET",
-    next: { revalidate: 15, ...(init?.next ?? {}) }
+    ...(noStore ? { cache: "no-store" } : { next: { revalidate: 15, ...(init?.next ?? {}) } })
   });
 }
 
