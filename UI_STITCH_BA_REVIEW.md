@@ -21,6 +21,7 @@ Ngày rà soát: 26/05/2026
 - Next.js serve trực tiếp HTML Stitch qua `StitchFrame`, không chèn header/layout từ thiết kế cũ để tránh lệch UI.
 - Các route nghiệp vụ vẫn nằm ở App Router để giữ đúng URL, role guard và flow theo `BA_Document.md`.
 - Màu, font, spacing, radius và composition lấy từ HTML Stitch. Không tự ý thiết kế lại UI riêng.
+- Lớp `StitchFrame` chỉ nối các CTA điều hướng cơ bản và Google OAuth từ bên ngoài iframe; file HTML gốc không bị sửa.
 
 ## Mapping màn hình
 
@@ -55,5 +56,7 @@ Ngày rà soát: 26/05/2026
 - RBAC: các portal `owner`, `staff`, `admin` và `owner/proxy-booking` có guard ngoài iframe.
 
 ## Lưu ý kỹ thuật
-- Cách hiện tại ưu tiên pixel-match với Stitch. HTML trong iframe là static blueprint nên không bind trực tiếp form/button với API.
-- Nếu cần interactive API đầy đủ mà vẫn giữ visual 100% Stitch, bước tiếp theo phải convert từng `code.html` thành React component theo đúng markup/class của Stitch, rồi gắn API vào component đó.
+- Cách hiện tại ưu tiên pixel-match với Stitch. Google OAuth, refresh session, logout, RBAC lookup và bearer token sang NestJS đã được nối ở lớp Next.js.
+- Các CTA landing/search/detail đã điều hướng tới đúng route App Router mà không chỉnh HTML Stitch.
+- Checkout submit, tạo booking/payment, booking history theo dữ liệu thật và các hành động portal trong HTML iframe vẫn chưa bind mutation API; hiện đây là UI blueprint tĩnh.
+- Để hoàn thiện tương tác API mà vẫn giữ visual Stitch, cần chuyển markup từng flow nghiệp vụ thành component React giữ nguyên class/token, hoặc thêm bridge có dữ liệu/validation đầy đủ cho từng form.
