@@ -16,23 +16,29 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
 
   return (
     <main className="flex min-h-screen items-center justify-center px-4 py-10 text-[#2b211d]">
-      <section className="stitch-panel w-full max-w-xl p-8 text-center">
+      <section className="w-full max-w-xl rounded-[32px] border border-[#dcc0ba] bg-white p-8 text-center shadow-[0_30px_90px_rgba(123,41,20,0.12)]">
         <p className="eyebrow">Terra & Leaf</p>
-        <h1 className="mt-3 font-heading text-4xl text-[#9a4029]">Đăng nhập hệ thống</h1>
+        <h1 className="mt-3 font-heading text-5xl text-[#9a4029]">Đăng nhập hệ thống</h1>
         <p className="mt-3 text-sm leading-6 text-[#75675f]">
           Đăng nhập bằng Google để đặt phòng, xem lịch sử booking và truy cập portal theo vai trò đã được cấp trong hệ thống.
         </p>
+
         {message && (
-          <div className="mt-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
+          <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
             {message}
           </div>
         )}
-        <a className="btn-primary mt-6 w-full" href={`/auth/login/google?next=${encodeURIComponent(next)}`}>
+
+        <a className="btn-primary mt-7 w-full" href={`/auth/login/google?next=${encodeURIComponent(next)}`}>
           Đăng nhập với Google
         </a>
         <Link className="btn-secondary mt-3 w-full" href="/">
           Quay về trang chủ
         </Link>
+
+        <p className="mt-6 text-xs leading-5 text-[#89726c]">
+          Email 23521197@gm.uit.edu.vn được backend gán quyền Admin. Các email khác mặc định là Customer.
+        </p>
       </section>
     </main>
   );
