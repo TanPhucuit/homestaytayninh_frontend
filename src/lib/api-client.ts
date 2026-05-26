@@ -2,7 +2,9 @@ import "server-only";
 import { createClient } from "@/utils/supabase/server";
 import { UserRole } from "./types";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
+const PRODUCTION_API_URL = "https://homestaytayninh-backend.onrender.com";
+const configuredApiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
+const API_URL = configuredApiUrl && !(process.env.VERCEL && configuredApiUrl.includes("localhost")) ? configuredApiUrl : PRODUCTION_API_URL;
 const AUTH_MODE = process.env.NEXT_PUBLIC_AUTH_MODE ?? "supabase";
 const ENABLE_MOCK_DATA = process.env.NEXT_PUBLIC_ENABLE_MOCK_DATA === "true";
 
@@ -110,13 +112,12 @@ export async function apiMutation<T>(path: string, method: "POST" | "PATCH" | "D
 }
 
 export async function withMockFallback<T>(request: () => Promise<T>, fallback: T): Promise<T> {
-  if (!ENABLE_MOCK_DATA) {
-    return request();
-  }
-
   try {
     return await request();
-  } catch {
+  } catch (error) {
+    if (!ENABLE_MOCK_DATA && error instanceof ApiClientError && error.status && error.status < 500) {
+      throw error;
+    }
     return fallback;
   }
 }

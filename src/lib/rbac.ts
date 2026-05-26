@@ -2,7 +2,9 @@ import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import { UserRole } from "./types";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
+const PRODUCTION_API_URL = "https://homestaytayninh-backend.onrender.com";
+const configuredApiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
+const API_URL = configuredApiUrl && !(process.env.VERCEL && configuredApiUrl.includes("localhost")) ? configuredApiUrl : PRODUCTION_API_URL;
 const AUTH_MODE = process.env.NEXT_PUBLIC_AUTH_MODE ?? "supabase";
 
 export interface SessionUser {

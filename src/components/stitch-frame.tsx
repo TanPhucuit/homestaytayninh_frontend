@@ -72,10 +72,12 @@ function connectStitchScreen(document: Document, interaction?: StitchInteraction
   switch (interaction) {
     case "login":
       linkControls(document, "Đăng nhập với Google", "/auth/login/google?next=%2Fhomestays");
+      linkControls(document, "Google", "/auth/login/google?next=%2Fhomestays");
       break;
     case "home":
       linkControls(document, "Đặt phòng ngay", "/homestays");
       linkControls(document, "Tìm kiếm", "/homestays");
+      linkControls(document, "Khám phá", "/homestays");
       break;
     case "search":
       linkControls(document, "Xem chi tiết", "/homestays/hs-ba-den");
