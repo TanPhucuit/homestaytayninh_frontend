@@ -16,6 +16,10 @@ export default async function OwnerProxyBookingPage() {
   const user = await getCurrentUser();
   const allowed = ["OWNER_STAFF", "ADMIN"] as const;
 
+  if (user.authorizationError) {
+    return <AccessDenied description={user.authorizationError} />;
+  }
+
   if (!canAccess(user.role, [...allowed])) {
     return <AccessDenied description="Đặt hộ khách hàng chỉ dành cho Owner Staff hoặc Admin." />;
   }

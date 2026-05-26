@@ -12,7 +12,8 @@ function errorMessage(error?: string) {
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string; next?: string }> }) {
   const params = await searchParams;
   const message = errorMessage(params.error);
-  const next = typeof params.next === "string" && params.next.startsWith("/") && !params.next.startsWith("//") ? params.next : "/homestays";
+  const next = typeof params.next === "string" && params.next.startsWith("/") && !params.next.startsWith("//") ? params.next : undefined;
+  const googleLoginHref = next ? `/auth/login/google?next=${encodeURIComponent(next)}` : "/auth/login/google";
 
   return (
     <main className="flex min-h-screen items-center justify-center px-4 py-10 text-[#2b211d]">
@@ -29,7 +30,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           </div>
         )}
 
-        <a className="btn-primary mt-7 w-full" href={`/auth/login/google?next=${encodeURIComponent(next)}`}>
+        <a className="btn-primary mt-7 w-full" href={googleLoginHref}>
           Đăng nhập với Google
         </a>
         <Link className="btn-secondary mt-3 w-full" href="/">

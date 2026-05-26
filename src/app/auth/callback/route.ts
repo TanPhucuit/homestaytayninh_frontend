@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
+import { homeForRole, normalizeRole } from "@/lib/rbac";
 
 function safeNextPath(value: string | null) {
-  return value?.startsWith("/") && !value.startsWith("//") ? value : "/homestays";
+  return value?.startsWith("/") && !value.startsWith("//") ? value : null;
 }
 
 export async function GET(request: NextRequest) {
@@ -16,10 +17,24 @@ export async function GET(request: NextRequest) {
     } catch {
       return NextResponse.redirect(new URL("/login?error=supabase_env", request.nextUrl.origin));
     }
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
-      return NextResponse.redirect(new URL(next, request.nextUrl.origin));
+      if (next) return NextResponse.redirect(new URL(next, request.nextUrl.origin));
+
+      const apiUrl = (process.env.NEXT_PUBLIC_API_URL ?? "https://homestaytayninh-backend.onrender.com").replace(/\/$/, "");
+      if (data.session?.access_token) {
+        const profileResponse = await fetch(`${apiUrl}/api/auth/me`, {
+          cache: "no-store",
+          headers: { authorization: `Bearer ${data.session.access_token}` }
+        }).catch(() => null);
+        if (profileResponse?.ok) {
+          const profile = (await profileResponse.json()) as { role?: string };
+          return NextResponse.redirect(new URL(homeForRole(normalizeRole(profile.role)), request.nextUrl.origin));
+        }
+      }
+
+      return NextResponse.redirect(new URL("/homestays", request.nextUrl.origin));
     }
   }
 

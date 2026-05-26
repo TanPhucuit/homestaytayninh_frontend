@@ -1,14 +1,23 @@
-import Link from "next/link";
-import { PaymentBadge, StatusBadge, statusGroup } from "@/components/customer-ui";
+import { AccessDenied } from "@/components/access-denied";
+import { AppTopBar, PaymentBadge, StatusBadge, statusGroup } from "@/components/customer-ui";
 import { EmptyState } from "@/components/feedback-state";
 import { getBookings, getHomestays, money } from "@/lib/api";
+import { getCurrentUser } from "@/lib/rbac";
 
 export const dynamic = "force-dynamic";
 
 const groups = ["Sắp tới", "Đang trải nghiệm", "Đã hoàn thành", "Đã hủy"];
 
 export default async function BookingsPage() {
-  const [bookings, homestays] = await Promise.all([getBookings("CUSTOMER"), getHomestays("CUSTOMER")]);
+  const user = await getCurrentUser();
+  if (!user.authenticated) {
+    return <AccessDenied description="Vui lòng đăng nhập để xem lịch sử booking của bạn." />;
+  }
+  if (user.authorizationError) {
+    return <AccessDenied description={user.authorizationError} />;
+  }
+
+  const [bookings, homestays] = await Promise.all([getBookings(user.role), getHomestays("CUSTOMER")]);
   const homestayById = new Map(homestays.map((homestay) => [homestay.id, homestay]));
   const activeGroup = bookings.some((booking) => booking.status === "IN_STAY") ? "Đang trải nghiệm" : "Sắp tới";
   const activeBookings = bookings.filter((booking) => statusGroup(booking.status) === activeGroup);
@@ -16,16 +25,7 @@ export default async function BookingsPage() {
 
   return (
     <main className="min-h-screen text-[#1c1c19]">
-      <header className="border-b border-[#dcc0ba] bg-[#fdf9f4]/90 backdrop-blur-xl">
-        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 md:px-8">
-          <Link href="/" className="font-heading text-3xl font-bold text-[#7b2914]">Terra & Leaf</Link>
-          <nav className="hidden gap-8 text-sm font-semibold text-[#56423d] md:flex">
-            <Link href="/homestays">Khám phá</Link>
-            <Link href="/bookings" className="text-[#9a4029]">Chuyến đi</Link>
-            <Link href="/login">Tài khoản</Link>
-          </nav>
-        </div>
-      </header>
+      <AppTopBar />
 
       <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
         <h1 className="mb-6 font-heading text-4xl text-[#9a4029] md:text-5xl">Chuyến đi của bạn</h1>
@@ -73,8 +73,8 @@ export default async function BookingsPage() {
                           </div>
                         </div>
                         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                          <Link className="btn-primary flex-1" href={`/bookings/${booking.id}`}>Xem chi tiết</Link>
-                          <Link className="btn-secondary flex-1" href={`/payment/result?bookingId=${booking.id}`}>Kiểm tra thanh toán</Link>
+                          <a className="btn-primary flex-1" href={`/bookings/${booking.id}`}>Xem chi tiết</a>
+                          <a className="btn-secondary flex-1" href={`/payment/result?bookingId=${booking.id}`}>Kiểm tra thanh toán</a>
                         </div>
                       </div>
                     </article>
@@ -91,11 +91,11 @@ export default async function BookingsPage() {
                 {otherBookings.map((booking) => {
                   const homestay = homestayById.get(booking.homestayId);
                   return (
-                    <Link className="rounded-3xl bg-white p-5 shadow-[0_16px_45px_rgba(123,41,20,0.07)]" href={`/bookings/${booking.id}`} key={booking.id}>
+                    <a className="rounded-3xl bg-white p-5 shadow-[0_16px_45px_rgba(123,41,20,0.07)]" href={`/bookings/${booking.id}`} key={booking.id}>
                       <StatusBadge status={booking.status} />
                       <h3 className="mt-3 font-heading text-2xl text-[#1c1c19]">{homestay?.name ?? booking.homestayId}</h3>
                       <p className="mt-1 text-sm text-[#75675f]">{booking.checkIn} - {booking.checkOut} · {booking.guestCount} khách</p>
-                    </Link>
+                    </a>
                   );
                 })}
               </div>

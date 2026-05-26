@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { AccessDenied } from "@/components/access-denied";
 import { PaymentBadge } from "@/components/customer-ui";
 import { getPaymentStatus, money } from "@/lib/api";
+import { getCurrentUser } from "@/lib/rbac";
 import { PaymentStatus } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -40,9 +42,17 @@ function copyFor(status: PaymentStatus) {
 
 export default async function PaymentResultPage({ searchParams }: { searchParams: Promise<{ status?: string; bookingId?: string }> }) {
   const params = await searchParams;
-  const payment = params.bookingId ? await getPaymentStatus(params.bookingId, "CUSTOMER") : null;
+  const user = params.bookingId ? await getCurrentUser() : null;
+  if (params.bookingId && !user?.authenticated) {
+    return <AccessDenied description="Vui lòng đăng nhập để xem trạng thái thanh toán của booking." />;
+  }
+  if (user?.authorizationError) {
+    return <AccessDenied description={user.authorizationError} />;
+  }
+  const payment = params.bookingId ? await getPaymentStatus(params.bookingId, user?.role ?? "CUSTOMER") : null;
   const status = payment?.status ?? normalizePaymentStatus(params.status);
   const view = copyFor(status);
+  const bookingHistoryHref = "/bookings";
 
   return (
     <main className="flex min-h-screen items-center justify-center px-4 py-10 text-[#1c1c19]">
@@ -63,8 +73,8 @@ export default async function PaymentResultPage({ searchParams }: { searchParams
           </div>
         )}
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-          <Link className="btn-primary" href="/bookings">Về chuyến đi của tôi</Link>
-          {params.bookingId && <Link className="btn-secondary" href={`/bookings/${params.bookingId}`}>Xem chi tiết đơn</Link>}
+          <a className="btn-primary" href={bookingHistoryHref}>Về chuyến đi của tôi</a>
+          {params.bookingId && <a className="btn-secondary" href={`/bookings/${params.bookingId}`}>Xem chi tiết đơn</a>}
           {!params.bookingId && <Link className="btn-secondary" href="/homestays">Tiếp tục khám phá</Link>}
         </div>
       </section>

@@ -1,7 +1,6 @@
-import { apiGet, apiMutation, withMockFallback } from "./api-client";
+import { apiGet, apiMutation } from "./api-client";
 import { endpoints } from "./endpoints";
-import { bookingsForRole, createMockCheckoutPreview, findMockBooking, findMockHomestay, mockDataSource } from "./mock-data-source";
-import { Article, Booking, CheckoutPreview, DashboardSummary, Homestay, PaymentStatus, UserProfile, UserRole, ViolationReport } from "./types";
+import { Article, Booking, CheckoutPreview, DashboardSummary, Homestay, UserProfile, UserRole, ViolationReport } from "./types";
 
 export const money = (value: number) => new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(value);
 
@@ -24,33 +23,27 @@ function queryString(filters?: HomestayFilters) {
 }
 
 export async function getHomestays(role: UserRole = "CUSTOMER", filters?: HomestayFilters): Promise<Homestay[]> {
-  return withMockFallback(() => apiGet<Homestay[]>(`${endpoints.homestays.list}${queryString(filters)}`, role), mockDataSource.homestays);
+  return apiGet<Homestay[]>(`${endpoints.homestays.list}${queryString(filters)}`, role);
 }
 
 export async function getHomestay(id: string, role: UserRole = "CUSTOMER"): Promise<Homestay> {
-  return withMockFallback(() => apiGet<Homestay>(endpoints.homestays.detail(id), role), findMockHomestay(id));
+  return apiGet<Homestay>(endpoints.homestays.detail(id), role);
 }
 
 export async function getBookings(role: UserRole = "CUSTOMER"): Promise<Booking[]> {
-  return withMockFallback(() => apiGet<Booking[]>(endpoints.bookings.mine, role, { cache: "no-store" }), bookingsForRole(role));
+  return apiGet<Booking[]>(endpoints.bookings.mine, role, { cache: "no-store" });
 }
 
 export async function getBooking(id: string, role: UserRole = "CUSTOMER"): Promise<Booking> {
-  const fallback = findMockBooking(id);
-  const booking = await withMockFallback(() => apiGet<Booking>(endpoints.bookings.detail(id), role, { cache: "no-store" }), fallback);
-  const homestay = findMockHomestay(booking.homestayId);
-  return {
-    ...booking,
-    includedServices: booking.includedServices ?? homestay.includedServices ?? mockDataSource.defaultIncludedServices
-  };
+  return apiGet<Booking>(endpoints.bookings.detail(id), role, { cache: "no-store" });
 }
 
 export async function getDashboard(role: UserRole = "ADMIN"): Promise<DashboardSummary> {
-  return withMockFallback(() => apiGet<DashboardSummary>(endpoints.admin.dashboard, role), mockDataSource.dashboard);
+  return apiGet<DashboardSummary>(endpoints.admin.dashboard, role);
 }
 
 export async function getArticles(role: UserRole = "STAFF"): Promise<Article[]> {
-  return withMockFallback(() => apiGet<Article[]>(endpoints.cms.articles, role), mockDataSource.articles);
+  return apiGet<Article[]>(endpoints.cms.articles, role);
 }
 
 export async function createArticle(input: Partial<Article>, role: UserRole = "STAFF"): Promise<Article> {
@@ -70,7 +63,7 @@ export async function setArticlePublished(articleId: string, published: boolean,
 }
 
 export async function getUsers(role: UserRole = "ADMIN"): Promise<UserProfile[]> {
-  return withMockFallback(() => apiGet<UserProfile[]>(endpoints.admin.users, role), mockDataSource.users);
+  return apiGet<UserProfile[]>(endpoints.admin.users, role);
 }
 
 export async function createUser(input: { name: string; email: string; phone?: string; role: UserRole }, role: UserRole = "ADMIN"): Promise<UserProfile> {
@@ -110,18 +103,15 @@ export async function initiatePayment(bookingId: string, role: UserRole = "CUSTO
 }
 
 export async function getPaymentStatus(bookingId: string, role: UserRole = "CUSTOMER"): Promise<NonNullable<Booking["payment"]> | null> {
-  return withMockFallback(
-    () => apiGet<NonNullable<Booking["payment"]> | null>(endpoints.payments.status(bookingId), role, { cache: "no-store" }),
-    findMockBooking(bookingId).payment ?? { id: `mock-${bookingId}`, status: "PENDING" as PaymentStatus, amount: findMockBooking(bookingId).grandTotal }
-  );
+  return apiGet<NonNullable<Booking["payment"]> | null>(endpoints.payments.status(bookingId), role, { cache: "no-store" });
 }
 
 export async function getOwnerHomestays(role: UserRole = "OWNER"): Promise<Homestay[]> {
-  return withMockFallback(() => apiGet<Homestay[]>(endpoints.owner.homestays, role), mockDataSource.homestays);
+  return apiGet<Homestay[]>(endpoints.owner.homestays, role);
 }
 
 export async function getOwnerBookings(role: UserRole = "OWNER_STAFF"): Promise<Booking[]> {
-  return withMockFallback(() => apiGet<Booking[]>(endpoints.owner.bookings, role, { cache: "no-store" }), bookingsForRole(role));
+  return apiGet<Booking[]>(endpoints.owner.bookings, role, { cache: "no-store" });
 }
 
 export async function createOwnerHomestay(input: Partial<Homestay>, role: UserRole = "OWNER"): Promise<Homestay> {
@@ -162,33 +152,36 @@ export async function addOwnerBookingService(bookingId: string, serviceId: strin
 }
 
 export async function getViolationReports(role: UserRole = "STAFF"): Promise<ViolationReport[]> {
-  return withMockFallback(() => apiGet<ViolationReport[]>(endpoints.admin.reports, role), mockDataSource.reports);
+  return apiGet<ViolationReport[]>(endpoints.admin.reports, role);
 }
 
 export async function resolveViolationReport(reportId: string, role: UserRole = "STAFF"): Promise<ViolationReport> {
   return apiMutation<ViolationReport>(endpoints.admin.resolveReport(reportId), "POST", undefined, role);
 }
 
-export async function getCheckoutPreview(homestayId = "hs-ba-den", role: UserRole = "CUSTOMER"): Promise<CheckoutPreview> {
-  const homestay = await getHomestay(homestayId, role);
-  const fallback = createMockCheckoutPreview(homestay.id);
-  const selectedServices = homestay.services.slice(0, 2).map((service, index) => ({
-    id: service.id,
-    name: service.name,
-    quantity: index === 0 ? 1 : 2,
-    unitPrice: service.unitPrice,
-    total: service.unitPrice * (index === 0 ? 1 : 2)
-  }));
-  const room = homestay.rooms[0] ?? fallback.room;
-  const roomTotal = room.pricePerNight * fallback.nights;
-  const serviceTotal = selectedServices.reduce((sum, service) => sum + service.total, 0);
+export async function getCheckoutPreview(homestayId?: string, role: UserRole = "CUSTOMER"): Promise<CheckoutPreview> {
+  const firstHomestayId = homestayId ?? (await getHomestays(role))[0]?.id;
+  if (!firstHomestayId) {
+    throw new Error("Không có homestay khả dụng để đặt.");
+  }
+  const homestay = await getHomestay(firstHomestayId, role);
+  const room = homestay.rooms[0];
+  if (!room) {
+    throw new Error("Homestay chưa có phòng khả dụng để đặt.");
+  }
+  const nights = 2;
+  const guestCount = Math.min(2, room.capacity);
+  const selectedServices: CheckoutPreview["selectedServices"] = [];
+  const roomTotal = room.pricePerNight * nights;
+  const serviceTotal = 0;
   const taxTotal = Math.round((roomTotal + serviceTotal) * 0.1);
 
   return {
-    ...fallback,
     homestay,
     room,
-    includedServices: homestay.includedServices.length > 0 ? homestay.includedServices : fallback.includedServices,
+    nights,
+    guestCount,
+    includedServices: homestay.includedServices,
     selectedServices,
     roomTotal,
     serviceTotal,

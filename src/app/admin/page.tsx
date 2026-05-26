@@ -7,11 +7,15 @@ export default async function AdminPage() {
   const user = await getCurrentUser();
   const allowed = ["ADMIN"] as const;
 
+  if (user.authorizationError) {
+    return <AccessDenied description={user.authorizationError} />;
+  }
+
   if (!canAccess(user.role, [...allowed])) {
     return <AccessDenied description="Admin Portal chỉ dành cho tài khoản Admin." />;
   }
 
   const [dashboard, users] = await Promise.all([getDashboard("ADMIN"), getUsers("ADMIN")]);
 
-  return <AdminPortal dashboard={dashboard} users={users} />;
+  return <AdminPortal dashboard={dashboard} users={users} currentUser={user} />;
 }

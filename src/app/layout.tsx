@@ -7,7 +7,7 @@ const body = Be_Vietnam_Pro({ subsets: ["latin", "vietnamese"], weight: ["400", 
 
 export const metadata: Metadata = {
   title: "Homestay Tây Ninh",
-  description: "Website đặt phòng homestay Tây Ninh MVP demo"
+  description: "Website đặt phòng homestay Tây Ninh"
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -17,4 +17,3 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     </html>
   );
 }
-

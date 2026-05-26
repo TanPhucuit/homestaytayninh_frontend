@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Booking, BookingStatus, Homestay, PaymentStatus, Service } from "@/lib/types";
 import { money } from "@/lib/api";
+import { getCurrentUser, homeForRole, navForRole } from "@/lib/rbac";
 
 const statusMeta: Record<BookingStatus, { label: string; className: string; group: string }> = {
   PENDING: { label: "Chờ xác nhận", group: "Sắp tới", className: "bg-[#fff3d6] text-[#7a4a12]" },
@@ -18,7 +19,12 @@ const paymentMeta: Record<PaymentStatus, { label: string; className: string }> =
   CANCELLED: { label: "Đã hủy/hết hạn", className: "bg-[#ffdad6] text-[#93000a]" }
 };
 
-export function AppTopBar() {
+export async function AppTopBar() {
+  const user = await getCurrentUser();
+  const navItems = user.authenticated
+    ? navForRole(user.role)
+    : [{ label: "Khám phá", href: "/homestays" }];
+
   return (
     <header className="sticky top-0 z-30 border-b border-[#dcc0ba] bg-[#fdf9f4]/90 backdrop-blur-xl">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-4 px-4 md:px-8">
@@ -26,18 +32,32 @@ export function AppTopBar() {
           Terra & Leaf
         </Link>
         <nav className="hidden items-center gap-8 text-sm font-semibold text-[#56423d] md:flex">
-          <Link className="hover:text-[#7b2914]" href="/homestays">Khám phá</Link>
-          <Link className="hover:text-[#7b2914]" href="/bookings">Booking của tôi</Link>
-          <Link className="hover:text-[#7b2914]" href="/owner">Vận hành</Link>
-          <Link className="hover:text-[#7b2914]" href="/staff">Cẩm nang</Link>
+          {navItems.map((item) => (
+            user.authenticated ? (
+              <a className="hover:text-[#7b2914]" href={item.href} key={item.href}>{item.label}</a>
+            ) : (
+              <Link className="hover:text-[#7b2914]" href={item.href} key={item.href}>{item.label}</Link>
+            )
+          ))}
         </nav>
-        <Link className="btn-primary" href="/login">Đăng nhập</Link>
+        {user.authenticated ? (
+          <div className="flex items-center gap-2">
+            <a className="hidden rounded-full bg-[#e8f0eb] px-4 py-2 text-sm font-bold text-[#466550] sm:block" href={homeForRole(user.role)}>
+              {user.role} · {user.name}
+            </a>
+            <a className="btn-secondary" href="/auth/logout">Đăng xuất</a>
+          </div>
+        ) : (
+          <Link className="btn-primary" href="/login">Đăng nhập</Link>
+        )}
       </div>
     </header>
   );
 }
 
 export function PageShell({ eyebrow, title, description, children }: { eyebrow: string; title: string; description?: string; children: React.ReactNode }) {
+  const bookingHistoryHref = "/bookings";
+
   return (
     <main className="min-h-screen text-[#1c1c19]">
       <AppTopBar />
@@ -52,7 +72,7 @@ export function PageShell({ eyebrow, title, description, children }: { eyebrow: 
             <div className="flex flex-wrap gap-2">
               <Link className="btn-secondary" href="/">Trang chủ</Link>
               <Link className="btn-secondary" href="/homestays">Tìm homestay</Link>
-              <Link className="btn-secondary" href="/bookings">Booking của tôi</Link>
+              <a className="btn-secondary" href={bookingHistoryHref}>Booking của tôi</a>
             </div>
           </div>
         </header>
@@ -145,9 +165,9 @@ export function BookingCard({ booking, homestay }: { booking: Booking; homestay?
         </div>
       </div>
       <div className="mt-5 flex flex-wrap gap-2">
-        <Link className="btn-primary" href={`/bookings/${booking.id}`}>Xem chi tiết</Link>
+        <a className="btn-primary" href={`/bookings/${booking.id}`}>Xem chi tiết</a>
         {(booking.payment?.status === "INITIATED" || booking.payment?.status === "PENDING" || booking.payment?.status === "FAILED") && (
-          <Link className="btn-secondary" href={`/payment/result?bookingId=${booking.id}`}>Kiểm tra thanh toán</Link>
+          <a className="btn-secondary" href={`/payment/result?bookingId=${booking.id}`}>Kiểm tra thanh toán</a>
         )}
       </div>
     </article>

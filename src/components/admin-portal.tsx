@@ -1,9 +1,16 @@
-import Link from "next/link";
 import { banUserAction, createAdminUserAction, assignRoleAction, unbanUserAction } from "@/app/admin/actions";
 import { money } from "@/lib/api";
+import { SessionUser } from "@/lib/rbac";
 import { DashboardSummary, UserProfile, UserRole } from "@/lib/types";
 
 const roles: UserRole[] = ["CUSTOMER", "OWNER", "OWNER_STAFF", "STAFF", "ADMIN"];
+const permissionCards: Array<{ role: UserRole; title: string; permissions: string[] }> = [
+  { role: "CUSTOMER", title: "Khách hàng", permissions: ["Tìm kiếm và đặt phòng", "Đặt dịch vụ bổ sung", "Theo dõi thanh toán và lịch sử"] },
+  { role: "OWNER", title: "Chủ homestay", permissions: ["Quản lý homestay và phòng", "Cập nhật giá, hình ảnh, dịch vụ"] },
+  { role: "OWNER_STAFF", title: "Nhân viên homestay", permissions: ["Xử lý booking/check-in/out", "Đặt hộ và thêm dịch vụ in-stay"] },
+  { role: "STAFF", title: "Vận hành hệ thống", permissions: ["CMS bài viết", "Xử lý báo cáo, ban/unban user"] },
+  { role: "ADMIN", title: "Quản trị viên", permissions: ["Dashboard toàn hệ thống", "Tạo tài khoản và phân quyền", "Truy cập mọi portal"] }
+];
 
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
@@ -14,7 +21,7 @@ function StatCard({ label, value }: { label: string; value: string }) {
   );
 }
 
-export function AdminPortal({ dashboard, users }: { dashboard: DashboardSummary; users: UserProfile[] }) {
+export function AdminPortal({ dashboard, users, currentUser }: { dashboard: DashboardSummary; users: UserProfile[]; currentUser: SessionUser }) {
   return (
     <main className="min-h-screen px-4 py-8 text-[#2f2926] md:px-8">
       <div className="mx-auto max-w-7xl space-y-8">
@@ -27,17 +34,51 @@ export function AdminPortal({ dashboard, users }: { dashboard: DashboardSummary;
                 Dashboard tổng quan, quản lý tài khoản, phân quyền và kiểm soát trạng thái người dùng theo BA.
               </p>
             </div>
-            <Link className="rounded-xl bg-[#fdf9f4] px-4 py-3 text-center text-sm font-semibold text-[#9a4029]" href="/">
-              Về trang chủ
-            </Link>
+            <div className="flex flex-col gap-3 text-sm">
+              <div className="rounded-xl bg-white/10 px-4 py-3 text-white">
+                <p className="font-bold">{currentUser.name}</p>
+                <p className="text-white/75">{currentUser.email} · ADMIN</p>
+              </div>
+              <a className="rounded-xl bg-[#fdf9f4] px-4 py-3 text-center font-semibold text-[#9a4029]" href="/auth/logout">
+                Đăng xuất
+              </a>
+            </div>
           </div>
         </header>
+
+        <nav className="grid gap-3 md:grid-cols-4">
+          <a className="card border-2 border-[#9a4029] p-4 font-bold text-[#9a4029]" href="/admin">Tổng quan Admin</a>
+          <a className="card p-4 font-bold text-[#466550]" href="/owner">Vận hành booking</a>
+          <a className="card p-4 font-bold text-[#466550]" href="/staff">CMS nội dung</a>
+          <a className="card p-4 font-bold text-[#466550]" href="/staff/moderation">Báo cáo vi phạm</a>
+        </nav>
 
         <section className="grid gap-4 md:grid-cols-4">
           <StatCard label="Doanh thu đã thanh toán" value={money(dashboard.revenue)} />
           <StatCard label="Số giao dịch" value={String(dashboard.transactions)} />
           <StatCard label="Tỷ lệ lấp đầy" value={`${dashboard.occupancyRate}%`} />
           <StatCard label="Booking hoàn thành" value={String(dashboard.completed)} />
+        </section>
+
+        <section className="card p-6">
+          <div className="flex flex-col justify-between gap-2 md:flex-row md:items-end">
+            <div>
+              <h2 className="font-heading text-2xl text-[#9a4029]">Phạm vi quyền theo vai trò</h2>
+              <p className="mt-1 text-sm text-[#56423d]">Đối chiếu nhanh UI và quyền nghiệp vụ đã khai báo trong hệ thống.</p>
+            </div>
+            <span className="badge bg-[#e8f0eb] text-[#466550]">5 vai trò</span>
+          </div>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+            {permissionCards.map((card) => (
+              <article className="rounded-2xl border border-[#eadfd4] bg-[#fdf9f4] p-4" key={card.role}>
+                <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#466550]">{card.role}</p>
+                <h3 className="mt-2 font-semibold text-[#9a4029]">{card.title}</h3>
+                <ul className="mt-3 space-y-2 text-sm leading-5 text-[#56423d]">
+                  {card.permissions.map((permission) => <li key={permission}>• {permission}</li>)}
+                </ul>
+              </article>
+            ))}
+          </div>
         </section>
 
         <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">

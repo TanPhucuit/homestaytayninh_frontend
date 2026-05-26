@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createArticle, deleteArticle, resolveViolationReport, setArticlePublished, updateArticle } from "@/lib/api";
+import { createArticle, deleteArticle, resolveViolationReport, setArticlePublished, setUserBanned, updateArticle } from "@/lib/api";
 
 function text(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
@@ -47,5 +47,15 @@ export async function unpublishArticleAction(formData: FormData) {
 
 export async function resolveReportAction(formData: FormData) {
   await resolveViolationReport(text(formData, "reportId"));
+  revalidatePath("/staff/moderation");
+}
+
+export async function banModeratedUserAction(formData: FormData) {
+  await setUserBanned(text(formData, "userId"), true, "STAFF");
+  revalidatePath("/staff/moderation");
+}
+
+export async function unbanModeratedUserAction(formData: FormData) {
+  await setUserBanned(text(formData, "userId"), false, "STAFF");
   revalidatePath("/staff/moderation");
 }

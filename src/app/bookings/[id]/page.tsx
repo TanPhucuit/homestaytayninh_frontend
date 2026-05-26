@@ -1,13 +1,23 @@
 import Link from "next/link";
+import { AccessDenied } from "@/components/access-denied";
 import { BookingTotals, PageShell, PaymentBadge, ServicesDisplay, StatusBadge } from "@/components/customer-ui";
 import { getBooking, getHomestay, money } from "@/lib/api";
+import { getCurrentUser } from "@/lib/rbac";
 import { addServiceAction, retryPaymentAction } from "./actions";
 
 export const dynamic = "force-dynamic";
 
 export default async function BookingDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const user = await getCurrentUser();
+  if (!user.authenticated) {
+    return <AccessDenied description="Vui lòng đăng nhập để xem chi tiết booking." />;
+  }
+  if (user.authorizationError) {
+    return <AccessDenied description={user.authorizationError} />;
+  }
+
   const { id } = await params;
-  const booking = await getBooking(id, "CUSTOMER");
+  const booking = await getBooking(id, user.role);
   const homestay = await getHomestay(booking.homestayId, "CUSTOMER");
   const canAddService = booking.status === "IN_STAY";
   const canRetryPayment = booking.payment?.status === "INITIATED" || booking.payment?.status === "PENDING" || booking.payment?.status === "FAILED";
@@ -64,7 +74,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                 <button className="btn-primary w-full" type="submit">Thử lại thanh toán</button>
               </form>
             )}
-            <Link className="btn-secondary mt-3 w-full" href={`/payment/result?bookingId=${booking.id}`}>Kiểm tra trạng thái</Link>
+            <a className="btn-secondary mt-3 w-full" href={`/payment/result?bookingId=${booking.id}`}>Kiểm tra trạng thái</a>
           </section>
         </aside>
       </section>

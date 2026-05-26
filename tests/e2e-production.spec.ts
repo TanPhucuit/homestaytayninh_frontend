@@ -40,7 +40,7 @@ test.describe("Homestay Tay Ninh production smoke", () => {
     await page.goto(`${baseURL}/bookings`);
     await expect(page.getByRole("heading", { name: "Quản lý đặt phòng của tôi" })).toBeVisible();
     await expect(page.getByText("Không tải được")).toHaveCount(0);
-    await page.goto(`${baseURL}/payment/result?bookingId=bk-demo-1`);
+    await page.goto(`${baseURL}/payment/result?status=pending`);
     await expect(page.getByRole("heading", { name: "Kết quả thanh toán" })).toBeVisible();
   });
 

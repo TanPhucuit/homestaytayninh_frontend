@@ -10,6 +10,10 @@ export default async function OwnerManagePage() {
   const user = await getCurrentUser();
   const allowed = ["OWNER", "ADMIN"] as const;
 
+  if (user.authorizationError) {
+    return <AccessDenied description={user.authorizationError} />;
+  }
+
   if (!canAccess(user.role, [...allowed])) {
     return <AccessDenied description="Trang quản lý homestay chỉ dành cho Owner hoặc Admin." />;
   }

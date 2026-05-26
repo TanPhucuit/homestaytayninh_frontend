@@ -1,8 +1,7 @@
-import Link from "next/link";
 import { canAccess, getCurrentUser } from "@/lib/rbac";
 import { AccessDenied } from "@/components/access-denied";
 import { BookingListPreview, OwnerBookingOps, OwnerShell, OwnerStats } from "@/components/owner-ui";
-import { getHomestays, getOwnerBookings, getOwnerHomestays } from "@/lib/api";
+import { getHomestay, getOwnerBookings, getOwnerHomestays } from "@/lib/api";
 import { updateOwnerBookingStatusAction } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -11,21 +10,24 @@ export default async function OwnerPage() {
   const user = await getCurrentUser();
   const allowed = ["OWNER", "OWNER_STAFF", "ADMIN"] as const;
 
+  if (user.authorizationError) {
+    return <AccessDenied description={user.authorizationError} />;
+  }
+
   if (!canAccess(user.role, [...allowed])) {
     return <AccessDenied description="Owner Portal chỉ dành cho Owner, Owner Staff hoặc Admin." />;
   }
 
-  const role = user.role === "ADMIN" ? "OWNER_STAFF" : user.role;
-  const [homestays, bookings] = await Promise.all([
-    user.role === "OWNER_STAFF" ? getHomestays("CUSTOMER") : getOwnerHomestays(user.role === "ADMIN" ? "ADMIN" : "OWNER"),
-    getOwnerBookings(role)
-  ]);
+  const bookings = await getOwnerBookings(user.role);
+  const homestays = user.role === "OWNER_STAFF"
+    ? await Promise.all([...new Set(bookings.map((booking) => booking.homestayId))].map((id) => getHomestay(id)))
+    : await getOwnerHomestays(user.role);
 
   return (
     <OwnerShell title="Dashboard vận hành homestay" description="Theo dõi doanh thu, booking, check-in/check-out và truy cập nhanh các nghiệp vụ owner.">
       <div className="mb-6 flex flex-wrap gap-3">
-        <Link className="btn-primary" href="/owner/manage">Quản lý homestay/phòng/dịch vụ</Link>
-        <Link className="btn-secondary" href="/owner/proxy-booking">Đặt hộ khách hàng</Link>
+        <a className="btn-primary" href="/owner/manage">Quản lý homestay/phòng/dịch vụ</a>
+        <a className="btn-secondary" href="/owner/proxy-booking">Đặt hộ khách hàng</a>
       </div>
       <OwnerStats homestays={homestays} bookings={bookings} />
       <section className="mt-8">

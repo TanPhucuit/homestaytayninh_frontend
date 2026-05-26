@@ -5,7 +5,6 @@ import { UserRole } from "./types";
 const PRODUCTION_API_URL = "https://homestaytayninh-backend.onrender.com";
 const configuredApiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
 const API_URL = configuredApiUrl && !(process.env.VERCEL && configuredApiUrl.includes("localhost")) ? configuredApiUrl : PRODUCTION_API_URL;
-const AUTH_MODE = process.env.NEXT_PUBLIC_AUTH_MODE ?? "supabase";
 
 export class ApiClientError extends Error {
   constructor(
@@ -20,14 +19,6 @@ export class ApiClientError extends Error {
 
 type ApiEnvelope<T> = { data?: T; error?: string; message?: string; success?: boolean };
 
-const userIdForRole: Record<UserRole, string> = {
-  CUSTOMER: "u-customer",
-  OWNER: "u-owner",
-  OWNER_STAFF: "u-owner-staff",
-  STAFF: "u-staff",
-  ADMIN: "u-admin"
-};
-
 function unwrapResponse<T>(payload: unknown): T {
   if (payload && typeof payload === "object" && "data" in payload) {
     return (payload as ApiEnvelope<T>).data as T;
@@ -37,14 +28,7 @@ function unwrapResponse<T>(payload: unknown): T {
 
 type NextRequestInit = RequestInit & { next?: { revalidate?: number } };
 
-async function authHeaders(role: UserRole): Promise<HeadersInit> {
-  if (AUTH_MODE !== "supabase") {
-    return {
-      "x-user-id": userIdForRole[role],
-      "x-user-role": role
-    };
-  }
-
+async function authHeaders(): Promise<HeadersInit> {
   let supabase;
   try {
     supabase = await createClient();
@@ -63,14 +47,14 @@ async function authHeaders(role: UserRole): Promise<HeadersInit> {
   return session?.access_token ? { authorization: `Bearer ${session.access_token}` } : {};
 }
 
-async function apiFetch<T>(path: string, role: UserRole, init?: NextRequestInit): Promise<T> {
+async function apiFetch<T>(path: string, _role: UserRole, init?: NextRequestInit): Promise<T> {
   if (!API_URL) {
     throw new ApiClientError("NEXT_PUBLIC_API_URL is not configured.", undefined, path);
   }
 
   const headers = new Headers(init?.headers);
   headers.set("content-type", "application/json");
-  const requestAuthHeaders = await authHeaders(role);
+  const requestAuthHeaders = await authHeaders();
   new Headers(requestAuthHeaders).forEach((value, key) => headers.set(key, value));
 
   const response = await fetch(`${API_URL}${path}`, {
@@ -109,12 +93,4 @@ export async function apiMutation<T>(path: string, method: "POST" | "PATCH" | "D
     cache: "no-store",
     body: body === undefined ? undefined : JSON.stringify(body)
   });
-}
-
-export async function withMockFallback<T>(request: () => Promise<T>, fallback: T): Promise<T> {
-  try {
-    return await request();
-  } catch {
-    return fallback;
-  }
 }

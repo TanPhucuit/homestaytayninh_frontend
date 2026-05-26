@@ -1,11 +1,13 @@
 import Link from "next/link";
-import { Article, ViolationReport } from "@/lib/types";
+import { Article, UserProfile, UserRole, ViolationReport } from "@/lib/types";
 import { EmptyState } from "./feedback-state";
 import {
   createArticleAction,
   deleteArticleAction,
   publishArticleAction,
   resolveReportAction,
+  banModeratedUserAction,
+  unbanModeratedUserAction,
   unpublishArticleAction,
   updateArticleAction
 } from "@/app/staff/actions";
@@ -22,8 +24,8 @@ function StaffShell({ title, description, children }: { title: string; descripti
               <p className="mt-3 max-w-2xl text-sm leading-6 text-white/80">{description}</p>
             </div>
             <nav className="flex flex-wrap gap-2">
-              <Link className="rounded-xl bg-white/10 px-4 py-3 text-sm font-semibold text-white" href="/staff">CMS bài viết</Link>
-              <Link className="rounded-xl bg-white/10 px-4 py-3 text-sm font-semibold text-white" href="/staff/moderation">Kiểm soát user</Link>
+              <a className="rounded-xl bg-white/10 px-4 py-3 text-sm font-semibold text-white" href="/staff">CMS bài viết</a>
+              <a className="rounded-xl bg-white/10 px-4 py-3 text-sm font-semibold text-white" href="/staff/moderation">Kiểm soát user</a>
               <Link className="rounded-xl bg-[#fdf9f4] px-4 py-3 text-sm font-semibold text-[#9a4029]" href="/">Trang chủ</Link>
             </nav>
           </div>
@@ -109,7 +111,9 @@ export function StaffCmsPortal({ articles }: { articles: Article[] }) {
   );
 }
 
-export function StaffModerationPortal({ reports }: { reports: ViolationReport[] }) {
+export function StaffModerationPortal({ reports, users, currentRole }: { reports: ViolationReport[]; users: UserProfile[]; currentRole: UserRole }) {
+  const manageableUsers = currentRole === "ADMIN" ? users : users.filter((user) => user.role !== "ADMIN");
+
   return (
     <StaffShell
       title="Kiểm soát người dùng và báo cáo vi phạm"
@@ -140,6 +144,28 @@ export function StaffModerationPortal({ reports }: { reports: ViolationReport[] 
             </article>
           ))
         )}
+      </section>
+      <section className="card p-6">
+        <h2 className="font-heading text-3xl text-[#9a4029]">Kiểm soát tài khoản</h2>
+        <p className="mt-2 text-sm text-[#75675f]">Staff có thể khóa hoặc mở khóa tài khoản khi xử lý vi phạm; phân quyền chỉ do Admin thực hiện.</p>
+        <div className="mt-5 grid gap-3">
+          {manageableUsers.length === 0 ? (
+            <EmptyState title="Chưa có người dùng" description="Danh sách người dùng sẽ hiển thị khi hệ thống có tài khoản." />
+          ) : manageableUsers.map((user) => (
+            <article className="flex flex-col justify-between gap-3 rounded-2xl bg-[#fdf9f4] p-4 sm:flex-row sm:items-center" key={user.id}>
+              <div>
+                <p className="font-semibold text-[#2f2926]">{user.name}</p>
+                <p className="mt-1 text-sm text-[#75675f]">{user.email} · {user.role}</p>
+              </div>
+              <form action={user.banned ? unbanModeratedUserAction : banModeratedUserAction}>
+                <input name="userId" type="hidden" value={user.id} />
+                <button className={user.banned ? "btn-secondary" : "btn-primary"} type="submit">
+                  {user.banned ? "Mở khóa" : "Khóa tài khoản"}
+                </button>
+              </form>
+            </article>
+          ))}
+        </div>
       </section>
     </StaffShell>
   );

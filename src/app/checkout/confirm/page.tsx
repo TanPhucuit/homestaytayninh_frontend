@@ -52,7 +52,7 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
                   <span>Tôi đồng ý với chính sách hủy phòng, điều khoản sử dụng dịch vụ và xác nhận thông tin đặt phòng là chính xác.</span>
                 </label>
                 <div className="rounded-2xl border border-[#dcc0ba] p-4">
-                  ApiPay thật sẽ được backend tạo payment URL/QR sau khi cổng thanh toán được bật. Trong demo, nút bên dưới vẫn đi qua luồng booking/payment của hệ thống.
+                  ApiPay được backend tạo payment URL/QR sau khi cổng thanh toán được cấu hình. Nếu provider chưa sẵn sàng, hệ thống sẽ hiển thị lỗi thanh toán cụ thể.
                 </div>
               </div>
             </section>

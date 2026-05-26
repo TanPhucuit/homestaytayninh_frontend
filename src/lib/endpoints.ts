@@ -1,7 +1,6 @@
 export const endpoints = {
   auth: {
-    me: "/api/auth/me",
-    demoLogin: "/api/auth/demo-login"
+    me: "/api/auth/me"
   },
   homestays: {
     list: "/api/homestays",

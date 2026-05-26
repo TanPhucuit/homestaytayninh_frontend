@@ -1,4 +1,4 @@
-import { EmptyState } from "@/components/feedback-state";
+import { AccessDenied } from "@/components/access-denied";
 import { StaffCmsPortal } from "@/components/staff-portal";
 import { getArticles } from "@/lib/api";
 import { canAccess, getCurrentUser } from "@/lib/rbac";
@@ -9,14 +9,12 @@ export default async function StaffPage() {
   const user = await getCurrentUser();
   const allowed = ["STAFF", "ADMIN"] as const;
 
+  if (user.authorizationError) {
+    return <AccessDenied description={user.authorizationError} />;
+  }
+
   if (!canAccess(user.role, [...allowed])) {
-    return (
-      <main className="min-h-screen px-4 py-10">
-        <div className="mx-auto max-w-3xl">
-          <EmptyState title="Không có quyền truy cập" description="Staff Portal chỉ dành cho Staff hoặc Admin." actionHref="/login" actionLabel="Đăng nhập đúng vai trò" />
-        </div>
-      </main>
-    );
+    return <AccessDenied description="Staff Portal chỉ dành cho Staff hoặc Admin." />;
   }
 
   const articles = await getArticles(user.role === "ADMIN" ? "ADMIN" : "STAFF");
