@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { Booking, BookingStatus, Homestay, PaymentStatus, Service } from "@/lib/types";
 import { money } from "@/lib/api";
@@ -61,9 +62,7 @@ export async function AppTopBar() {
   );
 }
 
-export function PageShell({ eyebrow, title, description, children }: { eyebrow: string; title: string; description?: string; children: React.ReactNode }) {
-  const bookingHistoryHref = "/bookings";
-
+export function PageShell({ eyebrow, title, description, children }: { eyebrow: string; title: string; description?: string; children: ReactNode }) {
   return (
     <main className="min-h-screen text-[#1c1c19]">
       <AppTopBar />
@@ -78,7 +77,7 @@ export function PageShell({ eyebrow, title, description, children }: { eyebrow: 
             <div className="flex flex-wrap gap-2">
               <Link className="btn-secondary" href="/">Trang chủ</Link>
               <Link className="btn-secondary" href="/homestays">Tìm homestay</Link>
-              <a className="btn-secondary" href={bookingHistoryHref}>Booking của tôi</a>
+              <Link className="btn-secondary" href="/bookings">Booking của tôi</Link>
             </div>
           </div>
         </header>
@@ -100,7 +99,7 @@ export function Stepper({ active }: { active: 1 | 2 | 3 }) {
           <div className="flex flex-1 items-center last:flex-none" key={step}>
             <div className="flex flex-col items-center gap-2">
               <div className={`grid h-9 w-9 place-items-center rounded-full border text-sm font-bold ${current ? "border-[#7b2914] bg-[#7b2914] text-white" : done ? "border-[#466550] bg-[#e8f0eb] text-[#466550]" : "border-[#dcc0ba] bg-[#ebe8e3] text-[#89726c]"}`}>
-                {done ? "✓" : number}
+                {done ? "OK" : number}
               </div>
               <span className={`text-xs font-bold ${current ? "text-[#7b2914]" : "text-[#89726c]"}`}>{step}</span>
             </div>
@@ -124,11 +123,11 @@ export function PaymentBadge({ status }: { status: PaymentStatus }) {
 
 export function HomestayCard({ homestay }: { homestay: Homestay }) {
   return (
-    <article className="group overflow-hidden rounded-[24px] bg-white shadow-[0_18px_55px_rgba(123,41,20,0.08)] transition hover:-translate-y-1 hover:shadow-[0_26px_70px_rgba(123,41,20,0.12)]">
-      <div className="relative aspect-[16/10] bg-cover bg-center" style={{ backgroundImage: `url(${homestay.imageUrl})` }}>
+    <article className="group overflow-hidden rounded-2xl bg-white shadow-[0_18px_55px_rgba(123,41,20,0.08)] transition hover:-translate-y-1 hover:shadow-[0_26px_70px_rgba(123,41,20,0.12)]">
+      <div className="relative aspect-[16/10] bg-[#efe7dc] bg-cover bg-center" style={{ backgroundImage: `url(${homestay.imageUrl})` }}>
         <div className="absolute inset-0 bg-gradient-to-t from-[#1c1c19]/55 via-transparent to-transparent" />
-        <div className="absolute left-4 top-4 rounded-full bg-[#fdf9f4]/90 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-[#466550]">{homestay.type}</div>
-        <div className="absolute bottom-4 right-4 rounded-full bg-white/90 px-3 py-1 text-sm font-bold text-[#466550]">★ {homestay.rating}</div>
+        <div className="absolute left-4 top-4 rounded-full bg-[#fdf9f4]/90 px-3 py-1 text-xs font-bold uppercase text-[#466550]">{homestay.type}</div>
+        <div className="absolute bottom-4 right-4 rounded-full bg-white/90 px-3 py-1 text-sm font-bold text-[#466550]">Rating {homestay.rating}</div>
       </div>
       <div className="p-5">
         <h2 className="font-heading text-2xl text-[#7b2914]">{homestay.name}</h2>
@@ -152,7 +151,7 @@ export function HomestayCard({ homestay }: { homestay: Homestay }) {
 
 export function BookingCard({ booking, homestay }: { booking: Booking; homestay?: Homestay }) {
   return (
-    <article className="rounded-[24px] bg-white p-5 shadow-[0_18px_55px_rgba(123,41,20,0.07)]">
+    <article className="rounded-2xl bg-white p-5 shadow-[0_18px_55px_rgba(123,41,20,0.07)]">
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
         <div>
           <div className="flex flex-wrap items-center gap-2">

@@ -25,7 +25,7 @@ export default async function OwnerManagePage({ searchParams }: { searchParams: 
   const firstHomestay = homestays[0];
 
   return (
-    <OwnerShell title="Quản lý homestay, phòng, giá và dịch vụ" description="Tạo homestay, thêm phòng, cập nhật dịch vụ đi kèm. Dữ liệu gọi qua Owner API backend." flash={flash}>
+    <OwnerShell title="Quản lý homestay, phòng, giá và dịch vụ" description="Tạo homestay, thêm phòng, cập nhật dịch vụ đi kèm, hình ảnh và giá theo ngày." flash={flash}>
       <section className="grid gap-6 xl:grid-cols-3">
         <form action={createHomestayAction} className="card p-6">
           <h2 className="font-heading text-2xl text-[#9a4029]">Thêm homestay</h2>

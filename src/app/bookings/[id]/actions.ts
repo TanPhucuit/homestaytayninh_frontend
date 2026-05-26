@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { addBookingService, initiatePayment, setBookingServiceStatus } from "@/lib/api";
+import { addBookingService, setBookingServiceStatus, updateBookingStatus } from "@/lib/api";
 import { actionErrorMessage } from "@/lib/action-errors";
 import { ApiClientError } from "@/lib/api-client";
 import { flashUrl } from "@/lib/flash";
@@ -29,7 +29,7 @@ export async function addServiceAction(formData: FormData) {
 export async function markServiceServedAction(formData: FormData) {
   const bookingId = String(formData.get("bookingId") ?? "");
   const serviceOrderId = String(formData.get("serviceOrderId") ?? "");
-  if (!bookingId || !serviceOrderId) redirect(flashUrl(`/bookings/${bookingId || ""}`, "error", "Thiếu booking hoặc service order để cập nhật trạng thái."));
+  if (!bookingId || !serviceOrderId) redirect(flashUrl(`/bookings/${bookingId || ""}`, "error", "Thiếu booking hoặc dịch vụ để cập nhật trạng thái."));
   try {
     await setBookingServiceStatus(bookingId, serviceOrderId, "SERVED", "OWNER_STAFF");
   } catch (error) {
@@ -39,15 +39,22 @@ export async function markServiceServedAction(formData: FormData) {
   redirect(flashUrl(`/bookings/${bookingId}`, "success", "Đã đánh dấu dịch vụ là đã phục vụ."));
 }
 
-export async function retryPaymentAction(formData: FormData) {
+export async function cancelBookingAction(formData: FormData) {
   const bookingId = String(formData.get("bookingId") ?? "");
-  if (!bookingId) redirect(flashUrl("/bookings", "error", "Thiếu booking để tạo lại yêu cầu thanh toán."));
+  if (!bookingId) redirect(flashUrl("/bookings", "error", "Thiếu booking để hủy đơn."));
   try {
-    await initiatePayment(bookingId, "CUSTOMER");
+    await updateBookingStatus(bookingId, "CANCELLED", "CUSTOMER");
   } catch (error) {
     if (error instanceof ApiClientError && error.status === 401) redirectToLogin(bookingId);
     redirect(flashUrl(`/bookings/${bookingId}`, "error", actionErrorMessage(error)));
   }
   revalidatePath(`/bookings/${bookingId}`);
-  redirect(flashUrl(`/bookings/${bookingId}`, "success", "Đã tạo lại yêu cầu thanh toán."));
+  revalidatePath("/bookings");
+  redirect(flashUrl(`/bookings/${bookingId}`, "success", "Đã gửi yêu cầu hủy đơn."));
+}
+
+export async function retryPaymentAction(formData: FormData) {
+  const bookingId = String(formData.get("bookingId") ?? "");
+  if (!bookingId) redirect(flashUrl("/bookings", "error", "Thiếu booking để thử lại thanh toán."));
+  redirect(`/payment/result?bookingId=${bookingId}&status=paid&demo=1`);
 }

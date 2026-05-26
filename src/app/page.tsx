@@ -21,7 +21,7 @@ export default async function HomePage() {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#1c1c19]/38 via-[#1c1c19]/28 to-[#1c1c19]/70" />
         <div className="relative mx-auto max-w-5xl px-4 text-center text-white md:px-8">
-          <p className="text-sm font-black uppercase tracking-[0.28em] text-white/80">Terra & Leaf Homestay</p>
+          <p className="text-sm font-black uppercase text-white/80">Terra & Leaf Homestay</p>
           <h1 className="mx-auto mt-5 max-w-4xl font-heading text-5xl font-bold leading-[1.05] drop-shadow-md md:text-[64px]">
             Nghỉ dưỡng giữa thiên nhiên Tây Ninh
           </h1>
@@ -31,16 +31,16 @@ export default async function HomePage() {
           <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
             <Link className="btn-primary" href="/homestays">Đặt phòng ngay</Link>
             {user.authenticated && !user.authorizationError ? (
-              <a className="rounded-xl bg-white/15 px-6 py-3 font-bold text-white ring-1 ring-white/30 backdrop-blur transition hover:bg-white/25" href={homeForRole(user.role)}>
+              <Link className="rounded-xl bg-white/15 px-6 py-3 font-bold text-white ring-1 ring-white/30 backdrop-blur transition hover:bg-white/25" href={homeForRole(user.role)}>
                 Vào portal của bạn
-              </a>
+              </Link>
             ) : user.authenticated ? (
               <Link className="rounded-xl bg-white/15 px-6 py-3 font-bold text-white ring-1 ring-white/30 backdrop-blur transition hover:bg-white/25" href="/login?error=role_lookup">
                 Kiểm tra quyền truy cập
               </Link>
             ) : (
               <Link className="rounded-xl bg-white/15 px-6 py-3 font-bold text-white ring-1 ring-white/30 backdrop-blur transition hover:bg-white/25" href="/login">
-                Đăng nhập với Google
+                Đăng nhập
               </Link>
             )}
           </div>
@@ -49,19 +49,19 @@ export default async function HomePage() {
 
       <section className="relative z-20 mx-auto -mt-24 max-w-6xl px-4 md:px-8">
         <form action="/homestays" className="stitch-panel grid gap-3 p-5 md:grid-cols-[1fr_1fr_0.8fr_0.8fr_auto] md:p-6">
-          <label className="grid gap-2 text-xs font-black uppercase tracking-[0.16em] text-[#89726c]">
+          <label className="grid gap-2 text-xs font-black uppercase text-[#89726c]">
             Nhận phòng
             <input className="field" name="checkIn" type="date" />
           </label>
-          <label className="grid gap-2 text-xs font-black uppercase tracking-[0.16em] text-[#89726c]">
+          <label className="grid gap-2 text-xs font-black uppercase text-[#89726c]">
             Trả phòng
             <input className="field" name="checkOut" type="date" />
           </label>
-          <label className="grid gap-2 text-xs font-black uppercase tracking-[0.16em] text-[#89726c]">
+          <label className="grid gap-2 text-xs font-black uppercase text-[#89726c]">
             Số khách
             <input className="field" name="guests" type="number" min="1" placeholder="2" />
           </label>
-          <label className="grid gap-2 text-xs font-black uppercase tracking-[0.16em] text-[#89726c]">
+          <label className="grid gap-2 text-xs font-black uppercase text-[#89726c]">
             Loại hình
             <select className="field" name="type" defaultValue="">
               <option value="">Tất cả</option>
@@ -79,7 +79,7 @@ export default async function HomePage() {
           <div>
             <p className="eyebrow">Gợi ý lưu trú</p>
             <h2 className="mt-2 font-heading text-4xl text-[#7b2914]">Homestay nổi bật</h2>
-            <p className="mt-3 max-w-2xl text-[#56423d]">Các lựa chọn đang được mở bán từ backend, trình bày theo card-based layout của Stitch.</p>
+            <p className="mt-3 max-w-2xl text-[#56423d]">Các lựa chọn đang mở bán, phù hợp cho gia đình, nhóm bạn và những chuyến nghỉ ngắn ngày tại Tây Ninh.</p>
           </div>
           <Link className="btn-secondary" href="/homestays">Xem tất cả</Link>
         </div>

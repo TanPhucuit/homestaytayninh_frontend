@@ -1,13 +1,40 @@
 import Link from "next/link";
-import { EmptyState } from "@/components/feedback-state";
 import { AppTopBar } from "@/components/customer-ui";
+import { EmptyState } from "@/components/feedback-state";
 import { getHomestays, HomestayFilters, money } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
 
+function detailHref(id: string, filters: HomestayFilters) {
+  const params = new URLSearchParams();
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value) params.set(key, value);
+  });
+  const query = params.toString();
+  return query ? `/homestays/${id}?${query}` : `/homestays/${id}`;
+}
+
+function cleanFilters(filters: HomestayFilters): HomestayFilters {
+  const positiveNumber = (value?: string) => {
+    if (!value) return undefined;
+    const number = Number(value);
+    return Number.isFinite(number) && number > 0 ? String(number) : undefined;
+  };
+
+  return {
+    checkIn: filters.checkIn,
+    checkOut: filters.checkOut,
+    guests: positiveNumber(filters.guests),
+    type: filters.type,
+    maxPrice: positiveNumber(filters.maxPrice),
+    amenity: filters.amenity
+  };
+}
+
 export default async function HomestaysPage({ searchParams }: { searchParams: Promise<HomestayFilters> }) {
   const filters = await searchParams;
-  const homestays = await getHomestays("CUSTOMER", filters);
+  const apiFilters = cleanFilters(filters);
+  const homestays = await getHomestays("CUSTOMER", apiFilters);
 
   return (
     <main className="min-h-screen text-[#1c1c19]">
@@ -17,7 +44,7 @@ export default async function HomestaysPage({ searchParams }: { searchParams: Pr
           <div>
             <p className="eyebrow">Kết quả tìm kiếm</p>
             <h1 className="mt-2 font-heading text-4xl text-[#1c1c19] md:text-5xl">Tìm thấy {homestays.length} homestay tại Tây Ninh</h1>
-            <p className="mt-3 max-w-2xl text-[#56423d]">Lọc theo ngày, số khách, loại hình, mức giá và tiện ích. Dữ liệu lấy từ backend API.</p>
+            <p className="mt-3 max-w-2xl text-[#56423d]">Lọc theo ngày, số khách, loại hình, mức giá và tiện ích. Bộ lọc sẽ được giữ khi bạn xem chi tiết và đặt phòng.</p>
           </div>
           <Link className="btn-secondary" href="/">Về trang chủ</Link>
         </header>
@@ -26,14 +53,14 @@ export default async function HomestaysPage({ searchParams }: { searchParams: Pr
           <aside className="card h-fit p-6 lg:sticky lg:top-28">
             <form className="grid gap-5" action="/homestays">
               <div>
-                <h3 className="mb-3 text-sm font-black uppercase tracking-[0.16em] text-[#466550]">Ngày lưu trú</h3>
+                <h3 className="mb-3 text-sm font-black uppercase text-[#466550]">Ngày lưu trú</h3>
                 <div className="grid gap-3">
                   <input className="field" name="checkIn" type="date" defaultValue={filters.checkIn} />
                   <input className="field" name="checkOut" type="date" defaultValue={filters.checkOut} />
                 </div>
               </div>
               <div>
-                <h3 className="mb-3 text-sm font-black uppercase tracking-[0.16em] text-[#466550]">Loại hình</h3>
+                <h3 className="mb-3 text-sm font-black uppercase text-[#466550]">Loại hình</h3>
                 <select className="field w-full" name="type" defaultValue={filters.type ?? ""}>
                   <option value="">Tất cả</option>
                   <option value="Phòng">Phòng</option>
@@ -42,15 +69,15 @@ export default async function HomestaysPage({ searchParams }: { searchParams: Pr
                 </select>
               </div>
               <div>
-                <h3 className="mb-3 text-sm font-black uppercase tracking-[0.16em] text-[#466550]">Khoảng giá / đêm</h3>
-                <input className="field w-full" name="maxPrice" type="number" min="0" step="50000" placeholder="2.000.000" defaultValue={filters.maxPrice} />
+                <h3 className="mb-3 text-sm font-black uppercase text-[#466550]">Khoảng giá / đêm</h3>
+                <input className="field w-full" name="maxPrice" type="number" min="0" step="50000" placeholder="2000000" defaultValue={filters.maxPrice} />
               </div>
               <div>
-                <h3 className="mb-3 text-sm font-black uppercase tracking-[0.16em] text-[#466550]">Số khách</h3>
+                <h3 className="mb-3 text-sm font-black uppercase text-[#466550]">Số khách</h3>
                 <input className="field w-full" name="guests" type="number" min="1" placeholder="2" defaultValue={filters.guests} />
               </div>
               <div>
-                <h3 className="mb-3 text-sm font-black uppercase tracking-[0.16em] text-[#466550]">Tiện ích</h3>
+                <h3 className="mb-3 text-sm font-black uppercase text-[#466550]">Tiện ích</h3>
                 <input className="field w-full" name="amenity" placeholder="Wifi, BBQ..." defaultValue={filters.amenity} />
               </div>
               <button className="btn-primary w-full" type="submit">Áp dụng bộ lọc</button>
@@ -61,8 +88,8 @@ export default async function HomestaysPage({ searchParams }: { searchParams: Pr
           {homestays.length ? (
             <section className="space-y-5">
               {homestays.map((homestay) => (
-                <article className="group grid overflow-hidden rounded-[24px] bg-white shadow-[0_18px_55px_rgba(123,41,20,0.08)] transition hover:-translate-y-1 md:grid-cols-[320px_1fr]" key={homestay.id}>
-                  <div className="min-h-64 bg-cover bg-center" style={{ backgroundImage: `url(${homestay.imageUrl})` }} />
+                <article className="group grid overflow-hidden rounded-2xl bg-white shadow-[0_18px_55px_rgba(123,41,20,0.08)] transition hover:-translate-y-1 md:grid-cols-[320px_1fr]" key={homestay.id}>
+                  <div className="min-h-64 bg-[#efe7dc] bg-cover bg-center" style={{ backgroundImage: `url(${homestay.imageUrl})` }} />
                   <div className="p-5 md:p-6">
                     <div className="flex flex-col justify-between gap-4 md:flex-row">
                       <div>
@@ -81,8 +108,8 @@ export default async function HomestaysPage({ searchParams }: { searchParams: Pr
                       ))}
                     </div>
                     <div className="mt-6 flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
-                      <p className="text-sm font-semibold text-[#75675f]">★ {homestay.rating} · {homestay.capacity} khách · {homestay.location}</p>
-                      <Link className="btn-secondary" href={`/homestays/${homestay.id}`}>Xem chi tiết</Link>
+                      <p className="text-sm font-semibold text-[#75675f]">Rating {homestay.rating} · {homestay.capacity} khách · {homestay.location}</p>
+                      <Link className="btn-secondary" href={detailHref(homestay.id, apiFilters)}>Xem chi tiết</Link>
                     </div>
                   </div>
                 </article>

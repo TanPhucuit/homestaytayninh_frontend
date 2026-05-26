@@ -101,6 +101,10 @@ export async function addBookingService(bookingId: string, serviceId: string, qu
   return apiMutation<Booking>(endpoints.bookings.addService(bookingId), "POST", { serviceId, quantity }, role);
 }
 
+export async function updateBookingStatus(bookingId: string, status: Booking["status"], role: UserRole = "CUSTOMER"): Promise<Booking> {
+  return apiMutation<Booking>(endpoints.bookings.status(bookingId), "PATCH", { status }, role);
+}
+
 export async function setBookingServiceStatus(bookingId: string, serviceOrderId: string, status: "PREPARING" | "SERVED", role: UserRole = "OWNER_STAFF") {
   return apiMutation(endpoints.bookings.serviceStatus(bookingId, serviceOrderId), "PATCH", { status }, role);
 }

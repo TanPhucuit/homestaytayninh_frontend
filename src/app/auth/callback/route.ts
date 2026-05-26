@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
 
   if (!loginResponse?.ok) {
     const suffix = loginResponse ? `&status=${loginResponse.status}` : "";
-    return redirectWithClearedOAuthCookies(request, `/login?error=backend_oauth${suffix}`);
+    return redirectWithClearedOAuthCookies(request, `/login?error=google_verify${suffix}`);
   }
   const login = (await loginResponse.json()) as BackendLoginResponse;
   const role = parseRole(login.user?.role ?? login.role) ?? "CUSTOMER";

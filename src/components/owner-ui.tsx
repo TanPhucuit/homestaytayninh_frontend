@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { ActionButton } from "./action-button";
 import { BookingCard, PageShell, StatusBadge } from "./customer-ui";
 import { FlashMessage } from "./feedback-state";
@@ -6,7 +7,7 @@ import { money } from "@/lib/api";
 import { FlashState } from "@/lib/flash";
 import { createImageAction, createRoomRateAction, updateHomestayAction, updateRoomAction, updateServiceAction } from "@/app/owner/actions";
 
-export function OwnerShell({ title, description, flash, children }: { title: string; description: string; flash?: FlashState | null; children: React.ReactNode }) {
+export function OwnerShell({ title, description, flash, children }: { title: string; description: string; flash?: FlashState | null; children: ReactNode }) {
   return (
     <PageShell eyebrow="Owner Portal" title={title} description={description}>
       <div className="mb-5">
@@ -51,10 +52,11 @@ export function OwnerBookingOps({ bookings, homestays, action }: { bookings: Boo
     CONFIRMED: [{ label: "Check-in", status: "IN_STAY" }, { label: "Hủy", status: "CANCELLED" }],
     IN_STAY: [{ label: "Check-out", status: "COMPLETED" }]
   };
+  const actionableBookings = bookings.filter((booking) => nextActions[booking.status]?.length);
 
   return (
     <section className="space-y-4">
-      {bookings.map((booking) => (
+      {actionableBookings.length ? actionableBookings.map((booking) => (
         <div className="card p-5" key={booking.id}>
           <div className="flex flex-col justify-between gap-3 lg:flex-row lg:items-start">
             <div>
@@ -73,7 +75,9 @@ export function OwnerBookingOps({ bookings, homestays, action }: { bookings: Boo
             </div>
           </div>
         </div>
-      ))}
+      )) : (
+        <div className="rounded-2xl border border-dashed border-[#dcc0ba] bg-white/70 p-8 text-[#75675f]">Không có booking cần thao tác ngay.</div>
+      )}
     </section>
   );
 }
@@ -89,7 +93,7 @@ export function OwnerInventory({ homestays }: { homestays: Homestay[] }) {
               <h2 className="mt-1 font-heading text-3xl text-[#9a4029]">{homestay.name}</h2>
               <p className="mt-2 text-sm text-[#75675f]">{homestay.location} · {money(homestay.priceFrom)} · {homestay.capacity} khách</p>
             </div>
-            <div className="h-28 w-full rounded-2xl bg-cover bg-center md:w-44" style={{ backgroundImage: `url(${homestay.imageUrl})` }} aria-label={homestay.name} />
+            <div className="h-28 w-full rounded-2xl bg-[#efe7dc] bg-cover bg-center md:w-44" style={{ backgroundImage: `url(${homestay.imageUrl})` }} aria-label={homestay.name} />
           </div>
           <form action={updateHomestayAction} className="mt-5 grid gap-3 rounded-2xl bg-[#fdf9f4] p-4 md:grid-cols-2">
             <input type="hidden" name="homestayId" value={homestay.id} />

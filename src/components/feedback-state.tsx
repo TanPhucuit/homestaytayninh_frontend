@@ -19,7 +19,7 @@ export function EmptyState({
   description,
   actionHref,
   actionLabel,
-  icon = "∅"
+  icon = "-"
 }: {
   title: string;
   description: string;
@@ -70,7 +70,7 @@ export function PageSkeleton({ title = "Đang tải dữ liệu", rows = 3 }: { 
 
 export function ErrorState({
   title = "Không tải được dữ liệu",
-  description = "Vui lòng thử lại. Nếu lỗi tiếp tục xảy ra, hãy kiểm tra kết nối API backend.",
+  description = "Vui lòng thử lại. Nếu lỗi tiếp tục xảy ra, hãy kiểm tra kết nối hoặc đăng nhập lại.",
   onRetry
 }: {
   title?: string;

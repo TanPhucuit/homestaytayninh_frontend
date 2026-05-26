@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { createBooking, initiatePayment } from "@/lib/api";
+import { createBooking } from "@/lib/api";
 import { actionErrorMessage } from "@/lib/action-errors";
 import { ApiClientError } from "@/lib/api-client";
 import { flashUrl } from "@/lib/flash";
@@ -71,12 +71,5 @@ export async function createCheckoutAction(formData: FormData) {
     redirect(flashUrl(checkoutNextPath(formData), "error", "Booking chưa được tạo. Vui lòng thử lại."));
   }
 
-  try {
-    await initiatePayment(bookingId, "CUSTOMER");
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Không tạo được yêu cầu thanh toán.";
-    redirect(`/payment/result?bookingId=${bookingId}&paymentError=${encodeURIComponent(message)}`);
-  }
-
-  redirect(`/payment/result?bookingId=${bookingId}`);
+  redirect(`/payment/result?bookingId=${bookingId}&status=paid&demo=1`);
 }

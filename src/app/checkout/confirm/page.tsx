@@ -16,6 +16,7 @@ type CheckoutConfirmParams = {
   guestCount?: string;
   checkIn?: string;
   checkOut?: string;
+  notes?: string;
   error?: string;
   success?: string;
   [key: string]: string | undefined;
@@ -43,10 +44,10 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
         <div className="mb-8 grid gap-6 lg:grid-cols-[1fr_380px]">
           <div>
             <p className="eyebrow">Thanh toán</p>
-            <h1 className="mt-2 font-heading text-4xl text-[#9a4029] md:text-5xl">Xác nhận & Thanh toán</h1>
-            <p className="mt-3 text-[#56423d]">Hoàn tất đặt phòng của bạn an toàn và nhanh chóng.</p>
+            <h1 className="mt-2 font-heading text-4xl text-[#9a4029] md:text-5xl">Xác nhận đặt phòng</h1>
+            <p className="mt-3 text-[#56423d]">Kiểm tra thông tin trước khi tạo đơn. Kết quả thanh toán ở bước này là demo.</p>
           </div>
-          <div className="rounded-[24px] bg-white p-5 shadow-[0_18px_55px_rgba(123,41,20,0.08)]">
+          <div className="rounded-2xl bg-white p-5 shadow-[0_18px_55px_rgba(123,41,20,0.08)]">
             <Stepper active={3} />
           </div>
         </div>
@@ -59,20 +60,21 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
               <p className="eyebrow">Booking Review</p>
               <h2 className="mt-2 font-heading text-3xl text-[#7b2914]">{preview.homestay.name}</h2>
               <div className="mt-6 grid gap-4 md:grid-cols-2">
-                <div className="rounded-3xl bg-[#fdf9f4] p-5">
-                  <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#466550]">Phòng</p>
+                <div className="rounded-2xl bg-[#fdf9f4] p-5">
+                  <p className="text-sm font-bold uppercase text-[#466550]">Phòng</p>
                   <h3 className="mt-2 font-heading text-2xl text-[#7b2914]">{preview.room.name}</h3>
                   <p className="mt-2 text-sm text-[#75675f]">{preview.nights} đêm · {preview.guestCount} khách · {params.guestName}</p>
                   <p className="mt-4 font-bold text-[#9a4029]">{money(preview.roomTotal)}</p>
                 </div>
-                <div className="rounded-3xl bg-[#fdf9f4] p-5">
-                  <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#466550]">Phương thức thanh toán</p>
-                  <h3 className="mt-2 font-heading text-2xl text-[#7b2914]">ApiPay</h3>
-                  <p className="mt-2 text-sm text-[#75675f]">Payment request được tạo qua backend để không lộ secret key ở frontend.</p>
-                  <span className="mt-4 inline-flex rounded-full bg-[#ffdad2] px-4 py-2 text-sm font-bold text-[#7b2914]">Chờ provider</span>
+                <div className="rounded-2xl bg-[#fdf9f4] p-5">
+                  <p className="text-sm font-bold uppercase text-[#466550]">Thanh toán</p>
+                  <h3 className="mt-2 font-heading text-2xl text-[#7b2914]">Demo thanh toán</h3>
+                  <p className="mt-2 text-sm text-[#75675f]">Sau khi xác nhận, hệ thống tạo booking và hiển thị kết quả mô phỏng. Chưa trừ tiền thật.</p>
+                  <span className="mt-4 inline-flex rounded-full bg-[#e8f0eb] px-4 py-2 text-sm font-bold text-[#466550]">Sẵn sàng xác nhận</span>
                 </div>
               </div>
             </section>
+
             {preview.selectedServices.length > 0 && (
               <section className="card p-6 md:p-8">
                 <h2 className="font-heading text-3xl text-[#9a4029]">Dịch vụ đã chọn</h2>
@@ -95,13 +97,13 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
                   <span>Tôi đồng ý với chính sách hủy phòng, điều khoản sử dụng dịch vụ và xác nhận thông tin đặt phòng là chính xác.</span>
                 </label>
                 <div className="rounded-2xl border border-[#dcc0ba] p-4">
-                  ApiPay được backend tạo payment URL/QR sau khi cổng thanh toán được cấu hình. Nếu provider chưa sẵn sàng, hệ thống sẽ hiển thị lỗi thanh toán cụ thể.
+                  Đây là màn thanh toán demo để hoàn thiện luồng đặt phòng. Khi cổng thanh toán thật sẵn sàng, bước này sẽ được kết nối ở đợt tích hợp riêng.
                 </div>
               </div>
             </section>
           </div>
 
-          <aside className="h-fit rounded-[24px] bg-white p-6 shadow-[0_24px_80px_rgba(123,41,20,0.1)] lg:sticky lg:top-28">
+          <aside className="h-fit rounded-2xl bg-white p-6 shadow-[0_24px_80px_rgba(123,41,20,0.1)] lg:sticky lg:top-28">
             <h2 className="border-b border-[#e8e1d5] pb-4 font-heading text-2xl text-[#1c1c19]">Tóm tắt đơn đặt</h2>
             <h3 className="mt-5 font-bold text-[#1c1c19]">{preview.room.name}</h3>
             <p className="mt-1 text-sm text-[#75675f]">{preview.nights} đêm · {preview.guestCount} khách</p>
@@ -114,7 +116,7 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
                 <p className="mt-1 text-xs text-[#75675f]">Đã bao gồm thuế, phí</p>
               </div>
             </div>
-            <ActionButton className="btn-primary mt-6 w-full" pendingLabel="Đang tạo booking...">Tạo booking và thanh toán</ActionButton>
+            <ActionButton className="btn-primary mt-6 w-full" pendingLabel="Đang tạo booking...">Xác nhận đặt phòng</ActionButton>
             <Link className="btn-secondary mt-3 w-full" href={`/checkout/services?${backParams.toString()}`}>Quay lại</Link>
           </aside>
         </form>

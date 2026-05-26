@@ -6,7 +6,7 @@ function errorMessage(error?: string) {
   if (error === "auth_required") return "Bạn cần đăng nhập trước khi thực hiện thao tác này.";
   if (error === "oauth") return "Không tạo được phiên đăng nhập Google. Vui lòng thử lại.";
   if (error === "callback") return "Google callback không hợp lệ hoặc phiên đăng nhập không được tạo.";
-  if (error === "backend_oauth") return "Google đã xác thực thành công, nhưng hệ thống chưa xác minh được tài khoản.";
+  if (error === "google_verify") return "Google đã xác thực thành công, nhưng hệ thống chưa xác minh được tài khoản.";
   if (error === "role_lookup") return "Hệ thống chưa xác minh được quyền truy cập. Vui lòng đăng nhập lại hoặc liên hệ quản trị viên.";
   if (error === "password_required") return "Vui lòng nhập email và mật khẩu.";
   if (error === "password_login") return "Email hoặc mật khẩu không đúng.";

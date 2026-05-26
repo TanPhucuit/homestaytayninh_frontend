@@ -20,7 +20,7 @@
   --error-soft: #ffdad6;
   --radius-control: 12px;
   --radius-card: 16px;
-  --radius-panel: 24px;
+  --radius-panel: 16px;
   --shadow-card: 0 18px 55px rgba(154, 64, 41, 0.08);
   --shadow-panel: 0 28px 80px rgba(123, 41, 20, 0.1);
 }

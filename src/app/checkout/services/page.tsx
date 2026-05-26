@@ -13,12 +13,15 @@ type CheckoutServiceParams = {
   guestCount?: string;
   checkIn?: string;
   checkOut?: string;
+  notes?: string;
 };
 
 export default async function CheckoutServicesPage({ searchParams }: { searchParams: Promise<CheckoutServiceParams> }) {
   const params = await searchParams;
   const preview = await getCheckoutPreview(params);
   const preservedEntries = Object.entries(params).filter(([, value]) => value);
+  const backParams = new URLSearchParams();
+  preservedEntries.forEach(([key, value]) => backParams.set(key, value ?? ""));
 
   return (
     <main className="min-h-screen text-[#1c1c19]">
@@ -28,9 +31,9 @@ export default async function CheckoutServicesPage({ searchParams }: { searchPar
           <div>
             <p className="eyebrow">Thanh toán</p>
             <h1 className="mt-2 font-heading text-4xl text-[#9a4029] md:text-5xl">Dịch vụ bổ sung</h1>
-            <p className="mt-3 text-[#56423d]">Tùy chỉnh kỳ nghỉ của bạn thêm trọn vẹn. Bạn có thể thay đổi sau nếu muốn.</p>
+            <p className="mt-3 text-[#56423d]">Chọn các dịch vụ muốn đặt cùng phòng. Có thể bỏ qua nếu không cần.</p>
           </div>
-          <div className="rounded-[24px] bg-white p-5 shadow-[0_18px_55px_rgba(123,41,20,0.08)]">
+          <div className="rounded-2xl bg-white p-5 shadow-[0_18px_55px_rgba(123,41,20,0.08)]">
             <Stepper active={2} />
           </div>
         </div>
@@ -52,10 +55,10 @@ export default async function CheckoutServicesPage({ searchParams }: { searchPar
 
             <section className="card p-6 md:p-8">
               <h2 className="font-heading text-3xl text-[#9a4029]">Dịch vụ đặt thêm</h2>
-              <p className="mt-2 text-[#75675f]">Chọn số lượng dịch vụ muốn đặt cùng booking.</p>
+              <p className="mt-2 text-[#75675f]">Nhập số lượng cho dịch vụ muốn dùng trong kỳ nghỉ.</p>
               <div className="mt-6 space-y-4">
                 {preview.homestay.services.map((service) => (
-                  <label className="grid gap-4 rounded-3xl bg-[#fdf9f4] p-4 md:grid-cols-[1fr_auto]" key={service.id}>
+                  <label className="grid gap-4 rounded-2xl bg-[#fdf9f4] p-4 md:grid-cols-[1fr_auto]" key={service.id}>
                     <div>
                       <h3 className="font-bold text-[#1c1c19]">{service.name}</h3>
                       {service.description && <p className="mt-1 text-sm text-[#75675f]">{service.description}</p>}
@@ -68,7 +71,7 @@ export default async function CheckoutServicesPage({ searchParams }: { searchPar
             </section>
           </div>
 
-          <aside className="h-fit rounded-[24px] bg-white p-6 shadow-[0_24px_80px_rgba(123,41,20,0.1)] lg:sticky lg:top-28">
+          <aside className="h-fit rounded-2xl bg-white p-6 shadow-[0_24px_80px_rgba(123,41,20,0.1)] lg:sticky lg:top-28">
             <h2 className="border-b border-[#e8e1d5] pb-4 font-heading text-2xl text-[#1c1c19]">Tóm tắt đơn đặt</h2>
             <h3 className="mt-5 font-bold text-[#1c1c19]">{preview.room.name}</h3>
             <p className="mt-1 text-sm text-[#75675f]">{preview.nights} đêm · {preview.guestCount} khách</p>
@@ -82,7 +85,7 @@ export default async function CheckoutServicesPage({ searchParams }: { searchPar
               </div>
             </div>
             <ActionButton className="btn-primary mt-6 w-full" pendingLabel="Đang chuyển bước...">Tiếp tục xác nhận</ActionButton>
-            <Link className="btn-secondary mt-3 w-full" href={`/checkout?homestayId=${preview.homestay.id}&roomId=${preview.room.id}`}>Quay lại</Link>
+            <Link className="btn-secondary mt-3 w-full" href={`/checkout?${backParams.toString()}`}>Quay lại</Link>
           </aside>
         </form>
       </div>
