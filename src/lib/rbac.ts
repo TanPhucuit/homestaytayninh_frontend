@@ -18,7 +18,7 @@ export interface NavItem {
   href: string;
 }
 
-const guestUser: SessionUser = { id: "", name: "Khach", email: "", role: "CUSTOMER", authenticated: false };
+const guestUser: SessionUser = { id: "", name: "Khách", email: "", role: "CUSTOMER", authenticated: false };
 
 export function normalizeRole(value?: string | null): UserRole {
   return parseRole(value) ?? "CUSTOMER";
@@ -39,11 +39,11 @@ export async function getCurrentUser(): Promise<SessionUser> {
   if (!API_URL) {
     return {
       id: "",
-      name: "Nguoi dung da dang nhap",
+      name: "Người dùng đã đăng nhập",
       email: "",
       role: "CUSTOMER",
       authenticated: true,
-      authorizationError: "Khong the xac minh vai tro vi frontend chua cau hinh NEXT_PUBLIC_API_URL."
+      authorizationError: "Không thể xác minh vai trò vì frontend chưa cấu hình NEXT_PUBLIC_API_URL."
     };
   }
 
@@ -53,14 +53,14 @@ export async function getCurrentUser(): Promise<SessionUser> {
   }).catch(() => null);
 
   if (!response?.ok) {
-    const backendError = response ? `Backend tra ve HTTP ${response.status}.` : "Khong ket noi duoc backend.";
+    const backendError = response ? `Backend trả về HTTP ${response.status}.` : "Không kết nối được backend.";
     return {
       id: "",
-      name: "Nguoi dung da dang nhap",
+      name: "Người dùng đã đăng nhập",
       email: "",
       role: "CUSTOMER",
       authenticated: true,
-      authorizationError: `Khong the xac minh vai tro tai khoan. ${backendError}`
+      authorizationError: `Không thể xác minh vai trò tài khoản. ${backendError}`
     };
   }
 
@@ -69,17 +69,17 @@ export async function getCurrentUser(): Promise<SessionUser> {
   if (!role) {
     return {
       id: profile.id ?? "",
-      name: profile.name ?? "Nguoi dung da dang nhap",
+      name: profile.name ?? "Người dùng đã đăng nhập",
       email: profile.email ?? "",
       role: "CUSTOMER",
       authenticated: true,
-      authorizationError: "Backend tra ve vai tro tai khoan khong hop le."
+      authorizationError: "Backend trả về vai trò tài khoản không hợp lệ."
     };
   }
 
   return {
     id: profile.id ?? "",
-    name: profile.name ?? profile.email ?? "Nguoi dung",
+    name: profile.name ?? profile.email ?? "Người dùng",
     email: profile.email ?? "",
     role,
     authenticated: true
@@ -104,26 +104,26 @@ export function homeForRole(role: UserRole): string {
 export function navForRole(role: UserRole): NavItem[] {
   const byRole: Record<UserRole, NavItem[]> = {
     CUSTOMER: [
-      { label: "Kham pha", href: "/homestays" },
-      { label: "Cam nang", href: "/articles" },
-      { label: "Chuyen di cua toi", href: "/bookings" }
+      { label: "Khám phá", href: "/homestays" },
+      { label: "Cẩm nang", href: "/articles" },
+      { label: "Chuyến đi của tôi", href: "/bookings" }
     ],
     OWNER: [
-      { label: "Dashboard chu nha", href: "/owner" },
-      { label: "Quan ly homestay", href: "/owner/manage" }
+      { label: "Dashboard chủ nhà", href: "/owner" },
+      { label: "Quản lý homestay", href: "/owner/manage" }
     ],
     OWNER_STAFF: [
-      { label: "Booking van hanh", href: "/owner" },
-      { label: "Dat ho khach", href: "/owner/proxy-booking" }
+      { label: "Booking vận hành", href: "/owner" },
+      { label: "Đặt hộ khách", href: "/owner/proxy-booking" }
     ],
     STAFF: [
-      { label: "Quan ly noi dung", href: "/staff" },
-      { label: "Kiem soat nguoi dung", href: "/staff/moderation" }
+      { label: "Quản lý nội dung", href: "/staff" },
+      { label: "Kiểm soát người dùng", href: "/staff/moderation" }
     ],
     ADMIN: [
-      { label: "Tong quan", href: "/admin" },
-      { label: "Van hanh chu nha", href: "/owner" },
-      { label: "Noi dung & kiem duyet", href: "/staff" }
+      { label: "Tổng quan", href: "/admin" },
+      { label: "Vận hành chủ nhà", href: "/owner" },
+      { label: "Nội dung & kiểm duyệt", href: "/staff" }
     ]
   };
 
