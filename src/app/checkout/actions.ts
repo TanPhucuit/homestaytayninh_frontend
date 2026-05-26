@@ -14,6 +14,7 @@ function serviceItemsFromForm(formData: FormData) {
 export async function createCheckoutAction(formData: FormData) {
   const homestayId = String(formData.get("homestayId") ?? "");
   let bookingId: string | undefined;
+  let authRequired = false;
 
   try {
     const booking = await createBooking(
@@ -32,16 +33,25 @@ export async function createCheckoutAction(formData: FormData) {
     bookingId = booking.id;
   } catch (error) {
     if (error instanceof ApiClientError && (error.status === 401 || error.status === 403)) {
-      redirect(`/login?error=auth_required&next=${encodeURIComponent(`/checkout?homestayId=${homestayId}`)}`);
+      authRequired = true;
+    } else {
+      throw error;
     }
-    throw error;
   }
 
+  if (authRequired) {
+    redirect(`/login?error=auth_required&next=${encodeURIComponent(`/checkout?homestayId=${homestayId}`)}`);
+  }
+  if (!bookingId) {
+    throw new Error("Booking was not created.");
+  }
+
+  let paymentPending = false;
   try {
     await initiatePayment(bookingId, "CUSTOMER");
   } catch {
-    redirect(`/payment/result?bookingId=${bookingId}&payment=pending`);
+    paymentPending = true;
   }
 
-  redirect(`/payment/result?bookingId=${bookingId}`);
+  redirect(`/payment/result?bookingId=${bookingId}${paymentPending ? "&payment=pending" : ""}`);
 }
