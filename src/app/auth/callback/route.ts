@@ -6,6 +6,7 @@ type BackendLoginResponse = {
   sessionToken?: string;
   expiresAt?: string;
   redirectTo?: string;
+  role?: string;
   user?: { role?: string };
 };
 
@@ -54,8 +55,8 @@ export async function GET(request: NextRequest) {
     return redirectWithClearedOAuthCookies(request, `/login?error=backend_oauth${suffix}`);
   }
   const login = (await loginResponse.json()) as BackendLoginResponse;
-  const role = parseRole(login.user?.role);
-  if (!login.sessionToken || !role) return redirectWithClearedOAuthCookies(request, "/login?error=role_lookup");
+  const role = parseRole(login.user?.role ?? login.role) ?? "CUSTOMER";
+  if (!login.sessionToken) return redirectWithClearedOAuthCookies(request, "/login?error=role_lookup");
 
   const next = safeNext(request.cookies.get(OAUTH_NEXT_COOKIE_NAME)?.value);
   const target = next === "/" ? login.redirectTo || homeForRole(role) : next;
