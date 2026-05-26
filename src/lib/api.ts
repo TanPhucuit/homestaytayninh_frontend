@@ -1,4 +1,4 @@
-import { apiGet, withMockFallback } from "./api-client";
+import { apiGet, apiMutation, withMockFallback } from "./api-client";
 import { endpoints } from "./endpoints";
 import { bookingsForRole, createMockCheckoutPreview, findMockBooking, findMockHomestay, mockDataSource } from "./mock-data-source";
 import { Article, Booking, CheckoutPreview, DashboardSummary, Homestay, UserProfile, UserRole, ViolationReport } from "./types";
@@ -37,6 +37,18 @@ export async function getArticles(role: UserRole = "STAFF"): Promise<Article[]> 
 
 export async function getUsers(role: UserRole = "ADMIN"): Promise<UserProfile[]> {
   return withMockFallback(() => apiGet<UserProfile[]>(endpoints.admin.users, role), mockDataSource.users);
+}
+
+export async function createUser(input: { name: string; email: string; phone?: string; role: UserRole }, role: UserRole = "ADMIN"): Promise<UserProfile> {
+  return apiMutation<UserProfile>(endpoints.admin.users, "POST", input, role);
+}
+
+export async function assignUserRole(userId: string, nextRole: UserRole, role: UserRole = "ADMIN"): Promise<UserProfile> {
+  return apiMutation<UserProfile>(endpoints.admin.role(userId), "POST", { role: nextRole }, role);
+}
+
+export async function setUserBanned(userId: string, banned: boolean, role: UserRole = "ADMIN"): Promise<UserProfile> {
+  return apiMutation<UserProfile>(banned ? endpoints.admin.ban(userId) : endpoints.admin.unban(userId), "POST", undefined, role);
 }
 
 export async function getViolationReports(role: UserRole = "STAFF"): Promise<ViolationReport[]> {

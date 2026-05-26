@@ -35,10 +35,15 @@ export function normalizeRole(value?: string | null): UserRole {
 
 export async function getCurrentUser(): Promise<SessionUser> {
   if (AUTH_MODE === "supabase") {
-    const supabase = await createClient();
+    let supabase;
+    try {
+      supabase = await createClient();
+    } catch {
+      return roleUsers.CUSTOMER;
+    }
     const {
       data: { user }
-    } = await supabase.auth.getUser();
+    } = await supabase.auth.getUser().catch(() => ({ data: { user: null } }));
     if (!user) return roleUsers.CUSTOMER;
 
     const {

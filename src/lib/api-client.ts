@@ -44,10 +44,15 @@ async function authHeaders(role: UserRole): Promise<HeadersInit> {
     };
   }
 
-  const supabase = await createClient();
+  let supabase;
+  try {
+    supabase = await createClient();
+  } catch {
+    return {};
+  }
   const {
     data: { user }
-  } = await supabase.auth.getUser();
+  } = await supabase.auth.getUser().catch(() => ({ data: { user: null } }));
   if (!user) return {};
 
   const {
