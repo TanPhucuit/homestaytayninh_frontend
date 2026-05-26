@@ -73,4 +73,23 @@ test.describe("authenticated RBAC with real Supabase sessions", () => {
 
     await context.close();
   });
+
+  test("customer can move through the real checkout steps without losing selected room state", async ({ browser }) => {
+    const context = await withRealSession(browser, "CUSTOMER");
+    const page = await context.newPage();
+
+    await page.goto(`${appUrl}/homestays/hs-ba-den`);
+    await page.getByRole("link", { name: /Chọn phòng|Tiếp tục đặt phòng/i }).first().click();
+    await expect(page).toHaveURL(/roomId=/);
+    await page.getByPlaceholder("Nguyễn Văn A").fill("Khách E2E");
+    await page.getByPlaceholder("0901234567").fill("0901234567");
+    await page.getByRole("button", { name: /Tiếp tục chọn dịch vụ/i }).click();
+    await expect(page).toHaveURL(/\/checkout\/services/);
+    await page.locator('input[name^="service:"]').first().fill("1");
+    await page.getByRole("button", { name: /Tiếp tục xác nhận/i }).click();
+    await expect(page).toHaveURL(/\/checkout\/confirm/);
+    await expect(page.getByText(/Khách E2E/)).toBeVisible();
+
+    await context.close();
+  });
 });

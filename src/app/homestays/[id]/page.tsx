@@ -62,7 +62,7 @@ export default async function HomestayDetailPage({ params }: { params: Promise<{
                   <p className="mt-2 text-sm leading-6 text-[#75675f]">{room.roomType} · tối đa {room.capacity} khách · {room.totalUnits} phòng/căn</p>
                   <div className="mt-5 flex items-end justify-between gap-4">
                     <p className="font-bold text-[#9a4029]">{money(room.pricePerNight)}</p>
-                    <Link className="btn-secondary" href={`/checkout?homestayId=${homestay.id}`}>Chọn phòng</Link>
+                    <Link className="btn-secondary" href={`/checkout?homestayId=${homestay.id}&roomId=${room.id}`}>Chọn phòng</Link>
                   </div>
                 </article>
               ))}
@@ -92,7 +92,7 @@ export default async function HomestayDetailPage({ params }: { params: Promise<{
             <div className="rounded-2xl bg-[#fdf9f4] p-3"><p className="font-bold text-[#466550]">{homestay.capacity}</p><p className="text-xs text-[#75675f]">Khách</p></div>
             <div className="rounded-2xl bg-[#fdf9f4] p-3"><p className="font-bold text-[#466550]">{homestay.rooms.length}</p><p className="text-xs text-[#75675f]">Phòng</p></div>
           </div>
-          {mainRoom && <Link className="btn-primary mt-6 w-full" href={`/checkout?homestayId=${homestay.id}`}>Tiếp tục đặt phòng</Link>}
+          {mainRoom && <Link className="btn-primary mt-6 w-full" href={`/checkout?homestayId=${homestay.id}&roomId=${mainRoom.id}`}>Tiếp tục đặt phòng</Link>}
           <p className="mt-4 text-center text-xs text-[#75675f]">Bạn vẫn chưa bị trừ tiền</p>
         </aside>
       </section>

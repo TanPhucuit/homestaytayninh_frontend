@@ -120,6 +120,7 @@ export function AdminPortal({ dashboard, users, currentUser }: { dashboard: Dash
                   <th className="px-3 py-2">Tên</th>
                   <th className="px-3 py-2">Email</th>
                   <th className="px-3 py-2">Role</th>
+                  <th className="px-3 py-2">Auth</th>
                   <th className="px-3 py-2">Trạng thái</th>
                   <th className="px-3 py-2">Phân quyền</th>
                   <th className="px-3 py-2">Hành động</th>
@@ -131,6 +132,7 @@ export function AdminPortal({ dashboard, users, currentUser }: { dashboard: Dash
                     <td className="rounded-l-xl px-3 py-3 font-semibold">{user.name}</td>
                     <td className="px-3 py-3">{user.email}</td>
                     <td className="px-3 py-3">{user.role}</td>
+                    <td className="px-3 py-3">{user.authLinked ? "Đã liên kết" : "Chờ Google login"}</td>
                     <td className="px-3 py-3">{user.banned ? "Bị khóa" : "Hoạt động"}</td>
                     <td className="px-3 py-3">
                       <form action={assignRoleAction} className="flex gap-2">

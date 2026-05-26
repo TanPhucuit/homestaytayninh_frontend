@@ -44,7 +44,7 @@ export default async function OwnerProxyBookingPage() {
                 {homestays.flatMap((homestay) => homestay.rooms.map((room) => <option key={room.id} value={room.id}>{homestay.name} · {room.name}</option>))}
               </select>
             </label>
-            <input className="field" name="customerId" placeholder="Customer ID" defaultValue="u-customer" />
+            <input className="field" name="customerId" placeholder="Mã hồ sơ khách đã có (có thể bỏ trống)" />
             <input className="field" name="guestName" placeholder="Tên khách" required />
             <input className="field" name="guestPhone" placeholder="Số điện thoại" required pattern="^[0-9+ ]{8,15}$" />
             <input className="field" name="guestCount" type="number" min="1" defaultValue="2" required />

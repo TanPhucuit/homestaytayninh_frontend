@@ -1,12 +1,32 @@
 import Link from "next/link";
 import { AppTopBar, Stepper } from "@/components/customer-ui";
 import { getCheckoutPreview, money } from "@/lib/api";
+import { createCheckoutAction } from "../actions";
 
 export const dynamic = "force-dynamic";
 
-export default async function CheckoutConfirmPage({ searchParams }: { searchParams: Promise<{ homestayId?: string }> }) {
+type CheckoutConfirmParams = {
+  homestayId?: string;
+  roomId?: string;
+  guestName?: string;
+  guestPhone?: string;
+  guestCount?: string;
+  checkIn?: string;
+  checkOut?: string;
+  [key: string]: string | undefined;
+};
+
+function serviceItemsFromParams(params: CheckoutConfirmParams) {
+  return Object.entries(params)
+    .filter(([key]) => key.startsWith("service:"))
+    .map(([key, value]) => ({ serviceId: key.replace("service:", ""), quantity: Number(value ?? 0) }))
+    .filter((item) => Number.isInteger(item.quantity) && item.quantity > 0);
+}
+
+export default async function CheckoutConfirmPage({ searchParams }: { searchParams: Promise<CheckoutConfirmParams> }) {
   const params = await searchParams;
-  const preview = await getCheckoutPreview(params.homestayId);
+  const preview = await getCheckoutPreview({ ...params, serviceItems: serviceItemsFromParams(params) });
+  const preservedEntries = Object.entries(params).filter(([, value]) => value);
 
   return (
     <main className="min-h-screen text-[#1c1c19]">
@@ -23,7 +43,8 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
           </div>
         </div>
 
-        <section className="grid gap-6 lg:grid-cols-[1fr_390px]">
+        <form action={createCheckoutAction} className="grid gap-6 lg:grid-cols-[1fr_390px]">
+          {preservedEntries.map(([key, value]) => <input key={key} type="hidden" name={key} value={value} />)}
           <div className="space-y-6">
             <section className="card p-6 md:p-8">
               <p className="eyebrow">Booking Review</p>
@@ -32,7 +53,7 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
                 <div className="rounded-3xl bg-[#fdf9f4] p-5">
                   <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#466550]">Phòng</p>
                   <h3 className="mt-2 font-heading text-2xl text-[#7b2914]">{preview.room.name}</h3>
-                  <p className="mt-2 text-sm text-[#75675f]">{preview.nights} đêm · {preview.guestCount} khách</p>
+                  <p className="mt-2 text-sm text-[#75675f]">{preview.nights} đêm · {preview.guestCount} khách · {params.guestName}</p>
                   <p className="mt-4 font-bold text-[#9a4029]">{money(preview.roomTotal)}</p>
                 </div>
                 <div className="rounded-3xl bg-[#fdf9f4] p-5">
@@ -43,6 +64,19 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
                 </div>
               </div>
             </section>
+            {preview.selectedServices.length > 0 && (
+              <section className="card p-6 md:p-8">
+                <h2 className="font-heading text-3xl text-[#9a4029]">Dịch vụ đã chọn</h2>
+                <div className="mt-5 space-y-3">
+                  {preview.selectedServices.map((service) => (
+                    <div className="flex justify-between gap-4 rounded-2xl bg-[#fdf9f4] p-4 text-sm" key={service.id}>
+                      <span>{service.name} · SL {service.quantity}</span>
+                      <strong>{money(service.total)}</strong>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
 
             <section className="card p-6 md:p-8">
               <h2 className="font-heading text-3xl text-[#9a4029]">Chính sách & Điều khoản</h2>
@@ -71,10 +105,10 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
                 <p className="mt-1 text-xs text-[#75675f]">Đã bao gồm thuế, phí</p>
               </div>
             </div>
-            <Link className="btn-primary mt-6 w-full" href={`/checkout?homestayId=${preview.homestay.id}`}>Tạo booking thật</Link>
-            <Link className="btn-secondary mt-3 w-full" href={`/checkout/services?homestayId=${preview.homestay.id}`}>Quay lại</Link>
+            <button className="btn-primary mt-6 w-full" type="submit">Tạo booking và thanh toán</button>
+            <Link className="btn-secondary mt-3 w-full" href={`/checkout/services?homestayId=${preview.homestay.id}&roomId=${preview.room.id}&guestName=${encodeURIComponent(params.guestName ?? "")}&guestPhone=${encodeURIComponent(params.guestPhone ?? "")}&guestCount=${encodeURIComponent(params.guestCount ?? "")}&checkIn=${encodeURIComponent(params.checkIn ?? "")}&checkOut=${encodeURIComponent(params.checkOut ?? "")}`}>Quay lại</Link>
           </aside>
-        </section>
+        </form>
       </div>
     </main>
   );

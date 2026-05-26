@@ -116,6 +116,7 @@ export function navForRole(role: UserRole): NavItem[] {
   const byRole: Record<UserRole, NavItem[]> = {
     CUSTOMER: [
       { label: "Khám phá", href: "/homestays" },
+      { label: "Cẩm nang", href: "/articles" },
       { label: "Chuyến đi của tôi", href: "/bookings" }
     ],
     OWNER: [

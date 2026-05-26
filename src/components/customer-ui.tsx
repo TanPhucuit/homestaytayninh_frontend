@@ -23,7 +23,7 @@ export async function AppTopBar() {
   const user = await getCurrentUser();
   const navItems = user.authenticated && !user.authorizationError
     ? navForRole(user.role)
-    : [{ label: "Khám phá", href: "/homestays" }];
+    : [{ label: "Khám phá", href: "/homestays" }, { label: "Cẩm nang", href: "/articles" }];
 
   return (
     <header className="sticky top-0 z-30 border-b border-[#dcc0ba] bg-[#fdf9f4]/90 backdrop-blur-xl">

@@ -3,7 +3,7 @@ import { AccessDenied } from "@/components/access-denied";
 import { BookingTotals, PageShell, PaymentBadge, ServicesDisplay, StatusBadge } from "@/components/customer-ui";
 import { getBooking, getHomestay, money } from "@/lib/api";
 import { getCurrentUser } from "@/lib/rbac";
-import { addServiceAction, retryPaymentAction } from "./actions";
+import { addServiceAction, markServiceServedAction, retryPaymentAction } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +19,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
   const { id } = await params;
   const booking = await getBooking(id, user.role);
   const homestay = await getHomestay(booking.homestayId, "CUSTOMER");
-  const canAddService = booking.status === "IN_STAY";
+  const canAddService = booking.status === "IN_STAY" && (user.role === "OWNER_STAFF" || user.role === "ADMIN");
   const canRetryPayment = booking.payment?.status === "INITIATED" || booking.payment?.status === "PENDING" || booking.payment?.status === "FAILED";
 
   return (
@@ -43,6 +43,22 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
           </section>
 
           <ServicesDisplay includedServices={booking.includedServices ?? homestay.includedServices} addOnServices={booking.services} />
+
+          {(user.role === "OWNER_STAFF" || user.role === "ADMIN") && booking.services.some((service) => service.status === "PREPARING") && (
+            <section className="card p-6">
+              <h2 className="font-heading text-2xl text-[#9a4029]">Xác nhận dịch vụ đã phục vụ</h2>
+              <div className="mt-4 space-y-3">
+                {booking.services.filter((service) => service.status === "PREPARING").map((service) => (
+                  <form action={markServiceServedAction} className="flex flex-col justify-between gap-3 rounded-2xl bg-[#fdf9f4] p-4 sm:flex-row sm:items-center" key={service.id}>
+                    <input type="hidden" name="bookingId" value={booking.id} />
+                    <input type="hidden" name="serviceOrderId" value={service.id} />
+                    <span>{service.name} · SL {service.quantity}</span>
+                    <button className="btn-secondary" type="submit">Đánh dấu đã phục vụ</button>
+                  </form>
+                ))}
+              </div>
+            </section>
+          )}
 
           {canAddService && (
             <form action={addServiceAction} className="card p-6">

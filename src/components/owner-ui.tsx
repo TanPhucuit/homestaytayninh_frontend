@@ -1,6 +1,7 @@
 import { BookingCard, PageShell, StatusBadge } from "./customer-ui";
 import { Booking, Homestay } from "@/lib/types";
 import { money } from "@/lib/api";
+import { createImageAction, createRoomRateAction, updateHomestayAction, updateRoomAction, updateServiceAction } from "@/app/owner/actions";
 
 export function OwnerShell({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
   return <PageShell eyebrow="Owner Portal" title={title} description={description}>{children}</PageShell>;
@@ -80,13 +81,53 @@ export function OwnerInventory({ homestays }: { homestays: Homestay[] }) {
             </div>
             <div className="h-28 w-full rounded-2xl bg-cover bg-center md:w-44" style={{ backgroundImage: `url(${homestay.imageUrl})` }} aria-label={homestay.name} />
           </div>
+          <form action={updateHomestayAction} className="mt-5 grid gap-3 rounded-2xl bg-[#fdf9f4] p-4 md:grid-cols-2">
+            <input type="hidden" name="homestayId" value={homestay.id} />
+            <input className="field" name="name" defaultValue={homestay.name} required />
+            <select className="field" name="type" defaultValue={homestay.type}>
+              <option>Phòng</option>
+              <option>Lều</option>
+              <option>Nhà nguyên căn</option>
+            </select>
+            <input className="field" name="location" defaultValue={homestay.location} required />
+            <input className="field" name="priceFrom" type="number" min="0" defaultValue={homestay.priceFrom} required />
+            <input className="field" name="capacity" type="number" min="1" defaultValue={homestay.capacity} required />
+            <input className="field" name="imageUrl" type="url" defaultValue={homestay.imageUrl} required />
+            <textarea className="field min-h-20 md:col-span-2" name="description" defaultValue={homestay.description} required />
+            <button className="btn-primary justify-self-start" type="submit">Lưu homestay</button>
+          </form>
+          <form action={createImageAction} className="mt-4 grid gap-3 rounded-2xl bg-white p-4 md:grid-cols-[1fr_1fr_120px_auto]">
+            <input type="hidden" name="homestayId" value={homestay.id} />
+            <input className="field" name="url" type="url" placeholder="URL hình ảnh mới" required />
+            <input className="field" name="alt" placeholder="Mô tả ảnh" />
+            <input className="field" name="position" type="number" min="0" defaultValue="1" />
+            <button className="btn-secondary" type="submit">Thêm ảnh</button>
+          </form>
           <div className="mt-5 grid gap-4 lg:grid-cols-2">
             <div>
               <h3 className="font-bold text-[#466550]">Phòng</h3>
               <div className="mt-2 space-y-2">
                 {homestay.rooms.map((room) => (
-                  <div className="rounded-xl bg-[#fdf9f4] px-4 py-3 text-sm" key={room.id}>
-                    <strong>{room.name}</strong> · {money(room.pricePerNight)} · {room.capacity} khách · {room.active ? "Đang bán" : "Tạm ẩn"}
+                  <div className="rounded-xl bg-[#fdf9f4] p-4 text-sm" key={room.id}>
+                    <form action={updateRoomAction} className="grid gap-2 md:grid-cols-2">
+                      <input type="hidden" name="homestayId" value={homestay.id} />
+                      <input type="hidden" name="roomId" value={room.id} />
+                      <input className="field" name="name" defaultValue={room.name} required />
+                      <input className="field" name="roomType" defaultValue={room.roomType} required />
+                      <input className="field" name="pricePerNight" type="number" min="0" defaultValue={room.pricePerNight} required />
+                      <input className="field" name="capacity" type="number" min="1" defaultValue={room.capacity} required />
+                      <input className="field" name="totalUnits" type="number" min="1" defaultValue={room.totalUnits} required />
+                      <label className="flex items-center gap-2 text-sm"><input name="active" type="checkbox" defaultChecked={room.active} /> Đang bán</label>
+                      <button className="btn-secondary justify-self-start" type="submit">Lưu phòng</button>
+                    </form>
+                    <form action={createRoomRateAction} className="mt-3 grid gap-2 md:grid-cols-[1fr_1fr_1fr_auto]">
+                      <input type="hidden" name="homestayId" value={homestay.id} />
+                      <input type="hidden" name="roomId" value={room.id} />
+                      <input className="field" name="startDate" type="date" required />
+                      <input className="field" name="endDate" type="date" required />
+                      <input className="field" name="pricePerNight" type="number" min="0" placeholder="Giá theo ngày" required />
+                      <button className="btn-secondary" type="submit">Thêm giá</button>
+                    </form>
                   </div>
                 ))}
               </div>
@@ -95,9 +136,16 @@ export function OwnerInventory({ homestays }: { homestays: Homestay[] }) {
               <h3 className="font-bold text-[#466550]">Dịch vụ</h3>
               <div className="mt-2 space-y-2">
                 {[...homestay.includedServices, ...homestay.services].map((service) => (
-                  <div className="rounded-xl bg-[#fdf9f4] px-4 py-3 text-sm" key={service.id}>
-                    <strong>{service.name}</strong> · {service.included ? "Bao gồm" : money(service.unitPrice)}
-                  </div>
+                  <form action={updateServiceAction} className="grid gap-2 rounded-xl bg-[#fdf9f4] p-4 text-sm" key={service.id}>
+                    <input type="hidden" name="homestayId" value={homestay.id} />
+                    <input type="hidden" name="serviceId" value={service.id} />
+                    <input className="field" name="name" defaultValue={service.name} required />
+                    <textarea className="field min-h-16" name="description" defaultValue={service.description ?? ""} />
+                    <input className="field" name="unitPrice" type="number" min="0" defaultValue={service.unitPrice} required />
+                    <label className="flex items-center gap-2"><input name="included" type="checkbox" defaultChecked={service.included} /> Bao gồm</label>
+                    <label className="flex items-center gap-2"><input name="active" type="checkbox" defaultChecked={service.active} /> Đang bán</label>
+                    <button className="btn-secondary justify-self-start" type="submit">Lưu dịch vụ</button>
+                  </form>
                 ))}
               </div>
             </div>

@@ -40,7 +40,7 @@ function copyFor(status: PaymentStatus) {
   };
 }
 
-export default async function PaymentResultPage({ searchParams }: { searchParams: Promise<{ status?: string; bookingId?: string }> }) {
+export default async function PaymentResultPage({ searchParams }: { searchParams: Promise<{ status?: string; bookingId?: string; paymentError?: string }> }) {
   const params = await searchParams;
   const user = params.bookingId ? await getCurrentUser() : null;
   if (params.bookingId && !user?.authenticated) {
@@ -63,6 +63,11 @@ export default async function PaymentResultPage({ searchParams }: { searchParams
         <p className="eyebrow mt-8">ApiPay</p>
         <h1 className="mt-3 font-heading text-4xl text-[#9a4029] md:text-5xl">{view.title}</h1>
         <p className="mx-auto mt-4 max-w-lg text-sm leading-6 text-[#75675f]">{view.description}</p>
+        {params.paymentError && (
+          <div className="mx-auto mt-5 max-w-md rounded-3xl border border-[#ffdad6] bg-[#fff8f7] p-5 text-sm font-semibold text-[#93000a]">
+            Không tạo được yêu cầu thanh toán: {params.paymentError}
+          </div>
+        )}
         <div className="mt-5 flex justify-center">
           <PaymentBadge status={status} />
         </div>
@@ -70,6 +75,11 @@ export default async function PaymentResultPage({ searchParams }: { searchParams
           <div className="mx-auto mt-6 max-w-md rounded-3xl bg-[#fdf9f4] p-5 text-sm text-[#56423d]">
             <div className="flex justify-between gap-4"><span>Mã payment</span><strong>{payment.id}</strong></div>
             <div className="mt-2 flex justify-between gap-4"><span>Số tiền</span><strong>{money(payment.amount)}</strong></div>
+            {payment.provider === "mock-apipay" && (
+              <p className="mt-3 rounded-2xl bg-[#fff3d6] p-3 text-left text-xs font-semibold text-[#7a4a12]">
+                ApiPay thật chưa được cấu hình. Trạng thái này chỉ là adapter tạm và không xác nhận thanh toán provider end-to-end.
+              </p>
+            )}
           </div>
         )}
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">

@@ -46,12 +46,12 @@ export async function createCheckoutAction(formData: FormData) {
     throw new Error("Booking was not created.");
   }
 
-  let paymentPending = false;
   try {
     await initiatePayment(bookingId, "CUSTOMER");
-  } catch {
-    paymentPending = true;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Không tạo được yêu cầu thanh toán.";
+    redirect(`/payment/result?bookingId=${bookingId}&paymentError=${encodeURIComponent(message)}`);
   }
 
-  redirect(`/payment/result?bookingId=${bookingId}${paymentPending ? "&payment=pending" : ""}`);
+  redirect(`/payment/result?bookingId=${bookingId}`);
 }

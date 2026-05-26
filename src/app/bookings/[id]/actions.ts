@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { addBookingService, initiatePayment } from "@/lib/api";
+import { addBookingService, initiatePayment, setBookingServiceStatus } from "@/lib/api";
 import { ApiClientError } from "@/lib/api-client";
 
 function redirectToLogin(bookingId: string): never {
@@ -15,11 +15,19 @@ export async function addServiceAction(formData: FormData) {
   const quantity = Math.max(1, Number(formData.get("quantity") ?? 1));
   if (!bookingId || !serviceId) return;
   try {
-    await addBookingService(bookingId, serviceId, quantity, "CUSTOMER");
+    await addBookingService(bookingId, serviceId, quantity, "OWNER_STAFF");
   } catch (error) {
     if (error instanceof ApiClientError && (error.status === 401 || error.status === 403)) redirectToLogin(bookingId);
     throw error;
   }
+  revalidatePath(`/bookings/${bookingId}`);
+}
+
+export async function markServiceServedAction(formData: FormData) {
+  const bookingId = String(formData.get("bookingId") ?? "");
+  const serviceOrderId = String(formData.get("serviceOrderId") ?? "");
+  if (!bookingId || !serviceOrderId) return;
+  await setBookingServiceStatus(bookingId, serviceOrderId, "SERVED", "OWNER_STAFF");
   revalidatePath(`/bookings/${bookingId}`);
 }
 
