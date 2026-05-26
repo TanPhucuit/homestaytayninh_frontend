@@ -22,7 +22,7 @@ export function PageShell({ eyebrow, title, description, children }: { eyebrow: 
   return (
     <main className="min-h-screen bg-[#fdf9f4] px-4 py-8 text-[#2b211d] md:px-8">
       <div className="mx-auto max-w-7xl">
-        <header className="mb-8 flex flex-col justify-between gap-4 rounded-2xl bg-white/80 p-6 shadow-sm ring-1 ring-[#eadfd3] md:flex-row md:items-end">
+        <header className="mb-8 flex flex-col justify-between gap-4 rounded-2xl bg-white/85 p-6 shadow-sm ring-1 ring-[#eadfd3] md:flex-row md:items-end">
           <div>
             <p className="eyebrow">{eyebrow}</p>
             <h1 className="mt-2 text-4xl text-[#9a4029] md:text-5xl">{title}</h1>
@@ -32,6 +32,7 @@ export function PageShell({ eyebrow, title, description, children }: { eyebrow: 
             <Link className="btn-secondary" href="/">Trang chủ</Link>
             <Link className="btn-secondary" href="/homestays">Tìm homestay</Link>
             <Link className="btn-secondary" href="/bookings">Booking của tôi</Link>
+            <Link className="btn-primary" href="/login">Đăng nhập</Link>
           </nav>
         </header>
         {children}
@@ -119,7 +120,7 @@ export function BookingTotals({ booking }: { booking: Booking }) {
 
   return (
     <section className="card p-6">
-      <h2 className="text-2xl text-[#9a4029]">Order Summary</h2>
+      <h2 className="text-2xl text-[#9a4029]">Tóm tắt đơn hàng</h2>
       <div className="mt-4 space-y-3">
         {rows.map(([label, value], index) => (
           <div className={`flex justify-between gap-4 ${index === rows.length - 1 ? "border-t border-[#eadfd3] pt-3 text-lg font-bold text-[#466550]" : "text-sm"}`} key={label}>
@@ -138,7 +139,7 @@ export function ServicesDisplay({ includedServices, addOnServices }: { includedS
       <h2 className="text-2xl text-[#9a4029]">Dịch vụ trong booking</h2>
       <div className="mt-5 grid gap-5 lg:grid-cols-2">
         <div>
-          <h3 className="text-lg font-bold text-[#466550]">Included Services</h3>
+          <h3 className="text-lg font-bold text-[#466550]">Dịch vụ đã bao gồm</h3>
           <div className="mt-3 space-y-2">
             {includedServices.length ? includedServices.map((service) => (
               <div className="rounded-xl bg-[#e8f0eb] px-4 py-3 text-sm" key={service.id}>
@@ -149,7 +150,7 @@ export function ServicesDisplay({ includedServices, addOnServices }: { includedS
           </div>
         </div>
         <div>
-          <h3 className="text-lg font-bold text-[#466550]">Add-on Services</h3>
+          <h3 className="text-lg font-bold text-[#466550]">Dịch vụ đặt thêm</h3>
           <div className="mt-3 overflow-hidden rounded-xl border border-[#eadfd3]">
             {addOnServices.length ? addOnServices.map((service) => (
               <div className="grid grid-cols-2 gap-2 border-b border-[#eadfd3] bg-white px-4 py-3 text-sm last:border-b-0 md:grid-cols-[1fr_70px_120px_120px]" key={service.id}>
