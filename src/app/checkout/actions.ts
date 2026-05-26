@@ -13,6 +13,8 @@ function serviceItemsFromForm(formData: FormData) {
 
 export async function createCheckoutAction(formData: FormData) {
   const homestayId = String(formData.get("homestayId") ?? "");
+  let bookingId: string | undefined;
+
   try {
     const booking = await createBooking(
       {
@@ -27,12 +29,19 @@ export async function createCheckoutAction(formData: FormData) {
       },
       "CUSTOMER"
     );
-    await initiatePayment(booking.id, "CUSTOMER");
-    redirect(`/payment/result?bookingId=${booking.id}`);
+    bookingId = booking.id;
   } catch (error) {
     if (error instanceof ApiClientError && (error.status === 401 || error.status === 403)) {
       redirect(`/login?error=auth_required&next=${encodeURIComponent(`/checkout?homestayId=${homestayId}`)}`);
     }
     throw error;
   }
+
+  try {
+    await initiatePayment(bookingId, "CUSTOMER");
+  } catch {
+    redirect(`/payment/result?bookingId=${bookingId}&payment=pending`);
+  }
+
+  redirect(`/payment/result?bookingId=${bookingId}`);
 }
