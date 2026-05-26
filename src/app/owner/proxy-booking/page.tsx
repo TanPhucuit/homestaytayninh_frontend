@@ -1,8 +1,7 @@
-import { StitchFrame } from "@/components/stitch-frame";
+import { AccessDenied } from "@/components/access-denied";
 import { OwnerShell } from "@/components/owner-ui";
 import { getHomestays } from "@/lib/api";
 import { canAccess, getCurrentUser } from "@/lib/rbac";
-import { stitchPages } from "@/lib/stitch-pages";
 import { createProxyBookingAction } from "../actions";
 
 export const dynamic = "force-dynamic";
@@ -18,7 +17,7 @@ export default async function OwnerProxyBookingPage() {
   const allowed = ["OWNER_STAFF", "ADMIN"] as const;
 
   if (!canAccess(user.role, [...allowed])) {
-    return <StitchFrame src={stitchPages.accessDenied} title="Không có quyền truy cập" />;
+    return <AccessDenied description="Đặt hộ khách hàng chỉ dành cho Owner Staff hoặc Admin." />;
   }
 
   const homestays = await getHomestays("CUSTOMER");

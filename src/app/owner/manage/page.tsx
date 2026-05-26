@@ -1,8 +1,7 @@
-import { StitchFrame } from "@/components/stitch-frame";
+import { AccessDenied } from "@/components/access-denied";
 import { OwnerInventory, OwnerShell } from "@/components/owner-ui";
 import { getOwnerHomestays } from "@/lib/api";
 import { canAccess, getCurrentUser } from "@/lib/rbac";
-import { stitchPages } from "@/lib/stitch-pages";
 import { createHomestayAction, createRoomAction, createServiceAction } from "../actions";
 
 export const dynamic = "force-dynamic";
@@ -12,7 +11,7 @@ export default async function OwnerManagePage() {
   const allowed = ["OWNER", "ADMIN"] as const;
 
   if (!canAccess(user.role, [...allowed])) {
-    return <StitchFrame src={stitchPages.accessDenied} title="Không có quyền truy cập" />;
+    return <AccessDenied description="Trang quản lý homestay chỉ dành cho Owner hoặc Admin." />;
   }
 
   const homestays = await getOwnerHomestays(user.role === "ADMIN" ? "ADMIN" : "OWNER");

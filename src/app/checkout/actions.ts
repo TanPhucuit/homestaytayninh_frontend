@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createBooking, initiatePayment } from "@/lib/api";
+import { ApiClientError } from "@/lib/api-client";
 
 function serviceItemsFromForm(formData: FormData) {
   return Array.from(formData.entries())
@@ -11,19 +12,27 @@ function serviceItemsFromForm(formData: FormData) {
 }
 
 export async function createCheckoutAction(formData: FormData) {
-  const booking = await createBooking(
-    {
-      homestayId: String(formData.get("homestayId") ?? ""),
-      roomId: String(formData.get("roomId") ?? ""),
-      guestName: String(formData.get("guestName") ?? "").trim(),
-      guestPhone: String(formData.get("guestPhone") ?? "").trim(),
-      guestCount: Math.max(1, Number(formData.get("guestCount") ?? 1)),
-      checkIn: String(formData.get("checkIn") ?? ""),
-      checkOut: String(formData.get("checkOut") ?? ""),
-      serviceItems: serviceItemsFromForm(formData)
-    },
-    "CUSTOMER"
-  );
-  await initiatePayment(booking.id, "CUSTOMER");
-  redirect(`/payment/result?bookingId=${booking.id}`);
+  const homestayId = String(formData.get("homestayId") ?? "");
+  try {
+    const booking = await createBooking(
+      {
+        homestayId,
+        roomId: String(formData.get("roomId") ?? ""),
+        guestName: String(formData.get("guestName") ?? "").trim(),
+        guestPhone: String(formData.get("guestPhone") ?? "").trim(),
+        guestCount: Math.max(1, Number(formData.get("guestCount") ?? 1)),
+        checkIn: String(formData.get("checkIn") ?? ""),
+        checkOut: String(formData.get("checkOut") ?? ""),
+        serviceItems: serviceItemsFromForm(formData)
+      },
+      "CUSTOMER"
+    );
+    await initiatePayment(booking.id, "CUSTOMER");
+    redirect(`/payment/result?bookingId=${booking.id}`);
+  } catch (error) {
+    if (error instanceof ApiClientError && (error.status === 401 || error.status === 403)) {
+      redirect(`/login?error=auth_required&next=${encodeURIComponent(`/checkout?homestayId=${homestayId}`)}`);
+    }
+    throw error;
+  }
 }

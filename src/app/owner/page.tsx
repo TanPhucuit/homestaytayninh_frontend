@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { canAccess, getCurrentUser } from "@/lib/rbac";
-import { stitchPages } from "@/lib/stitch-pages";
-import { StitchFrame } from "@/components/stitch-frame";
+import { AccessDenied } from "@/components/access-denied";
 import { BookingListPreview, OwnerBookingOps, OwnerShell, OwnerStats } from "@/components/owner-ui";
 import { getHomestays, getOwnerBookings, getOwnerHomestays } from "@/lib/api";
 import { updateOwnerBookingStatusAction } from "./actions";
@@ -13,7 +12,7 @@ export default async function OwnerPage() {
   const allowed = ["OWNER", "OWNER_STAFF", "ADMIN"] as const;
 
   if (!canAccess(user.role, [...allowed])) {
-    return <StitchFrame src={stitchPages.accessDenied} title="Không có quyền truy cập" />;
+    return <AccessDenied description="Owner Portal chỉ dành cho Owner, Owner Staff hoặc Admin." />;
   }
 
   const role = user.role === "ADMIN" ? "OWNER_STAFF" : user.role;

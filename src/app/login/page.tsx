@@ -3,14 +3,16 @@ import Link from "next/link";
 function errorMessage(error?: string) {
   if (error === "supabase_env") return "Chưa cấu hình Supabase Auth public URL/key trên Vercel. Đây là cấu hình đăng nhập Google, không phải database secret.";
   if (error === "provider_disabled") return "Google provider chưa được bật trong Supabase Auth. Vào Supabase Dashboard > Authentication > Providers > Google để bật và nhập Client ID/Secret.";
+  if (error === "auth_required") return "Bạn cần đăng nhập trước khi thực hiện thao tác này.";
   if (error === "oauth") return "Không tạo được phiên đăng nhập Google. Kiểm tra Google provider và Redirect URL trong Supabase.";
   if (error === "callback") return "Google callback không hợp lệ hoặc session không được tạo.";
   return "";
 }
 
-export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string; next?: string }> }) {
   const params = await searchParams;
   const message = errorMessage(params.error);
+  const next = typeof params.next === "string" && params.next.startsWith("/") && !params.next.startsWith("//") ? params.next : "/homestays";
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#fdf9f4] px-4 py-10 text-[#2b211d]">
@@ -25,7 +27,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
             {message}
           </div>
         )}
-        <a className="btn-primary mt-6 w-full" href="/auth/login/google?next=%2Fhomestays">
+        <a className="btn-primary mt-6 w-full" href={`/auth/login/google?next=${encodeURIComponent(next)}`}>
           Đăng nhập với Google
         </a>
         <Link className="btn-secondary mt-3 w-full" href="/">
