@@ -29,7 +29,7 @@ export default async function OwnerPage() {
       </div>
       <OwnerStats homestays={homestays} bookings={bookings} />
       <section className="mt-8">
-        <h2 className="mb-4 text-3xl text-[#9a4029]">Booking cần xử lý</h2>
+        <h2 className="mb-4 font-heading text-3xl text-[#9a4029]">Booking cần xử lý</h2>
         {user.role === "OWNER" ? (
           <BookingListPreview bookings={bookings} homestays={homestays} />
         ) : (

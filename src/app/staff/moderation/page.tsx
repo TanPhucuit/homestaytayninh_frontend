@@ -11,7 +11,7 @@ export default async function StaffModerationPage() {
 
   if (!canAccess(user.role, [...allowed])) {
     return (
-      <main className="min-h-screen bg-[#fdf9f4] px-4 py-10">
+      <main className="min-h-screen px-4 py-10">
         <div className="mx-auto max-w-3xl">
           <EmptyState title="Không có quyền truy cập" description="Trang kiểm soát người dùng chỉ dành cho Staff hoặc Admin." actionHref="/login" actionLabel="Đăng nhập đúng vai trò" />
         </div>

@@ -22,12 +22,12 @@ export function OwnerStats({ homestays, bookings }: { homestays: Homestay[]; boo
       {stats.map(([label, value]) => (
         <div className="card p-5" key={label}>
           <p className="text-sm font-semibold text-[#466550]">{label}</p>
-          <p className="mt-2 text-3xl font-bold text-[#9a4029]">{value}</p>
+          <p className="mt-2 font-heading text-3xl font-bold text-[#9a4029]">{value}</p>
         </div>
       ))}
       <div className="card p-5 md:col-span-4">
         <p className="text-sm font-semibold text-[#466550]">Doanh thu đã thanh toán</p>
-        <p className="mt-2 text-3xl font-bold text-[#9a4029]">{money(paidRevenue)}</p>
+        <p className="mt-2 font-heading text-3xl font-bold text-[#9a4029]">{money(paidRevenue)}</p>
       </div>
     </section>
   );
@@ -48,7 +48,7 @@ export function OwnerBookingOps({ bookings, homestays, action }: { bookings: Boo
           <div className="flex flex-col justify-between gap-3 lg:flex-row lg:items-start">
             <div>
               <StatusBadge status={booking.status} />
-              <h3 className="mt-3 text-2xl text-[#9a4029]">{homestayById.get(booking.homestayId)?.name ?? booking.homestayId}</h3>
+              <h3 className="mt-3 font-heading text-2xl text-[#9a4029]">{homestayById.get(booking.homestayId)?.name ?? booking.homestayId}</h3>
               <p className="mt-1 text-sm text-[#75675f]">{booking.guestName} · {booking.checkIn} → {booking.checkOut} · {money(booking.grandTotal)}</p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -75,7 +75,7 @@ export function OwnerInventory({ homestays }: { homestays: Homestay[] }) {
           <div className="flex flex-col justify-between gap-3 md:flex-row">
             <div>
               <p className="eyebrow">{homestay.type}</p>
-              <h2 className="mt-1 text-3xl text-[#9a4029]">{homestay.name}</h2>
+              <h2 className="mt-1 font-heading text-3xl text-[#9a4029]">{homestay.name}</h2>
               <p className="mt-2 text-sm text-[#75675f]">{homestay.location} · {money(homestay.priceFrom)} · {homestay.capacity} khách</p>
             </div>
             <div className="h-28 w-full rounded-2xl bg-cover bg-center md:w-44" style={{ backgroundImage: `url(${homestay.imageUrl})` }} aria-label={homestay.name} />

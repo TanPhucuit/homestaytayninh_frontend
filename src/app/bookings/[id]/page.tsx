@@ -23,7 +23,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                   <StatusBadge status={booking.status} />
                   {booking.payment?.status && <PaymentBadge status={booking.payment.status} />}
                 </div>
-                <h2 className="mt-4 text-3xl text-[#9a4029]">{homestay.name}</h2>
+                <h2 className="mt-4 font-heading text-3xl text-[#9a4029]">{homestay.name}</h2>
                 <p className="mt-2 text-sm leading-6 text-[#75675f]">
                   Khách: {booking.guestName} · SĐT: {booking.guestPhone} · {booking.guestCount} khách
                 </p>
@@ -37,7 +37,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
           {canAddService && (
             <form action={addServiceAction} className="card p-6">
               <input type="hidden" name="bookingId" value={booking.id} />
-              <h2 className="text-2xl text-[#9a4029]">Thêm dịch vụ khi đang trải nghiệm</h2>
+              <h2 className="font-heading text-2xl text-[#9a4029]">Thêm dịch vụ khi đang trải nghiệm</h2>
               <p className="mt-2 text-sm text-[#75675f]">Chức năng này phục vụ luồng Customer yêu cầu trực tiếp, hệ thống ghi nhận chi phí vào hóa đơn.</p>
               <div className="mt-4 grid gap-3 md:grid-cols-[1fr_120px_160px]">
                 <select className="field" name="serviceId" required>
@@ -55,7 +55,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
         <aside className="space-y-6">
           <BookingTotals booking={booking} />
           <section className="card p-6">
-            <h2 className="text-2xl text-[#9a4029]">Thanh toán</h2>
+            <h2 className="font-heading text-2xl text-[#9a4029]">Thanh toán</h2>
             <p className="mt-3 text-sm text-[#75675f]">Số tiền: {money(booking.payment?.amount ?? booking.grandTotal)}</p>
             {booking.payment?.checkoutUrl && <Link className="btn-secondary mt-4 w-full" href={booking.payment.checkoutUrl}>Mở payment URL</Link>}
             {canRetryPayment && (

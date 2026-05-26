@@ -28,7 +28,7 @@ export default async function OwnerProxyBookingPage() {
     <OwnerShell title="Đặt hộ khách hàng" description="Owner Staff tạo booking và chọn dịch vụ hộ khách gọi điện hoặc đặt trực tiếp tại quầy.">
       <form action={createProxyBookingAction} className="grid gap-6 lg:grid-cols-[1fr_380px]">
         <section className="card p-6">
-          <h2 className="text-2xl text-[#9a4029]">Thông tin booking hộ</h2>
+          <h2 className="font-heading text-2xl text-[#9a4029]">Thông tin booking hộ</h2>
           <div className="mt-5 grid gap-3 md:grid-cols-2">
             <label className="grid gap-2 text-sm font-semibold">Homestay
               <select className="field" name="homestayId" defaultValue={firstHomestay?.id} required>
@@ -50,7 +50,7 @@ export default async function OwnerProxyBookingPage() {
         </section>
 
         <aside className="card h-fit p-6">
-          <h2 className="text-2xl text-[#9a4029]">Dịch vụ gọi kèm</h2>
+          <h2 className="font-heading text-2xl text-[#9a4029]">Dịch vụ gọi kèm</h2>
           <div className="mt-4 grid gap-3">
             <select className="field" name="serviceId" defaultValue="">
               <option value="">Không chọn dịch vụ</option>

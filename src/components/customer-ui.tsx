@@ -39,10 +39,10 @@ export function AppTopBar() {
 
 export function PageShell({ eyebrow, title, description, children }: { eyebrow: string; title: string; description?: string; children: React.ReactNode }) {
   return (
-    <main className="min-h-screen bg-[#fdf9f4] text-[#1c1c19]">
+    <main className="min-h-screen text-[#1c1c19]">
       <AppTopBar />
       <div className="mx-auto max-w-7xl px-4 py-8 md:px-8 md:py-12">
-        <header className="mb-8 overflow-hidden rounded-[28px] bg-white/85 p-6 shadow-[0_24px_80px_rgba(123,41,20,0.08)] md:p-8">
+        <header className="stitch-panel mb-8 p-6 md:p-8">
           <p className="eyebrow">{eyebrow}</p>
           <div className="mt-3 grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
             <div>
@@ -73,15 +73,7 @@ export function Stepper({ active }: { active: 1 | 2 | 3 }) {
         return (
           <div className="flex flex-1 items-center last:flex-none" key={step}>
             <div className="flex flex-col items-center gap-2">
-              <div
-                className={`grid h-9 w-9 place-items-center rounded-full border text-sm font-bold ${
-                  current
-                    ? "border-[#7b2914] bg-[#7b2914] text-white"
-                    : done
-                      ? "border-[#466550] bg-[#e8f0eb] text-[#466550]"
-                      : "border-[#dcc0ba] bg-[#ebe8e3] text-[#89726c]"
-                }`}
-              >
+              <div className={`grid h-9 w-9 place-items-center rounded-full border text-sm font-bold ${current ? "border-[#7b2914] bg-[#7b2914] text-white" : done ? "border-[#466550] bg-[#e8f0eb] text-[#466550]" : "border-[#dcc0ba] bg-[#ebe8e3] text-[#89726c]"}`}>
                 {done ? "✓" : number}
               </div>
               <span className={`text-xs font-bold ${current ? "text-[#7b2914]" : "text-[#89726c]"}`}>{step}</span>
@@ -96,12 +88,12 @@ export function Stepper({ active }: { active: 1 | 2 | 3 }) {
 
 export function StatusBadge({ status }: { status: BookingStatus }) {
   const meta = statusMeta[status];
-  return <span className={`rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] ${meta.className}`}>{meta.label}</span>;
+  return <span className={`badge ${meta.className}`}>{meta.label}</span>;
 }
 
 export function PaymentBadge({ status }: { status: PaymentStatus }) {
   const meta = paymentMeta[status];
-  return <span className={`rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] ${meta.className}`}>{meta.label}</span>;
+  return <span className={`badge ${meta.className}`}>{meta.label}</span>;
 }
 
 export function HomestayCard({ homestay }: { homestay: Homestay }) {

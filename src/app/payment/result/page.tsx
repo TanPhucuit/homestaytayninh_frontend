@@ -22,11 +22,11 @@ export default async function PaymentResultPage({ searchParams }: { searchParams
 
   return (
     <PageShell eyebrow="ApiPay" title="Kết quả thanh toán" description="Trang này đọc trạng thái payment từ backend khi có bookingId, không chỉ dựa vào query tĩnh.">
-      <section className="mx-auto max-w-2xl rounded-3xl border border-[#eadfd3] bg-white p-8 text-center shadow-sm">
+      <section className="stitch-panel mx-auto max-w-2xl p-8 text-center">
         <div className={`mx-auto flex size-16 items-center justify-center rounded-full text-3xl font-bold ${isPaid ? "bg-[#e8f0eb] text-[#466550]" : isFailed ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-800"}`}>
           {isPaid ? "✓" : isFailed ? "!" : "…"}
         </div>
-        <h1 className="mt-5 text-4xl text-[#9a4029]">
+        <h1 className="mt-5 font-heading text-4xl text-[#9a4029]">
           {isPaid ? "Thanh toán thành công" : isFailed ? "Thanh toán chưa hoàn tất" : "Thanh toán đang xử lý"}
         </h1>
         <div className="mt-4 flex justify-center">

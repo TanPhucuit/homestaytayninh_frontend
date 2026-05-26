@@ -21,7 +21,7 @@ export default async function OwnerManagePage() {
     <OwnerShell title="Quản lý homestay, phòng, giá và dịch vụ" description="Tạo homestay, thêm phòng, cập nhật dịch vụ đi kèm. Dữ liệu gọi qua Owner API backend.">
       <section className="grid gap-6 xl:grid-cols-3">
         <form action={createHomestayAction} className="card p-6">
-          <h2 className="text-2xl text-[#9a4029]">Thêm homestay</h2>
+          <h2 className="font-heading text-2xl text-[#9a4029]">Thêm homestay</h2>
           <div className="mt-4 grid gap-3">
             <input className="field" name="name" placeholder="Tên homestay" required />
             <select className="field" name="type" defaultValue="Phòng">
@@ -39,7 +39,7 @@ export default async function OwnerManagePage() {
         </form>
 
         <form action={createRoomAction} className="card p-6">
-          <h2 className="text-2xl text-[#9a4029]">Thêm phòng</h2>
+          <h2 className="font-heading text-2xl text-[#9a4029]">Thêm phòng</h2>
           <div className="mt-4 grid gap-3">
             <select className="field" name="homestayId" defaultValue={firstHomestay?.id} required>
               {homestays.map((homestay) => <option key={homestay.id} value={homestay.id}>{homestay.name}</option>)}
@@ -54,7 +54,7 @@ export default async function OwnerManagePage() {
         </form>
 
         <form action={createServiceAction} className="card p-6">
-          <h2 className="text-2xl text-[#9a4029]">Thêm dịch vụ</h2>
+          <h2 className="font-heading text-2xl text-[#9a4029]">Thêm dịch vụ</h2>
           <div className="mt-4 grid gap-3">
             <select className="field" name="homestayId" defaultValue={firstHomestay?.id} required>
               {homestays.map((homestay) => <option key={homestay.id} value={homestay.id}>{homestay.name}</option>)}
@@ -69,7 +69,7 @@ export default async function OwnerManagePage() {
       </section>
 
       <section className="mt-8">
-        <h2 className="mb-4 text-3xl text-[#9a4029]">Danh sách tài sản</h2>
+        <h2 className="mb-4 font-heading text-3xl text-[#9a4029]">Danh sách tài sản</h2>
         <OwnerInventory homestays={homestays} />
       </section>
     </OwnerShell>
