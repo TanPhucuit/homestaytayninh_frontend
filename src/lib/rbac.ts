@@ -1,5 +1,9 @@
 import { cookies } from "next/headers";
+import { createClient } from "@/utils/supabase/server";
 import { UserRole } from "./types";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
+const AUTH_MODE = process.env.NEXT_PUBLIC_AUTH_MODE ?? "supabase";
 
 export interface SessionUser {
   id: string;
@@ -30,6 +34,41 @@ export function normalizeRole(value?: string | null): UserRole {
 }
 
 export async function getCurrentUser(): Promise<SessionUser> {
+  if (AUTH_MODE === "supabase") {
+    const supabase = await createClient();
+    const {
+      data: { user }
+    } = await supabase.auth.getUser();
+    if (!user) return roleUsers.CUSTOMER;
+
+    const {
+      data: { session }
+    } = await supabase.auth.getSession();
+    if (API_URL && session?.access_token) {
+      const response = await fetch(`${API_URL}/api/auth/me`, {
+        cache: "no-store",
+        headers: { authorization: `Bearer ${session.access_token}` }
+      });
+
+      if (response.ok) {
+        const profile = (await response.json()) as Partial<SessionUser>;
+        return {
+          id: profile.id ?? user.id,
+          name: profile.name ?? user.user_metadata?.name ?? user.email ?? "Customer",
+          email: profile.email ?? user.email ?? "",
+          role: normalizeRole(profile.role)
+        };
+      }
+    }
+
+    return {
+      id: user.id,
+      name: user.user_metadata?.name ?? user.email ?? "Customer",
+      email: user.email ?? "",
+      role: "CUSTOMER"
+    };
+  }
+
   const cookieStore = await cookies();
   const role = normalizeRole(cookieStore.get("demo-role")?.value);
   return roleUsers[role];

@@ -23,7 +23,15 @@ API env: `NEXT_PUBLIC_API_URL`
 - Env:
   - `NEXT_PUBLIC_API_URL`: Render backend URL
   - `NEXT_PUBLIC_SUPABASE_URL`: Supabase project URL
-  - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Supabase anon/publishable key
+  - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`: Supabase publishable key
+  - `NEXT_PUBLIC_AUTH_MODE`: `supabase`
+  - `NEXT_PUBLIC_ENABLE_MOCK_DATA`: `false`
+
+Enable the Google provider in Supabase Auth and add the Vercel callback URL to the redirect allow list:
+
+```text
+https://<your-vercel-domain>/auth/callback
+```
 
 ## Screens
 
@@ -33,7 +41,7 @@ API env: `NEXT_PUBLIC_API_URL`
 - `/checkout`: customer checkout, add-on services, ApiPay state panels
 - `/bookings`: customer booking history/order summary
 - `/bookings/[id]`: booking detail, payment summary, in-stay service ordering
-- `/login`: Supabase Auth role routing mock
+- `/login`: Supabase Google OAuth entry screen
 - `/owner`: owner and owner staff portal
 - `/owner/manage`: homestay, room, service, image and price management
 - `/staff`: CMS/user moderation portal
@@ -49,4 +57,4 @@ Example:
 NEXT_PUBLIC_API_URL="https://homestaytayninh-backend.onrender.com"
 ```
 
-The API client appends `/api/...` internally and falls back to demo data when the env is missing or the backend is offline.
+The API client appends `/api/...` internally and forwards the Supabase bearer session to protected NestJS endpoints. Mock API data is disabled by default and must be explicitly enabled with `NEXT_PUBLIC_ENABLE_MOCK_DATA="true"` for UI-only local development.

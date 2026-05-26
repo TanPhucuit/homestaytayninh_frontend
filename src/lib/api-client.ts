@@ -1,6 +1,10 @@
+import "server-only";
+import { createClient } from "@/utils/supabase/server";
 import { UserRole } from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
+const AUTH_MODE = process.env.NEXT_PUBLIC_AUTH_MODE ?? "supabase";
+const ENABLE_MOCK_DATA = process.env.NEXT_PUBLIC_ENABLE_MOCK_DATA === "true";
 
 export class ApiClientError extends Error {
   constructor(
@@ -32,20 +36,41 @@ function unwrapResponse<T>(payload: unknown): T {
 
 type NextRequestInit = RequestInit & { next?: { revalidate?: number } };
 
+async function authHeaders(role: UserRole): Promise<HeadersInit> {
+  if (AUTH_MODE !== "supabase") {
+    return {
+      "x-user-id": userIdForRole[role],
+      "x-user-role": role
+    };
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user }
+  } = await supabase.auth.getUser();
+  if (!user) return {};
+
+  const {
+    data: { session }
+  } = await supabase.auth.getSession();
+
+  return session?.access_token ? { authorization: `Bearer ${session.access_token}` } : {};
+}
+
 async function apiFetch<T>(path: string, role: UserRole, init?: NextRequestInit): Promise<T> {
   if (!API_URL) {
-    throw new ApiClientError("NEXT_PUBLIC_API_URL is not configured; using mock data source.", undefined, path);
+    throw new ApiClientError("NEXT_PUBLIC_API_URL is not configured.", undefined, path);
   }
+
+  const headers = new Headers(init?.headers);
+  headers.set("content-type", "application/json");
+  const requestAuthHeaders = await authHeaders(role);
+  new Headers(requestAuthHeaders).forEach((value, key) => headers.set(key, value));
 
   const response = await fetch(`${API_URL}${path}`, {
     ...init,
     ...(init?.next ? { next: init.next } : {}),
-    headers: {
-      "content-type": "application/json",
-      "x-user-id": userIdForRole[role],
-      "x-user-role": role,
-      ...(init?.headers ?? {})
-    }
+    headers
   });
 
   let payload: unknown = null;
@@ -80,6 +105,10 @@ export async function apiMutation<T>(path: string, method: "POST" | "PATCH" | "D
 }
 
 export async function withMockFallback<T>(request: () => Promise<T>, fallback: T): Promise<T> {
+  if (!ENABLE_MOCK_DATA) {
+    return request();
+  }
+
   try {
     return await request();
   } catch {
