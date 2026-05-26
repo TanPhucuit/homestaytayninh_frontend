@@ -100,6 +100,51 @@ export async function getPaymentStatus(bookingId: string, role: UserRole = "CUST
   );
 }
 
+export async function getOwnerHomestays(role: UserRole = "OWNER"): Promise<Homestay[]> {
+  return withMockFallback(() => apiGet<Homestay[]>(endpoints.owner.homestays, role), mockDataSource.homestays);
+}
+
+export async function getOwnerBookings(role: UserRole = "OWNER_STAFF"): Promise<Booking[]> {
+  return withMockFallback(() => apiGet<Booking[]>(endpoints.owner.bookings, role), bookingsForRole(role));
+}
+
+export async function createOwnerHomestay(input: Partial<Homestay>, role: UserRole = "OWNER"): Promise<Homestay> {
+  return apiMutation<Homestay>(endpoints.owner.homestays, "POST", input, role);
+}
+
+export async function createOwnerRoom(homestayId: string, input: { name: string; roomType: string; pricePerNight: number; capacity: number; totalUnits: number }, role: UserRole = "OWNER") {
+  return apiMutation(endpoints.owner.rooms(homestayId), "POST", input, role);
+}
+
+export async function createOwnerService(homestayId: string, input: { name: string; description?: string; unitPrice: number; included: boolean }, role: UserRole = "OWNER") {
+  return apiMutation(endpoints.owner.services(homestayId), "POST", input, role);
+}
+
+export async function updateOwnerBookingStatus(bookingId: string, status: Booking["status"], role: UserRole = "OWNER_STAFF"): Promise<Booking> {
+  return apiMutation<Booking>(endpoints.owner.bookingStatus(bookingId), "PATCH", { status }, role);
+}
+
+export async function createProxyBooking(
+  input: {
+    customerId?: string;
+    homestayId: string;
+    roomId: string;
+    guestName: string;
+    guestPhone: string;
+    guestCount: number;
+    checkIn: string;
+    checkOut: string;
+    serviceItems?: Array<{ serviceId: string; quantity: number }>;
+  },
+  role: UserRole = "OWNER_STAFF"
+): Promise<Booking> {
+  return apiMutation<Booking>(endpoints.owner.proxyBookings, "POST", input, role);
+}
+
+export async function addOwnerBookingService(bookingId: string, serviceId: string, quantity: number, role: UserRole = "OWNER_STAFF"): Promise<Booking> {
+  return apiMutation<Booking>(`${endpoints.owner.bookings}/${bookingId}/services`, "POST", { serviceId, quantity }, role);
+}
+
 export async function getViolationReports(role: UserRole = "STAFF"): Promise<ViolationReport[]> {
   return withMockFallback(() => apiGet<ViolationReport[]>(endpoints.admin.reports, role), mockDataSource.reports);
 }

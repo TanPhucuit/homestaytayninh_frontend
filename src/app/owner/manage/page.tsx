@@ -1,6 +1,11 @@
 import { StitchFrame } from "@/components/stitch-frame";
+import { OwnerInventory, OwnerShell } from "@/components/owner-ui";
+import { getOwnerHomestays } from "@/lib/api";
 import { canAccess, getCurrentUser } from "@/lib/rbac";
 import { stitchPages } from "@/lib/stitch-pages";
+import { createHomestayAction, createRoomAction, createServiceAction } from "../actions";
+
+export const dynamic = "force-dynamic";
 
 export default async function OwnerManagePage() {
   const user = await getCurrentUser();
@@ -10,5 +15,64 @@ export default async function OwnerManagePage() {
     return <StitchFrame src={stitchPages.accessDenied} title="Không có quyền truy cập" />;
   }
 
-  return <StitchFrame src={stitchPages.ownerDashboard} title="Quản lý homestay Terra & Leaf" />;
+  const homestays = await getOwnerHomestays(user.role === "ADMIN" ? "ADMIN" : "OWNER");
+  const firstHomestay = homestays[0];
+
+  return (
+    <OwnerShell title="Quản lý homestay, phòng, giá và dịch vụ" description="Tạo homestay, thêm phòng, cập nhật dịch vụ đi kèm. Dữ liệu gọi qua Owner API backend.">
+      <section className="grid gap-6 xl:grid-cols-3">
+        <form action={createHomestayAction} className="card p-6">
+          <h2 className="text-2xl text-[#9a4029]">Thêm homestay</h2>
+          <div className="mt-4 grid gap-3">
+            <input className="field" name="name" placeholder="Tên homestay" required />
+            <select className="field" name="type" defaultValue="Phòng">
+              <option>Phòng</option>
+              <option>Lều</option>
+              <option>Nhà nguyên căn</option>
+            </select>
+            <input className="field" name="location" placeholder="Vị trí" required />
+            <textarea className="field min-h-24" name="description" placeholder="Mô tả" required />
+            <input className="field" name="priceFrom" type="number" min="0" placeholder="Giá từ" required />
+            <input className="field" name="capacity" type="number" min="1" placeholder="Sức chứa" required />
+            <input className="field" name="imageUrl" type="url" placeholder="URL hình ảnh" required />
+            <button className="btn-primary" type="submit">Tạo homestay</button>
+          </div>
+        </form>
+
+        <form action={createRoomAction} className="card p-6">
+          <h2 className="text-2xl text-[#9a4029]">Thêm phòng</h2>
+          <div className="mt-4 grid gap-3">
+            <select className="field" name="homestayId" defaultValue={firstHomestay?.id} required>
+              {homestays.map((homestay) => <option key={homestay.id} value={homestay.id}>{homestay.name}</option>)}
+            </select>
+            <input className="field" name="name" placeholder="Tên phòng" required />
+            <input className="field" name="roomType" placeholder="Loại phòng" required />
+            <input className="field" name="pricePerNight" type="number" min="0" placeholder="Giá/đêm" required />
+            <input className="field" name="capacity" type="number" min="1" placeholder="Sức chứa" required />
+            <input className="field" name="totalUnits" type="number" min="1" placeholder="Số lượng phòng/căn" required />
+            <button className="btn-primary" type="submit" disabled={!firstHomestay}>Thêm phòng</button>
+          </div>
+        </form>
+
+        <form action={createServiceAction} className="card p-6">
+          <h2 className="text-2xl text-[#9a4029]">Thêm dịch vụ</h2>
+          <div className="mt-4 grid gap-3">
+            <select className="field" name="homestayId" defaultValue={firstHomestay?.id} required>
+              {homestays.map((homestay) => <option key={homestay.id} value={homestay.id}>{homestay.name}</option>)}
+            </select>
+            <input className="field" name="name" placeholder="Tên dịch vụ" required />
+            <textarea className="field min-h-20" name="description" placeholder="Mô tả" />
+            <input className="field" name="unitPrice" type="number" min="0" placeholder="Đơn giá" required />
+            <label className="flex items-center gap-2 text-sm text-[#466550]"><input name="included" type="checkbox" /> Dịch vụ đã bao gồm</label>
+            <button className="btn-primary" type="submit" disabled={!firstHomestay}>Thêm dịch vụ</button>
+          </div>
+        </form>
+      </section>
+
+      <section className="mt-8">
+        <h2 className="mb-4 text-3xl text-[#9a4029]">Danh sách tài sản</h2>
+        <OwnerInventory homestays={homestays} />
+      </section>
+    </OwnerShell>
+  );
 }
