@@ -11,6 +11,10 @@ export const updateSession = async (request: NextRequest) => {
     }
   });
 
+  if (!supabaseUrl || !supabaseKey) {
+    return supabaseResponse;
+  }
+
   const supabase = createServerClient(supabaseUrl!, supabaseKey!, {
     cookies: {
       getAll() {
@@ -27,4 +31,3 @@ export const updateSession = async (request: NextRequest) => {
   await supabase.auth.getUser();
   return supabaseResponse;
 };
-

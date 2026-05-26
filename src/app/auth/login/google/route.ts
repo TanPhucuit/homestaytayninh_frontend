@@ -8,7 +8,12 @@ function safeNextPath(value: string | null) {
 export async function GET(request: NextRequest) {
   const next = safeNextPath(request.nextUrl.searchParams.get("next"));
   const origin = request.nextUrl.origin;
-  const supabase = await createClient();
+  let supabase;
+  try {
+    supabase = await createClient();
+  } catch {
+    return NextResponse.redirect(new URL("/login?error=supabase_env", origin));
+  }
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {

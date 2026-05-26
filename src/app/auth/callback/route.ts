@@ -10,7 +10,12 @@ export async function GET(request: NextRequest) {
   const next = safeNextPath(request.nextUrl.searchParams.get("next"));
 
   if (code) {
-    const supabase = await createClient();
+    let supabase;
+    try {
+      supabase = await createClient();
+    } catch {
+      return NextResponse.redirect(new URL("/login?error=supabase_env", request.nextUrl.origin));
+    }
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
