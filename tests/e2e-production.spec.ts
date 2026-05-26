@@ -14,10 +14,12 @@ test.describe("Homestay Tay Ninh production smoke", () => {
 
   test("Google login entry does not fail with Supabase env error", async ({ page }) => {
     await page.goto(`${baseURL}/login`);
-    await expect(page.getByRole("link", { name: "Đăng nhập với Google" })).toBeVisible();
-    await page.getByRole("link", { name: "Đăng nhập với Google" }).click();
-    await page.waitForLoadState("domcontentloaded");
+    await expect(page.getByRole("link", { name: /Google/ })).toBeVisible();
+    await page.getByRole("link", { name: /Google/ }).click();
+    await page.waitForLoadState("networkidle");
     await expect(page).not.toHaveURL(/error=supabase_env/);
+    await expect(page).not.toHaveURL(/supabase\.co\/auth\/v1\/authorize/);
+    await expect(page.getByText(/Unsupported provider|provider is not enabled/)).toHaveCount(0);
   });
 
   test("customer search, detail and checkout form are usable", async ({ page }) => {

@@ -2,6 +2,7 @@ import Link from "next/link";
 
 function errorMessage(error?: string) {
   if (error === "supabase_env") return "Chưa cấu hình Supabase Auth public URL/key trên Vercel. Đây là cấu hình đăng nhập Google, không phải database secret.";
+  if (error === "provider_disabled") return "Google provider chưa được bật trong Supabase Auth. Vào Supabase Dashboard > Authentication > Providers > Google để bật và nhập Client ID/Secret.";
   if (error === "oauth") return "Không tạo được phiên đăng nhập Google. Kiểm tra Google provider và Redirect URL trong Supabase.";
   if (error === "callback") return "Google callback không hợp lệ hoặc session không được tạo.";
   return "";
@@ -24,9 +25,9 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
             {message}
           </div>
         )}
-        <Link className="btn-primary mt-6 w-full" href="/auth/login/google?next=%2Fhomestays">
+        <a className="btn-primary mt-6 w-full" href="/auth/login/google?next=%2Fhomestays">
           Đăng nhập với Google
-        </Link>
+        </a>
         <Link className="btn-secondary mt-3 w-full" href="/">
           Quay về trang chủ
         </Link>

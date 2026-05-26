@@ -25,5 +25,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL("/login?error=oauth", origin));
   }
 
+  const providerCheck = await fetch(data.url, { redirect: "manual", cache: "no-store" }).catch(() => null);
+  if (providerCheck && providerCheck.status >= 400) {
+    const body = await providerCheck.text().catch(() => "");
+    if (body.includes("Unsupported provider") || body.includes("provider is not enabled")) {
+      return NextResponse.redirect(new URL("/login?error=provider_disabled", origin));
+    }
+    return NextResponse.redirect(new URL("/login?error=oauth", origin));
+  }
+
   return NextResponse.redirect(data.url);
 }
