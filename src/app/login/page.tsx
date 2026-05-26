@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 function errorMessage(error?: string) {
-  if (error === "supabase_env") return "Frontend chưa có NEXT_PUBLIC_SUPABASE_URL hoặc NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY trên Vercel.";
+  if (error === "supabase_env") return "Chưa cấu hình Supabase Auth public URL/key trên Vercel. Đây là cấu hình đăng nhập Google, không phải database secret.";
   if (error === "oauth") return "Không tạo được phiên đăng nhập Google. Kiểm tra Google provider và Redirect URL trong Supabase.";
   if (error === "callback") return "Google callback không hợp lệ hoặc session không được tạo.";
   return "";
