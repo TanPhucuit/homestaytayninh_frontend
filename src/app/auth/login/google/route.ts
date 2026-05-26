@@ -1,33 +1,39 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/utils/supabase/server";
+import { OAUTH_NEXT_COOKIE_NAME, OAUTH_STATE_COOKIE_NAME } from "@/lib/session-cookie";
 
 export async function GET(request: NextRequest) {
   const origin = request.nextUrl.origin;
-  let supabase;
-  try {
-    supabase = await createClient();
-  } catch {
-    return NextResponse.redirect(new URL("/login?error=supabase_env", origin));
-  }
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-    options: {
-      redirectTo: `${origin}/auth/callback`
-    }
-  });
+  const clientId = process.env.GOOGLE_CLIENT_ID;
+  if (!clientId) return NextResponse.redirect(new URL("/login?error=google_env", origin));
 
-  if (error || !data.url) {
-    return NextResponse.redirect(new URL("/login?error=oauth", origin));
-  }
+  const state = crypto.randomUUID();
+  const next = safeNext(request.nextUrl.searchParams.get("next"));
+  const redirectUri = `${origin}/auth/callback`;
+  const url = new URL("https://accounts.google.com/o/oauth2/v2/auth");
+  url.searchParams.set("client_id", clientId);
+  url.searchParams.set("redirect_uri", redirectUri);
+  url.searchParams.set("response_type", "code");
+  url.searchParams.set("scope", "openid email profile");
+  url.searchParams.set("state", state);
+  url.searchParams.set("prompt", "select_account");
 
-  const providerCheck = await fetch(data.url, { redirect: "manual", cache: "no-store" }).catch(() => null);
-  if (providerCheck && providerCheck.status >= 400) {
-    const body = await providerCheck.text().catch(() => "");
-    if (body.includes("Unsupported provider") || body.includes("provider is not enabled")) {
-      return NextResponse.redirect(new URL("/login?error=provider_disabled", origin));
-    }
-    return NextResponse.redirect(new URL("/login?error=oauth", origin));
-  }
+  const response = NextResponse.redirect(url);
+  response.cookies.set(OAUTH_STATE_COOKIE_NAME, state, cookieOptions(600));
+  response.cookies.set(OAUTH_NEXT_COOKIE_NAME, next, cookieOptions(600));
+  return response;
+}
 
-  return NextResponse.redirect(data.url);
+function safeNext(value: string | null) {
+  if (!value || !value.startsWith("/") || value.startsWith("//")) return "/";
+  return value;
+}
+
+function cookieOptions(maxAge: number) {
+  return {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax" as const,
+    path: "/",
+    maxAge
+  };
 }

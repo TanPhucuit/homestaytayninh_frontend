@@ -1,13 +1,12 @@
 import Link from "next/link";
 
 function errorMessage(error?: string) {
-  if (error === "api_env") return "Chưa cấu hình NEXT_PUBLIC_API_URL cho frontend nên không thể xác minh vai trò sau đăng nhập.";
-  if (error === "supabase_env") return "Chưa cấu hình Supabase Auth public URL/key trên Vercel. Đây là cấu hình đăng nhập Google, không phải database secret.";
-  if (error === "provider_disabled") return "Google provider chưa được bật trong Supabase Auth. Vào Supabase Dashboard > Authentication > Providers > Google để bật và nhập Client ID/Secret.";
-  if (error === "auth_required") return "Bạn cần đăng nhập trước khi thực hiện thao tác này.";
-  if (error === "oauth") return "Không tạo được phiên đăng nhập Google. Kiểm tra Google provider và Redirect URL trong Supabase.";
-  if (error === "callback") return "Google callback không hợp lệ hoặc session không được tạo.";
-  if (error === "role_lookup") return "Bạn đã xác thực Google nhưng hệ thống chưa xác minh được quyền truy cập. Vui lòng đăng nhập lại hoặc liên hệ quản trị viên.";
+  if (error === "api_env") return "Chua cau hinh NEXT_PUBLIC_API_URL cho frontend nen khong the xac minh vai tro sau dang nhap.";
+  if (error === "google_env") return "Chua cau hinh GOOGLE_CLIENT_ID/GOOGLE_CLIENT_SECRET cho Google OAuth.";
+  if (error === "auth_required") return "Ban can dang nhap truoc khi thuc hien thao tac nay.";
+  if (error === "oauth") return "Khong tao duoc phien dang nhap Google. Kiem tra OAuth Client va Redirect URI trong Google Cloud.";
+  if (error === "callback") return "Google callback khong hop le hoac session khong duoc tao.";
+  if (error === "role_lookup") return "Ban da xac thuc Google nhung he thong chua xac minh duoc quyen truy cap. Vui long dang nhap lai hoac lien he quan tri vien.";
   return "";
 }
 
@@ -21,9 +20,9 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
     <main className="flex min-h-screen items-center justify-center px-4 py-10 text-[#2b211d]">
       <section className="w-full max-w-xl rounded-[32px] border border-[#dcc0ba] bg-white p-8 text-center shadow-[0_30px_90px_rgba(123,41,20,0.12)]">
         <p className="eyebrow">Terra & Leaf</p>
-        <h1 className="mt-3 font-heading text-5xl text-[#9a4029]">Đăng nhập hệ thống</h1>
+        <h1 className="mt-3 font-heading text-5xl text-[#9a4029]">Dang nhap he thong</h1>
         <p className="mt-3 text-sm leading-6 text-[#75675f]">
-          Đăng nhập bằng Google để đặt phòng, xem lịch sử booking và truy cập portal theo vai trò đã được cấp trong hệ thống.
+          Dang nhap bang Google de dat phong, xem lich su booking va truy cap portal theo vai tro da duoc cap trong Redis profile.
         </p>
 
         {message && (
@@ -33,14 +32,14 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         )}
 
         <a className="btn-primary mt-7 w-full" href={googleLoginHref}>
-          Đăng nhập với Google
+          Dang nhap voi Google
         </a>
         <Link className="btn-secondary mt-3 w-full" href="/">
-          Quay về trang chủ
+          Quay ve trang chu
         </Link>
 
         <p className="mt-6 text-xs leading-5 text-[#89726c]">
-          Email 23521197@gm.uit.edu.vn được backend gán quyền Admin. Các email khác mặc định là Customer.
+          Email 23521197@gm.uit.edu.vn duoc Redis profile gan quyen Admin. Cac email khac mac dinh la Customer.
         </p>
       </section>
     </main>

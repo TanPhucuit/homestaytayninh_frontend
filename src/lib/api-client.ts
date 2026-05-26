@@ -1,5 +1,6 @@
 import "server-only";
-import { createClient } from "@/utils/supabase/server";
+import { cookies } from "next/headers";
+import { SESSION_COOKIE_NAME } from "./session-cookie";
 import { UserRole } from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
@@ -27,22 +28,8 @@ function unwrapResponse<T>(payload: unknown): T {
 type NextRequestInit = RequestInit & { next?: { revalidate?: number } };
 
 async function authHeaders(): Promise<HeadersInit> {
-  let supabase;
-  try {
-    supabase = await createClient();
-  } catch {
-    return {};
-  }
-  const {
-    data: { user }
-  } = await supabase.auth.getUser().catch(() => ({ data: { user: null } }));
-  if (!user) return {};
-
-  const {
-    data: { session }
-  } = await supabase.auth.getSession();
-
-  return session?.access_token ? { authorization: `Bearer ${session.access_token}` } : {};
+  const token = (await cookies()).get(SESSION_COOKIE_NAME)?.value;
+  return token ? { authorization: `Bearer ${token}` } : {};
 }
 
 async function apiFetch<T>(path: string, _role: UserRole, init?: NextRequestInit): Promise<T> {
