@@ -11,3 +11,5 @@ coverage
 .vercel
 apikey.txt
 skills-lock.json
+test-results
+playwright-report

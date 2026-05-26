@@ -117,3 +117,27 @@ h3 {
   color: var(--muted);
 }
 
+.badge {
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.badge-green {
+  background: rgba(70, 101, 80, 0.12);
+  color: var(--forest);
+}
+
+.badge-sand {
+  background: rgba(154, 64, 41, 0.1);
+  color: var(--terracotta);
+}
+
+.badge-red {
+  background: rgba(220, 38, 38, 0.1);
+  color: #b91c1c;
+}
+

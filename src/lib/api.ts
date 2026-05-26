@@ -53,6 +53,22 @@ export async function getArticles(role: UserRole = "STAFF"): Promise<Article[]> 
   return withMockFallback(() => apiGet<Article[]>(endpoints.cms.articles, role), mockDataSource.articles);
 }
 
+export async function createArticle(input: Partial<Article>, role: UserRole = "STAFF"): Promise<Article> {
+  return apiMutation<Article>(endpoints.cms.articles, "POST", input, role);
+}
+
+export async function updateArticle(articleId: string, input: Partial<Article>, role: UserRole = "STAFF"): Promise<Article> {
+  return apiMutation<Article>(endpoints.cms.article(articleId), "PATCH", input, role);
+}
+
+export async function deleteArticle(articleId: string, role: UserRole = "STAFF"): Promise<Article> {
+  return apiMutation<Article>(endpoints.cms.article(articleId), "DELETE", undefined, role);
+}
+
+export async function setArticlePublished(articleId: string, published: boolean, role: UserRole = "STAFF"): Promise<Article> {
+  return apiMutation<Article>(published ? endpoints.cms.publish(articleId) : endpoints.cms.unpublish(articleId), "POST", undefined, role);
+}
+
 export async function getUsers(role: UserRole = "ADMIN"): Promise<UserProfile[]> {
   return withMockFallback(() => apiGet<UserProfile[]>(endpoints.admin.users, role), mockDataSource.users);
 }
@@ -147,6 +163,10 @@ export async function addOwnerBookingService(bookingId: string, serviceId: strin
 
 export async function getViolationReports(role: UserRole = "STAFF"): Promise<ViolationReport[]> {
   return withMockFallback(() => apiGet<ViolationReport[]>(endpoints.admin.reports, role), mockDataSource.reports);
+}
+
+export async function resolveViolationReport(reportId: string, role: UserRole = "STAFF"): Promise<ViolationReport> {
+  return apiMutation<ViolationReport>(endpoints.admin.resolveReport(reportId), "POST", undefined, role);
 }
 
 export async function getCheckoutPreview(homestayId = "hs-ba-den", role: UserRole = "CUSTOMER"): Promise<CheckoutPreview> {
