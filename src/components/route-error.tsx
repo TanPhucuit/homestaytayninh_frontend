@@ -9,4 +9,3 @@ export function RouteError({ reset, title }: { reset: () => void; title?: string
     </main>
   );
 }
-

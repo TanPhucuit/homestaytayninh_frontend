@@ -51,25 +51,23 @@ export function homeForRole(role: UserRole): string {
 }
 
 export function navForRole(role: UserRole): NavItem[] {
-  const base: NavItem[] = [
-    { label: "Trang chủ", href: "/" },
-    { label: "Tìm homestay", href: "/homestays" }
-  ];
-
   const byRole: Record<UserRole, NavItem[]> = {
-    CUSTOMER: [...base, { label: "Booking của tôi", href: "/bookings" }],
+    CUSTOMER: [
+      { label: "Trang chu", href: "/" },
+      { label: "Tim homestay", href: "/homestays" },
+      { label: "Booking cua toi", href: "/bookings" }
+    ],
     OWNER: [
       { label: "Owner dashboard", href: "/owner" },
-      { label: "Quản lý homestay", href: "/owner/manage" },
-      { label: "Booking vận hành", href: "/owner" }
+      { label: "Quan ly homestay", href: "/owner/manage" }
     ],
     OWNER_STAFF: [
-      { label: "Booking vận hành", href: "/owner" },
-      { label: "Đặt hộ khách", href: "/owner" }
+      { label: "Booking van hanh", href: "/owner" },
+      { label: "Dat ho khach", href: "/owner/proxy-booking" }
     ],
     STAFF: [
       { label: "CMS", href: "/staff" },
-      { label: "User moderation", href: "/staff" }
+      { label: "User moderation", href: "/staff/moderation" }
     ],
     ADMIN: [
       { label: "Admin dashboard", href: "/admin" },
@@ -78,6 +76,5 @@ export function navForRole(role: UserRole): NavItem[] {
     ]
   };
 
-  return [...byRole[role], { label: role, href: "/login" }];
+  return byRole[role];
 }
-

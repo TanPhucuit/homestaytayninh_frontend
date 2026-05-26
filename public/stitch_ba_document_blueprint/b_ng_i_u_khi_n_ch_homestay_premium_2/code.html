@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Owner Dashboard - Terra &amp; Leaf</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&amp;family=Libre+Caslon+Text:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-container": "#4c6b56",
+                        "secondary-container": "#c8ebd0",
+                        "primary": "#7b2914",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed-variant": "#7e2b16",
+                        "on-primary-container": "#ffc9bb",
+                        "error-container": "#ffdad6",
+                        "inverse-on-surface": "#f4f0eb",
+                        "tertiary-fixed-dim": "#ffb4a2",
+                        "primary-container": "#9a4029",
+                        "tertiary-fixed": "#ffdad2",
+                        "on-tertiary-container": "#ffc9bb",
+                        "surface-container": "#f1ede8",
+                        "outline-variant": "#dcc0ba",
+                        "surface-dim": "#ddd9d5",
+                        "outline": "#89726c",
+                        "surface-container-highest": "#e6e2dd",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "tertiary-container": "#9a4029",
+                        "on-tertiary": "#ffffff",
+                        "background": "#fdf9f4",
+                        "tertiary": "#7b2914",
+                        "inverse-primary": "#ffb4a2",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed": "#ffdad2",
+                        "on-secondary-fixed-variant": "#2f4d3a",
+                        "on-surface-variant": "#56423d",
+                        "on-primary-fixed": "#3c0800",
+                        "surface": "#fdf9f4",
+                        "on-tertiary-fixed": "#3c0700",
+                        "inverse-surface": "#31302d",
+                        "secondary": "#466550",
+                        "on-background": "#1c1c19",
+                        "on-secondary-fixed": "#022110",
+                        "surface-container-low": "#f7f3ee",
+                        "surface-bright": "#fdf9f4",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed": "#c8ebd0",
+                        "surface-variant": "#e6e2dd",
+                        "surface-container-high": "#ebe8e3",
+                        "on-primary-fixed-variant": "#7e2b16",
+                        "secondary-fixed-dim": "#accfb5",
+                        "on-surface": "#1c1c19",
+                        "surface-tint": "#9d422b",
+                        "primary-fixed-dim": "#ffb4a2",
+                        "on-error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter-mobile": "16px",
+                        "gutter-desktop": "24px",
+                        "unit": "4px",
+                        "margin-edge": "24px",
+                        "container-max-width": "1200px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Be Vietnam Pro"],
+                        "headline-lg-mobile": ["Libre Caslon Text"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "label-md": ["Be Vietnam Pro"],
+                        "body-md": ["Be Vietnam Pro"],
+                        "headline-md": ["Libre Caslon Text"],
+                        "headline-lg": ["Libre Caslon Text"],
+                        "display-lg": ["Libre Caslon Text"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md flex min-h-screen">
+<!-- SideNavBar -->
+<nav class="bg-surface-container-low dark:bg-surface-container-highest text-secondary dark:text-secondary-fixed border-r border-outline-variant dark:border-outline flat no shadows h-full w-64 fixed left-0 top-0 flex flex-col py-6 px-4 hidden md:flex">
+<div class="mb-8 px-2 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-variant overflow-hidden shrink-0">
+<img alt="Admin profile" class="w-full h-full object-cover" data-alt="A professional headshot of a confident woman with dark hair tied back, wearing a minimalist terra-cotta colored blouse. She is standing in a brightly lit, modern office space with subtle indoor plants blurring in the background. The lighting is soft and natural, creating a warm, trustworthy, and welcoming mood suitable for a premium homestay management portal." src="https://lh3.googleusercontent.com/aida-public/AB6AXuByw5zDc6D9kbTznentYxDhNa7oWW1_PZTb1Zga5l3K7JI1UzGANtHauedN7crgUNC4C8naxKo35d_St6oWPpX7LZ8FseWPyfW0gP2pKV_Aso-PLQcrOuctrqfOxjJ6BkG1m2Dp0Cux93RxZAuTQGQnBzhpUEjhq9_bVJx7dWhHr1O5-aWx3AaLY5s9nb-_fH_WNi71p0Xn73nUSEkiLA--bj3cVY5J-Kdjz7cExIvanl7vLKY9Kk1FR-RjR4BzbvV7t3lakFjJYDcS"/>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md text-primary dark:text-inverse-primary leading-none mb-1">Admin Panel</h2>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Terra &amp; Leaf Management</p>
+</div>
+</div>
+<ul class="flex-1 space-y-2">
+<li>
+<a class="flex items-center gap-3 px-3 py-2 bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-lg scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-label-md font-label-md">Dashboard</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-surface-variant hover:bg-surface-variant dark:hover:bg-inverse-surface rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">calendar_month</span>
+<span class="text-label-md font-label-md">Bookings</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-surface-variant hover:bg-surface-variant dark:hover:bg-inverse-surface rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">home_work</span>
+<span class="text-label-md font-label-md">Properties</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-surface-variant hover:bg-surface-variant dark:hover:bg-inverse-surface rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">concierge</span>
+<span class="text-label-md font-label-md">Services</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-surface-variant hover:bg-surface-variant dark:hover:bg-inverse-surface rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="text-label-md font-label-md">Revenue</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-surface-variant hover:bg-surface-variant dark:hover:bg-inverse-surface rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">article</span>
+<span class="text-label-md font-label-md">Content</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-surface-variant hover:bg-surface-variant dark:hover:bg-inverse-surface rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-label-md font-label-md">Users</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-surface-variant hover:bg-surface-variant dark:hover:bg-inverse-surface rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-label-md font-label-md">Settings</span>
+</a>
+</li>
+</ul>
+<div class="mt-auto border-t border-outline-variant pt-4 space-y-2">
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-surface-variant hover:bg-surface-variant dark:hover:bg-inverse-surface rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="text-label-md font-label-md">Support</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-surface-variant hover:bg-surface-variant dark:hover:bg-inverse-surface rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="text-label-md font-label-md">Logout</span>
+</a>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-1 md:ml-64 p-gutter-mobile md:p-gutter-desktop max-w-container-max-width mx-auto w-full">
+<!-- Header area for mobile -->
+<div class="md:hidden flex items-center justify-between mb-6 pb-4 border-b border-outline-variant">
+<h1 class="font-headline-md text-headline-md text-primary">Dashboard</h1>
+<button class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+<header class="mb-8 hidden md:block">
+<h1 class="font-headline-lg text-headline-lg text-primary mb-2">Welcome back, Admin</h1>
+<p class="text-on-surface-variant text-body-lg font-body-lg">Here's what's happening with your properties today.</p>
+</header>
+<!-- KPI Cards Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 hover:shadow-[0_4px_20px_rgba(123,41,20,0.04)] transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<div class="w-10 h-10 rounded-lg bg-secondary-container/30 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">payments</span>
+</div>
+<span class="inline-flex items-center gap-1 text-label-sm font-label-sm text-secondary bg-secondary-container/20 px-2 py-1 rounded-full">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+                        +12.5%
+                    </span>
+</div>
+<h3 class="text-label-md font-label-md text-on-surface-variant mb-1">Tổng doanh thu</h3>
+<p class="font-headline-md text-headline-md text-on-surface">124.5M VND</p>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 hover:shadow-[0_4px_20px_rgba(123,41,20,0.04)] transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<div class="w-10 h-10 rounded-lg bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">meeting_room</span>
+</div>
+<span class="inline-flex items-center gap-1 text-label-sm font-label-sm text-secondary bg-secondary-container/20 px-2 py-1 rounded-full">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+                        +5%
+                    </span>
+</div>
+<h3 class="text-label-md font-label-md text-on-surface-variant mb-1">Tỷ lệ lấp đầy</h3>
+<p class="font-headline-md text-headline-md text-on-surface">85%</p>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 hover:shadow-[0_4px_20px_rgba(123,41,20,0.04)] transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<div class="w-10 h-10 rounded-lg bg-tertiary-container/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
+</div>
+</div>
+<h3 class="text-label-md font-label-md text-on-surface-variant mb-1">Đơn phòng mới</h3>
+<p class="font-headline-md text-headline-md text-on-surface">12</p>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 hover:shadow-[0_4px_20px_rgba(123,41,20,0.04)] transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<div class="w-10 h-10 rounded-lg bg-secondary-container/20 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<h3 class="text-label-md font-label-md text-on-surface-variant mb-1">Đánh giá trung bình</h3>
+<div class="flex items-end gap-2">
+<p class="font-headline-md text-headline-md text-on-surface">4.8</p>
+<p class="text-label-md font-label-md text-on-surface-variant mb-1">/ 5</p>
+</div>
+</div>
+</div>
+<!-- Bento Grid: Charts & Activity -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+<!-- Chart Area (Spans 2 cols) -->
+<div class="lg:col-span-2 bg-surface-container-lowest border border-outline-variant rounded-xl p-6">
+<div class="flex justify-between items-center mb-6">
+<h2 class="font-headline-md text-headline-md text-on-surface">Doanh thu theo tháng</h2>
+<select class="bg-surface-container border-outline-variant rounded-lg text-label-md font-label-md px-3 py-1.5 focus:border-secondary focus:ring-1 focus:ring-secondary outline-none">
+<option>Năm 2024</option>
+<option>Năm 2023</option>
+</select>
+</div>
+<!-- Mock Chart Area -->
+<div class="h-64 flex items-end justify-between gap-2 px-2 border-l border-b border-outline-variant pb-2 pl-2">
+<!-- Bars -->
+<div class="w-full bg-primary/20 hover:bg-primary/40 rounded-t-sm transition-colors h-[40%] relative group">
+<span class="absolute -top-6 left-1/2 -translate-x-1/2 text-label-sm font-label-sm opacity-0 group-hover:opacity-100 transition-opacity">40M</span>
+</div>
+<div class="w-full bg-primary/20 hover:bg-primary/40 rounded-t-sm transition-colors h-[30%] relative group"></div>
+<div class="w-full bg-primary/20 hover:bg-primary/40 rounded-t-sm transition-colors h-[50%] relative group"></div>
+<div class="w-full bg-primary/20 hover:bg-primary/40 rounded-t-sm transition-colors h-[70%] relative group"></div>
+<div class="w-full bg-primary/20 hover:bg-primary/40 rounded-t-sm transition-colors h-[60%] relative group"></div>
+<div class="w-full bg-primary/80 rounded-t-sm h-[85%] relative group"> <!-- Current month -->
+<span class="absolute -top-6 left-1/2 -translate-x-1/2 text-label-sm font-label-sm">85M</span>
+</div>
+<div class="w-full bg-primary/20 hover:bg-primary/40 rounded-t-sm transition-colors h-[40%] relative group"></div>
+<div class="w-full bg-primary/20 hover:bg-primary/40 rounded-t-sm transition-colors h-[55%] relative group"></div>
+<div class="w-full bg-primary/20 hover:bg-primary/40 rounded-t-sm transition-colors h-[65%] relative group"></div>
+<div class="w-full bg-primary/20 hover:bg-primary/40 rounded-t-sm transition-colors h-[90%] relative group"></div>
+<div class="w-full bg-primary/20 hover:bg-primary/40 rounded-t-sm transition-colors h-[80%] relative group"></div>
+<div class="w-full bg-primary/20 hover:bg-primary/40 rounded-t-sm transition-colors h-[95%] relative group"></div>
+</div>
+<div class="flex justify-between mt-2 text-label-sm font-label-sm text-on-surface-variant px-2">
+<span>T1</span><span>T2</span><span>T3</span><span>T4</span><span>T5</span><span class="text-primary font-bold">T6</span><span>T7</span><span>T8</span><span>T9</span><span>T10</span><span>T11</span><span>T12</span>
+</div>
+</div>
+<!-- Recent Activity -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<h2 class="font-headline-md text-headline-md text-on-surface">Hoạt động gần đây</h2>
+<button class="text-label-sm font-label-sm text-primary hover:text-tertiary transition-colors">Xem tất cả</button>
+</div>
+<div class="space-y-4 flex-1 overflow-y-auto">
+<!-- Item 1 -->
+<div class="flex gap-4 items-start">
+<div class="w-8 h-8 rounded-full bg-secondary-container/50 flex items-center justify-center shrink-0 text-secondary mt-1">
+<span class="material-symbols-outlined text-[16px]">how_to_reg</span>
+</div>
+<div>
+<p class="text-label-md font-label-md text-on-surface">Check-in mới: Phòng Sunlit Haven</p>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Khách: Nguyễn Văn A • 10 phút trước</p>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="flex gap-4 items-start">
+<div class="w-8 h-8 rounded-full bg-secondary-container/50 flex items-center justify-center shrink-0 text-secondary mt-1">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+</div>
+<div>
+<p class="text-label-md font-label-md text-on-surface">Thanh toán thành công</p>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Booking #4920 - 4,500,000 VND • 1 giờ trước</p>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="flex gap-4 items-start">
+<div class="w-8 h-8 rounded-full bg-error-container/50 flex items-center justify-center shrink-0 text-error mt-1">
+<span class="material-symbols-outlined text-[16px]">build</span>
+</div>
+<div>
+<p class="text-label-md font-label-md text-on-surface">Yêu cầu bảo trì: Forest Cabin</p>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Vấn đề: Máy lạnh không mát • 2 giờ trước</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Homestay List Section -->
+<section>
+<div class="flex justify-between items-center mb-6">
+<h2 class="font-headline-md text-headline-md text-on-surface">Homestay sở hữu</h2>
+<button class="bg-primary text-on-primary px-4 py-2 rounded-lg text-label-md font-label-md hover:bg-tertiary transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                    Thêm phòng mới
+                </button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Property Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden hover:shadow-[0_4px_20px_rgba(123,41,20,0.04)] transition-shadow flex flex-col">
+<div class="h-48 relative overflow-hidden">
+<img alt="Homestay exterior" class="w-full h-full object-cover" data-alt="A beautifully designed homestay exterior featuring natural wood cladding, large glass windows reflecting a warm sunset, and lush forest green surroundings. The architectural style is minimalist yet tactile, blending harmoniously with nature. Soft, warm light spills from the interior, creating an inviting and premium atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmluwNgxlnAuT8csFpY_tjo7bYlmXDgiam54B9H64v4uP6F8jN1UtMU2h-nJJA7njMvTW8Gks2ajVQ_6WEvbZe3X1Hx4Cbu2ImYRfvR8b1K_bZ4ch4NJOGZlAYHJt7BuMxQHXriqOVDw4ULQJTWMp-5KPDTwX8dbfs_YFgl7iVKj_3k2X77-QDZZHTzJ8FXrzPSPSD9KlVxvS8SXhCzSjMXVga101d4kIS-28bJk7MmQtfM3KcAm7necGrDwcIbAGYEj6rtGy3tXaA"/>
+<div class="absolute top-3 right-3 bg-surface/90 px-2 py-1 rounded text-label-sm font-label-sm text-secondary flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-secondary"></span> Đang kinh doanh
+                        </div>
+</div>
+<div class="p-5 flex-1 flex flex-col">
+<h3 class="font-headline-md text-[20px] text-on-surface mb-1">The Sunlit Haven</h3>
+<p class="text-label-sm font-label-sm text-on-surface-variant mb-4 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">location_on</span> Tây Ninh, Việt Nam
+                        </p>
+<div class="grid grid-cols-2 gap-4 mb-4 pb-4 border-b border-outline-variant">
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Giá/Đêm</p>
+<p class="text-label-md font-label-md text-primary font-semibold">1,200k VND</p>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Tỷ lệ lấp đầy</p>
+<p class="text-label-md font-label-md text-secondary font-semibold">92%</p>
+</div>
+</div>
+<div class="mt-auto flex justify-end">
+<button class="text-primary text-label-md font-label-md hover:underline">Quản lý</button>
+</div>
+</div>
+</div>
+<!-- Property Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden hover:shadow-[0_4px_20px_rgba(123,41,20,0.04)] transition-shadow flex flex-col">
+<div class="h-48 relative overflow-hidden">
+<img alt="Homestay interior" class="w-full h-full object-cover" data-alt="An interior view of a minimalist homestay room. It features a large, comfortable bed with crisp white linens, a terracotta accent wall, and wooden bedside tables. A large window offers a view of dense forest greens. The lighting is soft and natural, emphasizing the textures of the materials and creating a serene, restful mood." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnm-dnAEAO9oLd8t6R3XAgAXJoNPUTfold8diGqa3QcAfVHke-ZSvA_xcouNpXiLQtjy05KL--I9z-IG6xYnD1YdCIzT1_GnrzET6jpDpfAGNPmYlCWv6PHXZ6ElHyhOpVnLPfq9OT-CBaQ0Mx3_6NSb-kzsBLrg4UwEHf1T3_tpC5d99RAixGuSq1Oazr0pH4x-Mr7Pm9nr5y5nqvcmbhuZgSCecCeHs2W04ap0LgCs-GSgvDbydgbbxy2bgm7A2vkzNRccTyqeJ0"/>
+<div class="absolute top-3 right-3 bg-surface/90 px-2 py-1 rounded text-label-sm font-label-sm text-secondary flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-secondary"></span> Đang kinh doanh
+                        </div>
+</div>
+<div class="p-5 flex-1 flex flex-col">
+<h3 class="font-headline-md text-[20px] text-on-surface mb-1">Forest Whisper Cabin</h3>
+<p class="text-label-sm font-label-sm text-on-surface-variant mb-4 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">location_on</span> Tây Ninh, Việt Nam
+                        </p>
+<div class="grid grid-cols-2 gap-4 mb-4 pb-4 border-b border-outline-variant">
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Giá/Đêm</p>
+<p class="text-label-md font-label-md text-primary font-semibold">1,500k VND</p>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Tỷ lệ lấp đầy</p>
+<p class="text-label-md font-label-md text-secondary font-semibold">78%</p>
+</div>
+</div>
+<div class="mt-auto flex justify-end">
+<button class="text-primary text-label-md font-label-md hover:underline">Quản lý</button>
+</div>
+</div>
+</div>
+<!-- Property Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden hover:shadow-[0_4px_20px_rgba(123,41,20,0.04)] transition-shadow flex flex-col opacity-80">
+<div class="h-48 relative overflow-hidden grayscale-[30%]">
+<img alt="Homestay pool area" class="w-full h-full object-cover" data-alt="A tranquil outdoor pool area of a homestay. The pool is surrounded by terracotta-tiled decking and lush green potted plants. Sun loungers are arranged neatly. The scene is captured in late afternoon sunlight, casting long, soft shadows. The overall aesthetic is calm, premium, and relaxing, typical of a boutique retreat." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAh2eH5D9_geKYdWarXcDdOEedIZ8pKB0CZyADdqJmbAf3Rk4LkcZJE28MV1b-PYPFmZRxh4Ds8ogX5sya3w2xAhfCUGkoEZ6vrXsm9_SZ5tOnySM3zZCLv89Yr0mhTODC3jSYzNxsHVQ5ctTmGyb5nP5UN51aJ6nnLTA1zjp3seoEx8VjPkhCPzdGOYDL4FF0qtB-30d8acsQK7cwqelgCK9I8iB51qdubR85aVRlkmBvAkUbbEpNgenPMTV8DSpVJExG7RvQv19nU"/>
+<div class="absolute top-3 right-3 bg-surface/90 px-2 py-1 rounded text-label-sm font-label-sm text-error flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-error"></span> Đang bảo trì
+                        </div>
+</div>
+<div class="p-5 flex-1 flex flex-col">
+<h3 class="font-headline-md text-[20px] text-on-surface mb-1">Terracotta Villa</h3>
+<p class="text-label-sm font-label-sm text-on-surface-variant mb-4 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">location_on</span> Tây Ninh, Việt Nam
+                        </p>
+<div class="grid grid-cols-2 gap-4 mb-4 pb-4 border-b border-outline-variant">
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Giá/Đêm</p>
+<p class="text-label-md font-label-md text-primary font-semibold">2,200k VND</p>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Dự kiến hoàn thành</p>
+<p class="text-label-md font-label-md text-on-surface-variant font-semibold">15/11/2024</p>
+</div>
+</div>
+<div class="mt-auto flex justify-end">
+<button class="text-primary text-label-md font-label-md hover:underline">Xem tiến độ</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+</body></html>

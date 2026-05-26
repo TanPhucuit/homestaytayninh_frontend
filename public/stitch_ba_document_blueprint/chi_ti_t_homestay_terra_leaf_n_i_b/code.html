@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Terra Leaf Núi Bà - Terra &amp; Leaf Homestay</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&amp;family=Libre+Caslon+Text:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-container": "#4c6b56",
+                        "secondary-container": "#c8ebd0",
+                        "primary": "#7b2914",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed-variant": "#7e2b16",
+                        "on-primary-container": "#ffc9bb",
+                        "error-container": "#ffdad6",
+                        "inverse-on-surface": "#f4f0eb",
+                        "tertiary-fixed-dim": "#ffb4a2",
+                        "primary-container": "#9a4029",
+                        "tertiary-fixed": "#ffdad2",
+                        "on-tertiary-container": "#ffc9bb",
+                        "surface-container": "#f1ede8",
+                        "outline-variant": "#dcc0ba",
+                        "surface-dim": "#ddd9d5",
+                        "outline": "#89726c",
+                        "surface-container-highest": "#e6e2dd",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "tertiary-container": "#9a4029",
+                        "on-tertiary": "#ffffff",
+                        "background": "#fdf9f4",
+                        "tertiary": "#7b2914",
+                        "inverse-primary": "#ffb4a2",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed": "#ffdad2",
+                        "on-secondary-fixed-variant": "#2f4d3a",
+                        "on-surface-variant": "#56423d",
+                        "on-primary-fixed": "#3c0800",
+                        "surface": "#fdf9f4",
+                        "on-tertiary-fixed": "#3c0700",
+                        "inverse-surface": "#31302d",
+                        "secondary": "#466550",
+                        "on-background": "#1c1c19",
+                        "on-secondary-fixed": "#022110",
+                        "surface-container-low": "#f7f3ee",
+                        "surface-bright": "#fdf9f4",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed": "#c8ebd0",
+                        "surface-variant": "#e6e2dd",
+                        "surface-container-high": "#ebe8e3",
+                        "on-primary-fixed-variant": "#7e2b16",
+                        "secondary-fixed-dim": "#accfb5",
+                        "on-surface": "#1c1c19",
+                        "surface-tint": "#9d422b",
+                        "primary-fixed-dim": "#ffb4a2",
+                        "on-error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter-mobile": "16px",
+                        "gutter-desktop": "24px",
+                        "unit": "4px",
+                        "margin-edge": "24px",
+                        "container-max-width": "1200px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Be Vietnam Pro"],
+                        "headline-lg-mobile": ["Libre Caslon Text"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "label-md": ["Be Vietnam Pro"],
+                        "body-md": ["Be Vietnam Pro"],
+                        "headline-md": ["Libre Caslon Text"],
+                        "headline-lg": ["Libre Caslon Text"],
+                        "display-lg": ["Libre Caslon Text"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #dcc0ba;
+            border-radius: 9999px;
+        }
+        .image-overlay {
+            background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 50%);
+        }
+        
+        .bento-image-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 0.75rem;
+            cursor: pointer;
+        }
+        
+        .bento-image-card img {
+            transition: transform 0.5s ease;
+        }
+        
+        .bento-image-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .bento-image-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.1);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .bento-image-card:hover::after {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<header class="bg-background dark:bg-inverse-surface border-b border-outline-variant dark:border-outline sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-gutter-mobile md:px-gutter-desktop max-w-container-width mx-auto h-16">
+<!-- Brand -->
+<a class="font-headline-md text-headline-md text-primary dark:text-inverse-primary tracking-tight" href="#">Terra &amp; Leaf</a>
+<!-- Navigation (Web) -->
+<nav class="hidden md:flex gap-8 h-full">
+<a class="flex flex-col justify-center text-primary dark:text-inverse-primary border-b-2 border-primary h-full font-label-md text-label-md px-2" href="#">Explore</a>
+<a class="flex flex-col justify-center text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors h-full font-label-md text-label-md px-2" href="#">My Bookings</a>
+<a class="flex flex-col justify-center text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors h-full font-label-md text-label-md px-2" href="#">Host Mode</a>
+</nav>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors rounded-full hover:bg-surface-variant">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">notifications</span>
+</button>
+<button class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant">
+<img alt="User profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLw-uJ3yvNvv-VQ9aNEMM5XXnIKIMsvSWlSADxjb7ljJ24tAWfFFZb3xlEVWaaHYjREJ61Apet_P_gho135QsuAuQW_-aMuHAdCTF_L7_clV1ogJELdmDOed6WZDgdgpIEnF6kcv4F0kI1gnqDGxZ_7H532NcSte-iW927Ey8doCceBWRCl0wSYT8GHhWu9lzWONAaygvgNbiOb1FO69OrapMThYpfIV3nMNVR1Xr8vGDZiJP6qwaOKvWQHoxq3sYtGVZ-gCodQZeN"/>
+</button>
+<!-- Mobile Menu Button -->
+<button class="md:hidden p-2 text-on-surface-variant">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</div>
+</header>
+<main class="max-w-[1200px] mx-auto px-gutter-mobile md:px-gutter-desktop py-8 md:py-12">
+<!-- Breadcrumb & Title Section -->
+<div class="mb-8">
+<div class="flex items-center gap-2 text-on-surface-variant font-label-md text-label-md mb-4">
+<a class="hover:text-primary transition-colors" href="#">Tây Ninh</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">Thạnh Tân</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="text-on-surface">Terra Leaf Núi Bà</span>
+</div>
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h1 class="font-display-lg text-display-lg text-on-surface mb-2">Terra Leaf Núi Bà</h1>
+<div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-on-surface-variant font-body-md text-body-md">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-semibold text-on-surface">4.9</span>
+<span class="underline decoration-outline-variant hover:decoration-primary cursor-pointer">(128 đánh giá)</span>
+</div>
+<span class="hidden md:inline text-outline-variant">•</span>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined">location_on</span>
+<span class="underline decoration-outline-variant hover:decoration-primary cursor-pointer">Thạnh Tân, Tây Ninh</span>
+</div>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg border border-outline-variant hover:border-primary text-on-surface font-label-md text-label-md transition-colors bg-surface-container-lowest">
+<span class="material-symbols-outlined text-[18px]">share</span>
+                        Chia sẻ
+                    </button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg border border-outline-variant hover:border-primary text-on-surface font-label-md text-label-md transition-colors bg-surface-container-lowest">
+<span class="material-symbols-outlined text-[18px]">favorite</span>
+                        Lưu
+                    </button>
+</div>
+</div>
+</div>
+<!-- Image Bento Grid Gallery -->
+<div class="grid grid-cols-1 md:grid-cols-4 grid-rows-[300px_200px] md:grid-rows-[250px_250px] gap-4 mb-12 rounded-xl overflow-hidden">
+<!-- Hero Image (Large) -->
+<div class="bento-image-card md:col-span-2 md:row-span-2 relative">
+<img class="w-full h-full object-cover" data-alt="A stunning modern villa nestled at the foot of a lush, majestic mountain. The architectural design features sleek lines, expansive glass windows, and warm terracotta elements. The scene is bathed in golden hour sunlight, highlighting the verdant forest green surroundings and creating a serene, premium hospitality atmosphere. The image embodies a minimalist yet tactile aesthetic with a palette of earthy tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA315wXumufRGZip4XdHAwyG9aKZKOtC9PyQ-IKI9n4DlEDUjSnF5BKAGZtldNYUy2XbKO7195tdAGT3FFgQtoo9tlffaNCv777DdVkowzFhhqh0ZxHxK_94OmfM3RYA6br8dmKyi9JjYdYCkFnKZDLWVVpBvQXDW6UyoJKoooPrUe9NHmNCbongABj_fVkLspyLhv3aDk54_eE7_rplTRzqowbulzo0gGiqVaDdCYyexi_0YlzFmy8X6JGDLCnZH-IT_NzAyKF4hfu"/>
+</div>
+<!-- Thumbnail 1 -->
+<div class="bento-image-card hidden md:block">
+<img class="w-full h-full object-cover" data-alt="A beautifully designed homestay bedroom featuring a minimalist interior with warm wood accents and crisp white linens. A large window offers a breathtaking view of the surrounding mountain landscape. The lighting is soft and natural, emphasizing the texture of the terracotta floor tiles and the serene, calming mood of the space. The color palette revolves around soft sand, forest green, and muted terracotta." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAj1RIzV8TxMN5ouBTUOyCglsVz2vdB6NgBihcSPKJylIFNZFYtR5C6XvaSc_TBZSKkFXwWe-81xOkueL7SvbPDPoXBBQls5EMWwF7o9k--c6TZhj7yOSvvkvbZGuHFxV3Q_RuLvZiMZt0pgKLynRcDyQaaoMf1ZjjeieCUFZZH-kBGjUZi7BvMs2Gzz8N9Xfs6mGCAXB1Oa-7hvfI50Nw-nA9bjAqJ2xwzNCkFQCBcCSR-BiehpNcZx76LlTp3x0um1CPquM6e83gI"/>
+</div>
+<!-- Thumbnail 2 -->
+<div class="bento-image-card hidden md:block">
+<img class="w-full h-full object-cover" data-alt="A pristine outdoor infinity pool at a luxury homestay, overlooking a dense, vibrant green forest and mountain range. The pool deck is made of smooth, warm-toned stone. The water reflects the clear blue sky, contrasting beautifully with the surrounding earthy elements. The scene conveys a sense of high-end relaxation and tranquility, utilizing a palette of azure, forest green, and soft terracotta." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDknAm37hdvyvCR0em6joXl7bYE3PfHdXTbT_WdPJBOo-CReLNdCais1uCFQsbypwwDzpo-8tm0Ksx_rvA7l0Urca4B-hXpL7nuRXL5x47LZ5dvTb9CoQzWvVPRWT9WWUbnr66IkjAH3QPMFGqbe9AawwjxZHX4lfvUttCzcH7ILTpVagPCe930GKY9gJAAkwQe9xwMoJTXsXOZNV2fXzzvfxKtDGVLWkqc6M-G45GA5XjFLmMiI1oHZncnsNJpyhQgHwoRYAhSU03g"/>
+</div>
+<!-- Thumbnail 3 -->
+<div class="bento-image-card hidden md:block">
+<img class="w-full h-full object-cover" data-alt="An inviting outdoor BBQ area set in a lush garden. The space features rustic wooden furniture, string lights softly glowing in the early evening dusk, and a modern stone grill. The atmosphere is warm, convivial, and intimate, perfect for family gatherings. The color palette focuses on rich forest greens, deep terracotta shadows, and the warm yellow glow of the lights." src="https://lh3.googleusercontent.com/aida-public/AB6AXuClGF7vE4J2ySlDA2XqOGy___doGLsTQCs_eI1m8nXFt7Z6myoh3cI4hq6fS5e8MKn42m5vYvklpUj_0JLFPhTAMprMRiA-rn23rrmRf61OWBvz2gNraHeYQ8LAabK4NgvzoaOHydeC0trZRwq2EmT4kiz_5if4Acuo5A7ehSbxs6moowcgf2OBzeBd6P0Rs-4UQSJghyfx5X3vtFjmkP5pyxX4tgjApy2z6YAe788VAY5Fv0pgqN1e9BRV4A3qtBYcz611h_226eY_"/>
+</div>
+<!-- Thumbnail 4 with 'Show All' overlay -->
+<div class="bento-image-card hidden md:block relative">
+<img class="w-full h-full object-cover" data-alt="A beautifully plated traditional local Vietnamese dish served on artisan ceramic tableware. The food is vibrant and fresh, set on a wooden table outdoors with a blurred natural background. The lighting highlights the textures of the food and the tactile quality of the terracotta plate. The mood is authentic and premium, utilizing earthy tones and vibrant culinary colors." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5Z6AqXBeF563aVe2MsQx5g2WPzfY_rRCsLIKtD-DePEvmxrxO9T8oIsqEMEO7aP4xFDhcBVZgff8neOjvpK6BA02HhyU-s659qlQD8Vv7B1Q4ffsYwyNctHYI-AS-UM4EDuoQi55QZR0lGg8vja0c-yVfnIc4ah4J1wfdkzsaJW5WcETMTn-LOFPXzNdrmceGkW2C_EB9nxnGbOigMGcCrxyWaKY1yd3gwoRmMqPSyTfCVMS3h4u7D-D8n7BqLUGBdzGzcwDEc5I2"/>
+<div class="absolute inset-0 bg-surface/40 backdrop-blur-sm flex items-center justify-center border border-outline-variant rounded-xl m-[1px]">
+<span class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined">grid_view</span>
+                        Xem tất cả ảnh
+                    </span>
+</div>
+</div>
+</div>
+<!-- Main Content Layout -->
+<div class="flex flex-col lg:flex-row gap-12 relative">
+<!-- Left Column: Details -->
+<div class="lg:w-2/3 flex flex-col gap-10">
+<!-- Highlight Chips -->
+<div class="flex flex-wrap gap-2">
+<div class="px-4 py-2 bg-secondary/10 text-on-secondary-container font-label-md text-label-md rounded-full border border-secondary/20 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">landscape</span>
+                        Gần Núi Bà Đen
+                    </div>
+<div class="px-4 py-2 bg-primary/10 text-primary font-label-md text-label-md rounded-full border border-primary/20 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">outdoor_grill</span>
+                        Có BBQ sân vườn
+                    </div>
+<div class="px-4 py-2 bg-secondary/10 text-on-secondary-container font-label-md text-label-md rounded-full border border-secondary/20 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">family_restroom</span>
+                        Phù hợp gia đình
+                    </div>
+<div class="px-4 py-2 bg-secondary/10 text-on-secondary-container font-label-md text-label-md rounded-full border border-secondary/20 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">airport_shuttle</span>
+                        Có xe đưa đón
+                    </div>
+</div>
+<!-- Editorial Description -->
+<section class="border-b border-outline-variant pb-10">
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-4">Nơi đất sét nung gặp gỡ đại ngàn</h2>
+<div class="prose prose-on-surface max-w-none font-body-lg text-body-lg text-on-surface-variant space-y-4">
+<p>Nằm nép mình dưới chân núi Bà Đen huyền thoại, Terra Leaf mang đến một không gian lưu trú đậm chất mộc mạc nhưng không kém phần tinh tế. Lấy cảm hứng từ những lò gốm đất nung truyền thống của Tây Ninh, kết hợp với mảng xanh rì của rừng cây tự nhiên, nơi đây là chốn dừng chân lý tưởng để bạn gác lại mọi âu lo.</p>
+<p>Mỗi buổi sáng thức giấc, bạn sẽ được chào đón bởi lớp sương mờ vờn quanh đỉnh núi, tiếng chim hót lanh lảnh và hương thơm của cỏ cây. Buổi tối là khoảng thời gian tuyệt vời để quây quần bên bếp lửa hồng BBQ, thưởng thức những sản vật địa phương và ngắm bầu trời đầy sao trong không khí tĩnh lặng.</p>
+</div>
+<button class="mt-4 font-label-md text-label-md text-primary underline decoration-primary/50 hover:decoration-primary flex items-center gap-1">
+                        Đọc thêm <span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+</section>
+<!-- Amenities Grid -->
+<section class="border-b border-outline-variant pb-10">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-6">Tiện ích nổi bật</h3>
+<div class="grid grid-cols-2 md:grid-cols-3 gap-y-6 gap-x-4">
+<div class="flex items-center gap-3 text-on-surface-variant font-body-md text-body-md">
+<span class="material-symbols-outlined text-[28px] text-secondary">wifi</span>
+                            Wifi tốc độ cao
+                        </div>
+<div class="flex items-center gap-3 text-on-surface-variant font-body-md text-body-md">
+<span class="material-symbols-outlined text-[28px] text-secondary">pool</span>
+                            Hồ bơi vô cực
+                        </div>
+<div class="flex items-center gap-3 text-on-surface-variant font-body-md text-body-md">
+<span class="material-symbols-outlined text-[28px] text-secondary">outdoor_grill</span>
+                            Khu BBQ riêng tư
+                        </div>
+<div class="flex items-center gap-3 text-on-surface-variant font-body-md text-body-md">
+<span class="material-symbols-outlined text-[28px] text-secondary">local_parking</span>
+                            Bãi đậu xe rộng rãi
+                        </div>
+<div class="flex items-center gap-3 text-on-surface-variant font-body-md text-body-md">
+<span class="material-symbols-outlined text-[28px] text-secondary">ac_unit</span>
+                            Điều hòa 2 chiều
+                        </div>
+<div class="flex items-center gap-3 text-on-surface-variant font-body-md text-body-md">
+<span class="material-symbols-outlined text-[28px] text-secondary">kitchen</span>
+                            Bếp đầy đủ dụng cụ
+                        </div>
+</div>
+<button class="mt-6 px-6 py-3 border border-outline text-on-surface font-label-md text-label-md rounded-lg hover:bg-surface-variant transition-colors">
+                        Hiển thị tất cả 24 tiện ích
+                    </button>
+</section>
+<!-- Room Selection -->
+<section class="border-b border-outline-variant pb-10">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-6">Lựa chọn không gian của bạn</h3>
+<div class="space-y-6">
+<!-- Room Card 1 -->
+<div class="flex flex-col md:flex-row gap-6 p-6 rounded-xl border border-outline-variant bg-surface-container-lowest hover:border-primary transition-colors group">
+<div class="w-full md:w-1/3 aspect-[4/3] rounded-lg overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A spacious and elegant homestay room designed for families. The room features a large, comfortable king-size bed and two twin beds, decorated in neutral soft sand tones with accents of forest green. Natural light floods in through large glass doors that open to a lush private garden. The aesthetic is clean, premium, and welcoming, embodying a minimalist design with earthy terracotta touches." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfItx2ja3q6N6L1lzXN7GVSj1qnVDqjMHqLTlW-vgv5k7MqGq2dEA746KQEHfpTADptjIhh6zshH_EzfghDm4gCD003ChNtfnaov3eQCWOzfrmLkx89pvpzRlEIk21DL3fwHuqGWhTr2Qq9w0QpqG2Ui4hMi3PQm8klmFzOhe3Km2p_-3ukv8tI1iOr_DVtVLim2jaiBm6bvFALs-PWhCoL0pJhC31QO7H9q5bPi6WHQod5ASPsVJbKLQ18uz7bsG11RSa12VqmI39"/>
+</div>
+<div class="w-full md:w-2/3 flex flex-col justify-between">
+<div>
+<h4 class="font-headline-md text-headline-md text-on-surface mb-2">Family Garden House</h4>
+<div class="flex flex-wrap gap-2 mb-3 text-on-surface-variant font-label-sm text-label-sm">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">group</span> 4 khách</span>
+<span>•</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">bed</span> 2 giường đôi</span>
+<span>•</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">aspect_ratio</span> 45m²</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4 line-clamp-2">Căn nhà gỗ riêng biệt với khoảng sân vườn nhỏ, phù hợp cho gia đình thư giãn. Cửa sổ lớn đón ánh sáng tự nhiên và luồng gió mát từ núi.</p>
+</div>
+<div class="flex items-end justify-between border-t border-outline-variant pt-4 mt-auto">
+<div>
+<div class="font-headline-md text-headline-md text-primary">1.800.000đ</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">/ đêm</div>
+</div>
+<button class="px-6 py-2.5 bg-surface-container-lowest border border-secondary text-secondary hover:bg-secondary hover:text-on-secondary rounded-lg font-label-md text-label-md transition-colors">
+                                        Chọn phòng
+                                    </button>
+</div>
+</div>
+</div>
+<!-- Room Card 2 -->
+<div class="flex flex-col md:flex-row gap-6 p-6 rounded-xl border border-outline-variant bg-surface-container-lowest hover:border-primary transition-colors group">
+<div class="w-full md:w-1/3 aspect-[4/3] rounded-lg overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A cozy, intimately designed homestay room tailored for couples. The highlight is a large panoramic window offering a direct, breathtaking view of the green mountain range. The interior utilizes warm terracotta hues and rich forest green textiles, creating a tactile, premium environment. Soft, warm lighting enhances the romantic and serene mood, perfectly aligning with a minimalist, nature-inspired aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqrjp3nVi0uGsueXbR-xkF5g254Oww3TXLr9h8L8Td_89jRTIST_kwVGNWB1fHP0yGU6QSvOzFKHexvt1IIQ3kQHRLmJCAs7LR0N0WdBwGKnR-nYISZVsomoYxYVmzRBJLWSHA4AMKfVRg0Wme8pRNjZocwhYXmJi4x3gVOmQdBmvHJl-BD8byr8H0oRJivXXPKDyZGLI3qC4q161PyNq13kP7eB2sENVPJ5_KA5Y3PwX1FuWGG18SMjmXL4fbGDkQdR3-lxUVLUIZ"/>
+</div>
+<div class="w-full md:w-2/3 flex flex-col justify-between">
+<div>
+<h4 class="font-headline-md text-headline-md text-on-surface mb-2">Mountain View Room</h4>
+<div class="flex flex-wrap gap-2 mb-3 text-on-surface-variant font-label-sm text-label-sm">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">group</span> 2 khách</span>
+<span>•</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">bed</span> 1 giường đôi lớn</span>
+<span>•</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">aspect_ratio</span> 28m²</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4 line-clamp-2">Phòng nghỉ ấm cúng trên tầng cao với ban công riêng tư, nơi lý tưởng để thưởng thức tách trà sáng và ngắm nhìn đỉnh núi Bà Đen hùng vĩ.</p>
+</div>
+<div class="flex items-end justify-between border-t border-outline-variant pt-4 mt-auto">
+<div>
+<div class="font-headline-md text-headline-md text-primary">1.200.000đ</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">/ đêm</div>
+</div>
+<button class="px-6 py-2.5 bg-surface-container-lowest border border-secondary text-secondary hover:bg-secondary hover:text-on-secondary rounded-lg font-label-md text-label-md transition-colors">
+                                        Chọn phòng
+                                    </button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Map Location -->
+<section class="pb-10">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-6">Vị trí</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4">Thạnh Tân, Tây Ninh, Việt Nam</p>
+<div class="w-full h-[400px] rounded-xl overflow-hidden border border-outline-variant relative bg-surface-variant">
+<!-- Placeholder for Map Image -->
+<img class="w-full h-full object-cover opacity-80" data-alt="A highly detailed, stylized map view showing the location of a homestay in Tay Ninh, Vietnam. The map focuses on the area surrounding Nui Ba Den mountain. The visual style is premium and minimalist, utilizing the brand's earthy color palette of soft sand, terracotta routes, and forest green geographic features. Pinpoints highlight the homestay location amidst the natural landscape." data-location="Tây Ninh" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxdyB6wo7C-c9IiEbRGknplTHVmmkwosrhxp-EMuTy9Um7yIV9rj_TUGFw1kO4-ez1bzUXkYRELtNK2ZGOvHVXzvwn4b909kY3jJQ8CsJbLoukMQTCtn90Njb5JztbeW-wHsjQAblmeW1JiOzJBt2MX3tThLmPsY0RE6dakwuHcw6DiFr8G4tIs3Zzo09xe99HQSC_UevrxbDBhDR_ImzGwwomickJnUlnpOW303DFJsRH5w91GzN1tv67o9i58KCcxgrU42_XKilB"/>
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<div class="bg-primary text-on-primary p-3 rounded-full shadow-lg flex flex-col items-center">
+<span class="material-symbols-outlined text-[24px]">home_pin</span>
+</div>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-4">Nằm cách trung tâm thành phố Tây Ninh khoảng 8km, đường đi thuận tiện cho cả ô tô và xe máy. Xung quanh có nhiều quán ăn địa phương và chợ nhỏ.</p>
+</section>
+</div>
+<!-- Right Column: Sticky Booking Widget -->
+<div class="lg:w-1/3 relative">
+<div class="sticky top-24 bg-surface-container-lowest rounded-xl border border-outline-variant p-6 shadow-[0_10px_30px_-15px_rgba(123,41,20,0.1)]">
+<div class="flex items-baseline gap-1 mb-6 border-b border-outline-variant pb-4">
+<span class="font-headline-lg text-headline-lg-mobile text-primary">1.200.000đ</span>
+<span class="font-body-md text-body-md text-on-surface-variant">/ đêm</span>
+</div>
+<!-- Booking Form -->
+<div class="space-y-4 mb-6">
+<!-- Date Picker Sim -->
+<div class="border border-outline-variant rounded-lg overflow-hidden flex divide-x divide-outline-variant focus-within:border-secondary focus-within:ring-1 focus-within:ring-secondary transition-all">
+<div class="w-1/2 p-3 cursor-pointer hover:bg-surface-container-low transition-colors">
+<label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">Nhận phòng</label>
+<div class="font-body-md text-body-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary">calendar_today</span>
+                                    15 Th10
+                                </div>
+</div>
+<div class="w-1/2 p-3 cursor-pointer hover:bg-surface-container-low transition-colors">
+<label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">Trả phòng</label>
+<div class="font-body-md text-body-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary">calendar_month</span>
+                                    17 Th10
+                                </div>
+</div>
+</div>
+<!-- Guests -->
+<div class="border border-outline-variant rounded-lg p-3 cursor-pointer hover:bg-surface-container-low transition-colors focus-within:border-secondary focus-within:ring-1 focus-within:ring-secondary flex justify-between items-center">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">Khách</label>
+<div class="font-body-md text-body-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary">group</span>
+                                    2 người lớn
+                                </div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">expand_more</span>
+</div>
+</div>
+<!-- Price Breakdown -->
+<div class="space-y-3 mb-6 font-body-md text-body-md text-on-surface-variant border-b border-outline-variant pb-6">
+<div class="flex justify-between">
+<span class="underline decoration-outline-variant">1.200.000đ x 2 đêm</span>
+<span>2.400.000đ</span>
+</div>
+<div class="flex justify-between">
+<span class="underline decoration-outline-variant">Phí dịch vụ dọn dẹp</span>
+<span>200.000đ</span>
+</div>
+</div>
+<!-- Total -->
+<div class="flex justify-between items-center mb-6">
+<span class="font-headline-md text-headline-md text-on-surface">Tổng tiền</span>
+<span class="font-headline-md text-headline-md text-primary">2.600.000đ</span>
+</div>
+<!-- CTA -->
+<button class="w-full bg-primary text-on-primary font-label-md text-label-md py-4 rounded-lg hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm">
+                        Tiếp tục đặt phòng
+                    </button>
+<p class="text-center font-label-sm text-label-sm text-on-surface-variant mt-4">
+                        Bạn vẫn chưa bị trừ tiền
+                    </p>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-highest dark:bg-inverse-surface border-t border-outline-variant dark:border-outline mt-12">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8 py-12 px-gutter-mobile md:px-gutter-desktop max-w-container-width mx-auto">
+<div class="md:col-span-1">
+<a class="font-headline-md text-headline-md text-primary dark:text-inverse-primary mb-4 block" href="#">Terra &amp; Leaf</a>
+<p class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant">
+                    © 2024 Terra &amp; Leaf Homestay. All rights reserved.
+                </p>
+</div>
+<div class="flex flex-col gap-3">
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200 font-label-sm text-label-sm" href="#">About Us</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200 font-label-sm text-label-sm" href="#">Privacy Policy</a>
+</div>
+<div class="flex flex-col gap-3">
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200 font-label-sm text-label-sm" href="#">Terms of Service</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200 font-label-sm text-label-sm" href="#">Local Guide</a>
+</div>
+<div class="flex flex-col gap-3">
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200 font-label-sm text-label-sm" href="#">Sustainability</a>
+</div>
+</div>
+</footer>
+</body></html>

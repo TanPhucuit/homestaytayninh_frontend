@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vận hành Booking - Terra &amp; Leaf</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=Libre+Caslon+Text:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-container": "#4c6b56",
+                        "secondary-container": "#c8ebd0",
+                        "primary": "#7b2914",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed-variant": "#7e2b16",
+                        "on-primary-container": "#ffc9bb",
+                        "error-container": "#ffdad6",
+                        "inverse-on-surface": "#f4f0eb",
+                        "tertiary-fixed-dim": "#ffb4a2",
+                        "primary-container": "#9a4029",
+                        "tertiary-fixed": "#ffdad2",
+                        "on-tertiary-container": "#ffc9bb",
+                        "surface-container": "#f1ede8",
+                        "outline-variant": "#dcc0ba",
+                        "surface-dim": "#ddd9d5",
+                        "outline": "#89726c",
+                        "surface-container-highest": "#e6e2dd",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "tertiary-container": "#9a4029",
+                        "on-tertiary": "#ffffff",
+                        "background": "#fdf9f4",
+                        "tertiary": "#7b2914",
+                        "inverse-primary": "#ffb4a2",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed": "#ffdad2",
+                        "on-secondary-fixed-variant": "#2f4d3a",
+                        "on-surface-variant": "#56423d",
+                        "on-primary-fixed": "#3c0800",
+                        "surface": "#fdf9f4",
+                        "on-tertiary-fixed": "#3c0700",
+                        "inverse-surface": "#31302d",
+                        "secondary": "#466550",
+                        "on-background": "#1c1c19",
+                        "on-secondary-fixed": "#022110",
+                        "surface-container-low": "#f7f3ee",
+                        "surface-bright": "#fdf9f4",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed": "#c8ebd0",
+                        "surface-variant": "#e6e2dd",
+                        "surface-container-high": "#ebe8e3",
+                        "on-primary-fixed-variant": "#7e2b16",
+                        "secondary-fixed-dim": "#accfb5",
+                        "on-surface": "#1c1c19",
+                        "surface-tint": "#9d422b",
+                        "primary-fixed-dim": "#ffb4a2",
+                        "on-error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter-mobile": "16px",
+                        "gutter-desktop": "24px",
+                        "unit": "4px",
+                        "margin-edge": "24px",
+                        "container-max-width": "1200px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Be Vietnam Pro"],
+                        "headline-lg-mobile": ["Libre Caslon Text"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "label-md": ["Be Vietnam Pro"],
+                        "body-md": ["Be Vietnam Pro"],
+                        "headline-md": ["Libre Caslon Text"],
+                        "headline-lg": ["Libre Caslon Text"],
+                        "display-lg": ["Libre Caslon Text"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md antialiased flex h-screen overflow-hidden">
+<!-- SideNavBar (Shared Component JSON logic applied) -->
+<nav class="bg-surface-container-low dark:bg-surface-container-highest border-r border-outline-variant dark:border-outline h-full w-64 fixed left-0 top-0 flex flex-col py-6 px-4 z-20">
+<div class="mb-8 px-2 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-variant overflow-hidden">
+<img alt="Admin profile" class="w-full h-full object-cover" data-alt="A close up professional headshot of an administrative staff member smiling warmly. They are wearing a neutral tone blazer. The lighting is soft and natural, emphasizing approachability and competence. The background is a slightly blurred modern office setting. The overall mood is welcoming and professional, fitting for a homestay management context." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0xT-_nACigGs-VAzNi_y_KNjePqADXQLZLLwVSEHUIzoluQqW-pTGteAolCh5qnmpjpIKTJGq4LEgIuJf6nVhoWz8tY86jV16x5iHrWY9vbxJoUcYjm36662wu44jGv895yxjXrgGBcQgLl1eh9_XHaVmYo66fKlzxAF9t0UlaJo89SHkCFrWTWlJJLZ3NKMWagMgH8FxOBMwreLGYEMYmjhR6FVsQ17mwM-HCW0pptOJcuJTaTkNBJB-josskNnb5S7LwhQdwmrF"/>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md text-primary dark:text-inverse-primary text-base">Admin Panel</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Terra &amp; Leaf Management</p>
+</div>
+</div>
+<ul class="flex flex-col gap-1 flex-grow">
+<!-- Inactive -->
+<li><a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-surface-variant hover:bg-surface-variant dark:hover:bg-inverse-surface rounded-lg transition-colors font-label-md text-label-md" href="#"><span class="material-symbols-outlined text-xl" data-icon="dashboard">dashboard</span> Dashboard</a></li>
+<!-- Active State Logic Applied (Intent: Booking Operations) -->
+<li><a class="flex items-center gap-3 px-3 py-2 bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-lg scale-95 transition-transform font-label-md text-label-md" href="#"><span class="material-symbols-outlined text-xl" data-icon="calendar_month">calendar_month</span> Bookings</a></li>
+<!-- Inactive -->
+<li><a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-surface-variant hover:bg-surface-variant dark:hover:bg-inverse-surface rounded-lg transition-colors font-label-md text-label-md" href="#"><span class="material-symbols-outlined text-xl" data-icon="home_work">home_work</span> Properties</a></li>
+<li><a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-surface-variant hover:bg-surface-variant dark:hover:bg-inverse-surface rounded-lg transition-colors font-label-md text-label-md" href="#"><span class="material-symbols-outlined text-xl" data-icon="concierge">concierge</span> Services</a></li>
+<li><a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-surface-variant hover:bg-surface-variant dark:hover:bg-inverse-surface rounded-lg transition-colors font-label-md text-label-md" href="#"><span class="material-symbols-outlined text-xl" data-icon="payments">payments</span> Revenue</a></li>
+<li><a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-surface-variant hover:bg-surface-variant dark:hover:bg-inverse-surface rounded-lg transition-colors font-label-md text-label-md" href="#"><span class="material-symbols-outlined text-xl" data-icon="article">article</span> Content</a></li>
+<li><a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-surface-variant hover:bg-surface-variant dark:hover:bg-inverse-surface rounded-lg transition-colors font-label-md text-label-md" href="#"><span class="material-symbols-outlined text-xl" data-icon="group">group</span> Users</a></li>
+<li><a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-surface-variant hover:bg-surface-variant dark:hover:bg-inverse-surface rounded-lg transition-colors font-label-md text-label-md" href="#"><span class="material-symbols-outlined text-xl" data-icon="settings">settings</span> Settings</a></li>
+</ul>
+<ul class="flex flex-col gap-1 mt-auto border-t border-outline-variant dark:border-outline pt-4">
+<li><a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-surface-variant hover:bg-surface-variant dark:hover:bg-inverse-surface rounded-lg transition-colors font-label-md text-label-md" href="#"><span class="material-symbols-outlined text-xl" data-icon="help">help</span> Support</a></li>
+<li><a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-surface-variant hover:bg-surface-variant dark:hover:bg-inverse-surface rounded-lg transition-colors font-label-md text-label-md" href="#"><span class="material-symbols-outlined text-xl" data-icon="logout">logout</span> Logout</a></li>
+</ul>
+</nav>
+<!-- Main Content Area -->
+<main class="ml-64 flex-1 flex flex-col h-full bg-background relative z-10 overflow-hidden">
+<!-- Header -->
+<header class="px-gutter-desktop py-6 border-b border-outline-variant bg-surface flex justify-between items-center shrink-0">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-background">Vận hành Booking</h2>
+<p class="text-on-surface-variant mt-1 text-sm">Hôm nay, 24 Tháng 10, 2024</p>
+</div>
+<div class="flex gap-4 items-center">
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline">search</span>
+<input class="pl-10 pr-4 py-2 rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors outline-none text-sm w-64" placeholder="Tìm mã đơn, tên khách..." type="text"/>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant hover:bg-surface-variant transition-colors relative">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+</div>
+</header>
+<!-- Dashboard Content -->
+<div class="p-gutter-desktop overflow-y-auto flex-1 flex gap-6">
+<!-- Left Column: Stats & Table -->
+<div class="flex-1 flex flex-col gap-6">
+<!-- Top Queue Cards (Bento style) -->
+<div class="grid grid-cols-4 gap-6 shrink-0">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 hover:shadow-md transition-shadow cursor-pointer flex flex-col justify-between group">
+<div class="flex justify-between items-start mb-4">
+<div class="w-10 h-10 rounded-full bg-error-container flex items-center justify-center text-error">
+<span class="material-symbols-outlined">pending_actions</span>
+</div>
+<span class="text-xs font-semibold text-error bg-error-container px-2 py-1 rounded-full">Cần xử lý</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant mb-1">Chờ xác nhận</p>
+<p class="font-headline-lg text-headline-lg text-on-background group-hover:text-primary transition-colors">12</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 hover:shadow-md transition-shadow cursor-pointer flex flex-col justify-between group">
+<div class="flex justify-between items-start mb-4">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined">login</span>
+</div>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant mb-1">Check-in hôm nay</p>
+<p class="font-headline-lg text-headline-lg text-on-background group-hover:text-secondary transition-colors">5</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 hover:shadow-md transition-shadow cursor-pointer flex flex-col justify-between group">
+<div class="flex justify-between items-start mb-4">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface">
+<span class="material-symbols-outlined">logout</span>
+</div>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant mb-1">Check-out hôm nay</p>
+<p class="font-headline-lg text-headline-lg text-on-background transition-colors">8</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 hover:shadow-md transition-shadow cursor-pointer flex flex-col justify-between group">
+<div class="flex justify-between items-start mb-4">
+<div class="w-10 h-10 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary-container">
+<span class="material-symbols-outlined">hotel</span>
+</div>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant mb-1">Khách đang lưu trú</p>
+<p class="font-headline-lg text-headline-lg text-on-background transition-colors">24</p>
+</div>
+</div>
+</div>
+<!-- Booking Queue Table -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden flex-1 flex flex-col">
+<div class="px-6 py-4 border-b border-outline-variant flex justify-between items-center bg-surface-container-lowest">
+<h3 class="font-label-md text-label-md font-semibold text-on-background">Danh sách Booking</h3>
+<div class="flex gap-2">
+<button class="px-3 py-1.5 border border-outline-variant rounded-lg text-sm hover:bg-surface-variant flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">filter_list</span> Lọc
+                            </button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+<th class="px-6 py-3 font-medium">Mã đơn</th>
+<th class="px-6 py-3 font-medium">Khách hàng</th>
+<th class="px-6 py-3 font-medium">Phòng</th>
+<th class="px-6 py-3 font-medium">Ngày lưu trú</th>
+<th class="px-6 py-3 font-medium">Trạng thái</th>
+<th class="px-6 py-3 font-medium text-right">Hành động</th>
+</tr>
+</thead>
+<tbody class="text-sm divide-y divide-outline-variant">
+<!-- Row 1 (Pending) -->
+<tr class="hover:bg-surface-container-low transition-colors cursor-pointer bg-surface-container-low"> <!-- Highlighted indicating selection -->
+<td class="px-6 py-4 font-medium text-primary">#BK-9284</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold text-xs">NT</div>
+<div>
+<p class="font-medium text-on-background">Nguyễn Trọng</p>
+<p class="text-xs text-on-surface-variant">2 khách</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">Pine House 01</td>
+<td class="px-6 py-4">
+<p class="text-on-background">24 Oct - 26 Oct</p>
+<p class="text-xs text-on-surface-variant">2 đêm</p>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-error-container text-error">Pending</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="bg-primary hover:bg-tertiary text-on-primary px-3 py-1.5 rounded-lg text-xs font-medium transition-colors">Confirm</button>
+</td>
+</tr>
+<!-- Row 2 (Confirmed/Today Check-in) -->
+<tr class="hover:bg-surface-container-low transition-colors cursor-pointer">
+<td class="px-6 py-4 font-medium text-on-background">#BK-9281</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-tertiary-container text-on-tertiary-container flex items-center justify-center font-bold text-xs">LH</div>
+<div>
+<p class="font-medium text-on-background">Lê Hà</p>
+<p class="text-xs text-on-surface-variant">4 khách</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">Clay Villa A</td>
+<td class="px-6 py-4">
+<p class="text-on-background">24 Oct - 25 Oct</p>
+<p class="text-xs text-on-surface-variant">1 đêm</p>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border border-secondary text-secondary">Confirmed</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="border border-secondary text-secondary hover:bg-secondary hover:text-on-secondary px-3 py-1.5 rounded-lg text-xs font-medium transition-colors">Check-in</button>
+</td>
+</tr>
+<!-- Row 3 (In-stay) -->
+<tr class="hover:bg-surface-container-low transition-colors cursor-pointer">
+<td class="px-6 py-4 font-medium text-on-background">#BK-9270</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center font-bold text-xs">TM</div>
+<div>
+<p class="font-medium text-on-background">Trần Minh</p>
+<p class="text-xs text-on-surface-variant">2 khách</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">Forest Cabin</td>
+<td class="px-6 py-4">
+<p class="text-on-background">22 Oct - 25 Oct</p>
+<p class="text-xs text-on-surface-variant">3 đêm</p>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary-container text-on-secondary-container">In-stay</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-on-surface-variant hover:text-primary px-2 py-1"><span class="material-symbols-outlined text-sm">more_vert</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Right Panel: Side Panel (Drawer) for Selected Booking -->
+<aside class="w-96 bg-surface-container-lowest border border-outline-variant rounded-xl flex flex-col shrink-0 overflow-hidden shadow-sm">
+<!-- Drawer Header -->
+<div class="p-5 border-b border-outline-variant bg-surface-container-low flex justify-between items-start">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-background text-lg">Chi tiết đơn #BK-9284</h3>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-error-container text-error mt-2">Chờ xác nhận</span>
+</div>
+<button class="text-on-surface-variant hover:text-on-background transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Drawer Content Scrollable -->
+<div class="flex-1 overflow-y-auto p-5 flex flex-col gap-6">
+<!-- Guest Info -->
+<div>
+<h4 class="font-label-md text-label-md text-on-surface-variant mb-3 uppercase tracking-wider text-xs">Thông tin khách hàng</h4>
+<div class="flex items-center gap-4 mb-4">
+<div class="w-12 h-12 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold text-lg">NT</div>
+<div>
+<p class="font-medium text-on-background">Nguyễn Trọng</p>
+<p class="text-sm text-on-surface-variant">+84 901 234 567</p>
+</div>
+</div>
+<p class="text-sm text-on-surface-variant"><span class="material-symbols-outlined text-sm align-middle mr-1">mail</span> trong.nguyen@email.com</p>
+</div>
+<hr class="border-outline-variant"/>
+<!-- Booking Details -->
+<div>
+<h4 class="font-label-md text-label-md text-on-surface-variant mb-3 uppercase tracking-wider text-xs">Chi tiết lưu trú</h4>
+<div class="bg-surface-container-low p-4 rounded-lg border border-outline-variant mb-4">
+<div class="flex justify-between items-center mb-2">
+<p class="font-medium text-on-background">Pine House 01</p>
+<p class="text-sm font-medium text-primary">1.200.000đ/đêm</p>
+</div>
+<p class="text-sm text-on-surface-variant flex items-center gap-1"><span class="material-symbols-outlined text-sm">group</span> 2 Người lớn, 0 Trẻ em</p>
+</div>
+<div class="grid grid-cols-2 gap-4 text-sm">
+<div>
+<p class="text-on-surface-variant text-xs mb-1">Check-in</p>
+<p class="font-medium text-on-background">14:00<br/>24 Th10, 2024</p>
+</div>
+<div>
+<p class="text-on-surface-variant text-xs mb-1">Check-out</p>
+<p class="font-medium text-on-background">12:00<br/>26 Th10, 2024</p>
+</div>
+</div>
+</div>
+<hr class="border-outline-variant"/>
+<!-- Services -->
+<div>
+<h4 class="font-label-md text-label-md text-on-surface-variant mb-3 uppercase tracking-wider text-xs">Dịch vụ đi kèm</h4>
+<ul class="space-y-2">
+<li class="flex justify-between items-center text-sm">
+<span class="flex items-center gap-2 text-on-background"><span class="material-symbols-outlined text-sm text-secondary">restaurant</span> Ăn sáng (x2)</span>
+<span class="text-on-surface-variant">Bao gồm</span>
+</li>
+<li class="flex justify-between items-center text-sm">
+<span class="flex items-center gap-2 text-on-background"><span class="material-symbols-outlined text-sm text-secondary">airport_shuttle</span> Đưa đón sân bay</span>
+<span class="font-medium">350.000đ</span>
+</li>
+</ul>
+</div>
+<hr class="border-outline-variant"/>
+<!-- Payment Summary -->
+<div>
+<h4 class="font-label-md text-label-md text-on-surface-variant mb-3 uppercase tracking-wider text-xs">Thanh toán</h4>
+<div class="space-y-2 text-sm mb-4">
+<div class="flex justify-between">
+<span class="text-on-surface-variant">Tiền phòng (2 đêm)</span>
+<span>2.400.000đ</span>
+</div>
+<div class="flex justify-between">
+<span class="text-on-surface-variant">Dịch vụ</span>
+<span>350.000đ</span>
+</div>
+<div class="flex justify-between font-medium text-on-background pt-2 border-t border-outline-variant mt-2">
+<span>Tổng cộng</span>
+<span class="text-primary text-base">2.750.000đ</span>
+</div>
+</div>
+<div class="bg-surface-variant p-3 rounded text-sm text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">info</span> Khách chọn thanh toán tiền mặt khi nhận phòng.
+                        </div>
+</div>
+</div>
+<!-- Drawer Actions -->
+<div class="p-5 border-t border-outline-variant bg-surface-container-low flex gap-3">
+<button class="flex-1 px-4 py-2 border border-error text-error hover:bg-error-container rounded-lg font-medium text-sm transition-colors">Từ chối</button>
+<button class="flex-1 px-4 py-2 bg-primary hover:bg-tertiary text-on-primary rounded-lg font-medium text-sm transition-colors shadow-sm">Xác nhận Đơn</button>
+</div>
+</aside>
+</div>
+</main>
+</body></html>
