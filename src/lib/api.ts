@@ -1,12 +1,30 @@
 import { apiGet, apiMutation, withMockFallback } from "./api-client";
 import { endpoints } from "./endpoints";
 import { bookingsForRole, createMockCheckoutPreview, findMockBooking, findMockHomestay, mockDataSource } from "./mock-data-source";
-import { Article, Booking, CheckoutPreview, DashboardSummary, Homestay, UserProfile, UserRole, ViolationReport } from "./types";
+import { Article, Booking, CheckoutPreview, DashboardSummary, Homestay, PaymentStatus, UserProfile, UserRole, ViolationReport } from "./types";
 
 export const money = (value: number) => new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(value);
 
-export async function getHomestays(role: UserRole = "CUSTOMER"): Promise<Homestay[]> {
-  return withMockFallback(() => apiGet<Homestay[]>(endpoints.homestays.list, role), mockDataSource.homestays);
+export interface HomestayFilters {
+  checkIn?: string;
+  checkOut?: string;
+  guests?: string;
+  type?: string;
+  maxPrice?: string;
+  amenity?: string;
+}
+
+function queryString(filters?: HomestayFilters) {
+  const params = new URLSearchParams();
+  Object.entries(filters ?? {}).forEach(([key, value]) => {
+    if (value) params.set(key, value);
+  });
+  const query = params.toString();
+  return query ? `?${query}` : "";
+}
+
+export async function getHomestays(role: UserRole = "CUSTOMER", filters?: HomestayFilters): Promise<Homestay[]> {
+  return withMockFallback(() => apiGet<Homestay[]>(`${endpoints.homestays.list}${queryString(filters)}`, role), mockDataSource.homestays);
 }
 
 export async function getHomestay(id: string, role: UserRole = "CUSTOMER"): Promise<Homestay> {
@@ -49,6 +67,37 @@ export async function assignUserRole(userId: string, nextRole: UserRole, role: U
 
 export async function setUserBanned(userId: string, banned: boolean, role: UserRole = "ADMIN"): Promise<UserProfile> {
   return apiMutation<UserProfile>(banned ? endpoints.admin.ban(userId) : endpoints.admin.unban(userId), "POST", undefined, role);
+}
+
+export async function addBookingService(bookingId: string, serviceId: string, quantity: number, role: UserRole = "CUSTOMER"): Promise<Booking> {
+  return apiMutation<Booking>(endpoints.bookings.addService(bookingId), "POST", { serviceId, quantity }, role);
+}
+
+export async function createBooking(
+  input: {
+    homestayId: string;
+    roomId: string;
+    guestName: string;
+    guestPhone: string;
+    guestCount: number;
+    checkIn: string;
+    checkOut: string;
+    serviceItems?: Array<{ serviceId: string; quantity: number }>;
+  },
+  role: UserRole = "CUSTOMER"
+): Promise<Booking> {
+  return apiMutation<Booking>(endpoints.bookings.create, "POST", input, role);
+}
+
+export async function initiatePayment(bookingId: string, role: UserRole = "CUSTOMER"): Promise<NonNullable<Booking["payment"]>> {
+  return apiMutation<NonNullable<Booking["payment"]>>(endpoints.payments.initiate, "POST", { bookingId }, role);
+}
+
+export async function getPaymentStatus(bookingId: string, role: UserRole = "CUSTOMER"): Promise<NonNullable<Booking["payment"]> | null> {
+  return withMockFallback(
+    () => apiGet<NonNullable<Booking["payment"]> | null>(endpoints.payments.status(bookingId), role),
+    findMockBooking(bookingId).payment ?? { id: `mock-${bookingId}`, status: "PENDING" as PaymentStatus, amount: findMockBooking(bookingId).grandTotal }
+  );
 }
 
 export async function getViolationReports(role: UserRole = "STAFF"): Promise<ViolationReport[]> {
