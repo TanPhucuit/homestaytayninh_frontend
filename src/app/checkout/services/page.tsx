@@ -1,12 +1,24 @@
 import Link from "next/link";
+import { ActionButton } from "@/components/action-button";
 import { AppTopBar, Stepper } from "@/components/customer-ui";
 import { getCheckoutPreview, money } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
 
-export default async function CheckoutServicesPage({ searchParams }: { searchParams: Promise<{ homestayId?: string }> }) {
+type CheckoutServiceParams = {
+  homestayId?: string;
+  roomId?: string;
+  guestName?: string;
+  guestPhone?: string;
+  guestCount?: string;
+  checkIn?: string;
+  checkOut?: string;
+};
+
+export default async function CheckoutServicesPage({ searchParams }: { searchParams: Promise<CheckoutServiceParams> }) {
   const params = await searchParams;
-  const preview = await getCheckoutPreview(params.homestayId);
+  const preview = await getCheckoutPreview(params);
+  const preservedEntries = Object.entries(params).filter(([, value]) => value);
 
   return (
     <main className="min-h-screen text-[#1c1c19]">
@@ -23,7 +35,8 @@ export default async function CheckoutServicesPage({ searchParams }: { searchPar
           </div>
         </div>
 
-        <section className="grid gap-6 lg:grid-cols-[1fr_390px]">
+        <form action="/checkout/confirm" className="grid gap-6 lg:grid-cols-[1fr_390px]" method="get">
+          {preservedEntries.map(([key, value]) => <input key={key} type="hidden" name={key} value={value} />)}
           <div className="space-y-6">
             <section className="card p-6 md:p-8">
               <h2 className="font-heading text-3xl text-[#9a4029]">Dịch vụ đã bao gồm</h2>
@@ -39,21 +52,17 @@ export default async function CheckoutServicesPage({ searchParams }: { searchPar
 
             <section className="card p-6 md:p-8">
               <h2 className="font-heading text-3xl text-[#9a4029]">Dịch vụ đặt thêm</h2>
-              <p className="mt-2 text-[#75675f]">Chọn số lượng khi tạo booking ở bước chính.</p>
+              <p className="mt-2 text-[#75675f]">Chọn số lượng dịch vụ muốn đặt cùng booking.</p>
               <div className="mt-6 space-y-4">
                 {preview.homestay.services.map((service) => (
-                  <div className="grid gap-4 rounded-3xl bg-[#fdf9f4] p-4 md:grid-cols-[1fr_auto]" key={service.id}>
+                  <label className="grid gap-4 rounded-3xl bg-[#fdf9f4] p-4 md:grid-cols-[1fr_auto]" key={service.id}>
                     <div>
                       <h3 className="font-bold text-[#1c1c19]">{service.name}</h3>
                       {service.description && <p className="mt-1 text-sm text-[#75675f]">{service.description}</p>}
                       <p className="mt-2 font-bold text-[#9a4029]">{money(service.unitPrice)}</p>
                     </div>
-                    <div className="flex h-fit items-center overflow-hidden rounded-xl border border-[#dcc0ba] bg-white">
-                      <span className="px-3 py-2 text-[#75675f]">-</span>
-                      <span className="px-4 py-2 font-bold text-[#1c1c19]">0</span>
-                      <span className="px-3 py-2 text-[#75675f]">+</span>
-                    </div>
-                  </div>
+                    <input className="field h-fit w-28" name={`service:${service.id}`} type="number" min="0" defaultValue="0" aria-label={`Số lượng ${service.name}`} />
+                  </label>
                 ))}
               </div>
             </section>
@@ -72,10 +81,10 @@ export default async function CheckoutServicesPage({ searchParams }: { searchPar
                 <p className="mt-1 text-xs text-[#75675f]">Đã bao gồm thuế, phí</p>
               </div>
             </div>
-            <Link className="btn-primary mt-6 w-full" href={`/checkout/confirm?homestayId=${preview.homestay.id}`}>Tiếp tục</Link>
-            <Link className="btn-secondary mt-3 w-full" href={`/checkout?homestayId=${preview.homestay.id}`}>Quay lại</Link>
+            <ActionButton className="btn-primary mt-6 w-full" pendingLabel="Đang chuyển bước...">Tiếp tục xác nhận</ActionButton>
+            <Link className="btn-secondary mt-3 w-full" href={`/checkout?homestayId=${preview.homestay.id}&roomId=${preview.room.id}`}>Quay lại</Link>
           </aside>
-        </section>
+        </form>
       </div>
     </main>
   );

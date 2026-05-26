@@ -40,6 +40,7 @@ export interface Homestay {
   services: Service[];
   rooms: Room[];
   reviews: Array<{ id: string; userId: string; rating: number; comment: string }>;
+  images?: Array<{ id: string; url: string; alt: string; position: number }>;
 }
 
 export interface Booking {
@@ -59,7 +60,7 @@ export interface Booking {
   grandTotal: number;
   services: Array<{ id: string; name: string; quantity: number; unitPrice: number; total: number; status: string }>;
   includedServices?: Service[];
-  payment?: { id: string; status: PaymentStatus; amount: number; checkoutUrl?: string };
+  payment?: { id: string; provider?: string; status: PaymentStatus; amount: number; checkoutUrl?: string };
 }
 
 export interface UserProfile {
@@ -69,6 +70,7 @@ export interface UserProfile {
   phone?: string;
   role: UserRole;
   banned: boolean;
+  authLinked?: boolean;
 }
 
 export interface Article {

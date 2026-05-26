@@ -49,6 +49,10 @@ export default async function HomestaysPage({ searchParams }: { searchParams: Pr
                 <h3 className="mb-3 text-sm font-black uppercase tracking-[0.16em] text-[#466550]">Số khách</h3>
                 <input className="field w-full" name="guests" type="number" min="1" placeholder="2" defaultValue={filters.guests} />
               </div>
+              <div>
+                <h3 className="mb-3 text-sm font-black uppercase tracking-[0.16em] text-[#466550]">Tiện ích</h3>
+                <input className="field w-full" name="amenity" placeholder="Wifi, BBQ..." defaultValue={filters.amenity} />
+              </div>
               <button className="btn-primary w-full" type="submit">Áp dụng bộ lọc</button>
               <Link className="btn-secondary w-full" href="/homestays">Xóa bộ lọc</Link>
             </form>

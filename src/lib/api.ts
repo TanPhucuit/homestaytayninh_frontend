@@ -1,6 +1,6 @@
 import { apiGet, apiMutation } from "./api-client";
 import { endpoints } from "./endpoints";
-import { Article, Booking, CheckoutPreview, DashboardSummary, Homestay, UserProfile, UserRole, ViolationReport } from "./types";
+import { Article, Booking, CheckoutPreview, DashboardSummary, Homestay, Room, Service, UserProfile, UserRole, ViolationReport } from "./types";
 
 export const money = (value: number) => new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(value);
 
@@ -11,6 +11,17 @@ export interface HomestayFilters {
   type?: string;
   maxPrice?: string;
   amenity?: string;
+}
+
+export interface CheckoutDraft {
+  homestayId?: string;
+  roomId?: string;
+  guestName?: string;
+  guestPhone?: string;
+  guestCount?: string;
+  checkIn?: string;
+  checkOut?: string;
+  serviceItems?: Array<{ serviceId: string; quantity: number }>;
 }
 
 function queryString(filters?: HomestayFilters) {
@@ -44,6 +55,14 @@ export async function getDashboard(role: UserRole = "ADMIN"): Promise<DashboardS
 
 export async function getArticles(role: UserRole = "STAFF"): Promise<Article[]> {
   return apiGet<Article[]>(endpoints.cms.articles, role);
+}
+
+export async function getPublishedArticles(): Promise<Article[]> {
+  return apiGet<Article[]>(endpoints.cms.publicArticles, "CUSTOMER", { cache: "no-store" });
+}
+
+export async function getPublishedArticle(slug: string): Promise<Article> {
+  return apiGet<Article>(endpoints.cms.publicArticle(slug), "CUSTOMER", { cache: "no-store" });
 }
 
 export async function createArticle(input: Partial<Article>, role: UserRole = "STAFF"): Promise<Article> {
@@ -82,6 +101,10 @@ export async function addBookingService(bookingId: string, serviceId: string, qu
   return apiMutation<Booking>(endpoints.bookings.addService(bookingId), "POST", { serviceId, quantity }, role);
 }
 
+export async function setBookingServiceStatus(bookingId: string, serviceOrderId: string, status: "PREPARING" | "SERVED", role: UserRole = "OWNER_STAFF") {
+  return apiMutation(endpoints.bookings.serviceStatus(bookingId, serviceOrderId), "PATCH", { status }, role);
+}
+
 export async function createBooking(
   input: {
     homestayId: string;
@@ -118,12 +141,32 @@ export async function createOwnerHomestay(input: Partial<Homestay>, role: UserRo
   return apiMutation<Homestay>(endpoints.owner.homestays, "POST", input, role);
 }
 
+export async function updateOwnerHomestay(homestayId: string, input: Partial<Homestay>, role: UserRole = "OWNER"): Promise<Homestay> {
+  return apiMutation<Homestay>(endpoints.owner.homestay(homestayId), "PATCH", input, role);
+}
+
 export async function createOwnerRoom(homestayId: string, input: { name: string; roomType: string; pricePerNight: number; capacity: number; totalUnits: number }, role: UserRole = "OWNER") {
   return apiMutation(endpoints.owner.rooms(homestayId), "POST", input, role);
 }
 
+export async function updateOwnerRoom(homestayId: string, roomId: string, input: Partial<Room>, role: UserRole = "OWNER") {
+  return apiMutation(endpoints.owner.room(homestayId, roomId), "PATCH", input, role);
+}
+
+export async function createOwnerRoomRate(homestayId: string, roomId: string, input: { startDate: string; endDate: string; pricePerNight: number }, role: UserRole = "OWNER") {
+  return apiMutation(endpoints.owner.rates(homestayId, roomId), "POST", input, role);
+}
+
 export async function createOwnerService(homestayId: string, input: { name: string; description?: string; unitPrice: number; included: boolean }, role: UserRole = "OWNER") {
   return apiMutation(endpoints.owner.services(homestayId), "POST", input, role);
+}
+
+export async function updateOwnerService(homestayId: string, serviceId: string, input: Partial<Service>, role: UserRole = "OWNER") {
+  return apiMutation(endpoints.owner.service(homestayId, serviceId), "PATCH", input, role);
+}
+
+export async function createOwnerImage(homestayId: string, input: { url: string; alt?: string; position?: number }, role: UserRole = "OWNER") {
+  return apiMutation(endpoints.owner.images(homestayId), "POST", input, role);
 }
 
 export async function updateOwnerBookingStatus(bookingId: string, status: Booking["status"], role: UserRole = "OWNER_STAFF"): Promise<Booking> {
@@ -159,21 +202,32 @@ export async function resolveViolationReport(reportId: string, role: UserRole = 
   return apiMutation<ViolationReport>(endpoints.admin.resolveReport(reportId), "POST", undefined, role);
 }
 
-export async function getCheckoutPreview(homestayId?: string, role: UserRole = "CUSTOMER"): Promise<CheckoutPreview> {
-  const firstHomestayId = homestayId ?? (await getHomestays(role))[0]?.id;
+export async function getCheckoutPreview(draftOrHomestayId?: string | CheckoutDraft, role: UserRole = "CUSTOMER"): Promise<CheckoutPreview> {
+  const draft: CheckoutDraft = typeof draftOrHomestayId === "string" ? { homestayId: draftOrHomestayId } : (draftOrHomestayId ?? {});
+  const firstHomestayId = draft.homestayId ?? (await getHomestays(role))[0]?.id;
   if (!firstHomestayId) {
     throw new Error("Không có homestay khả dụng để đặt.");
   }
   const homestay = await getHomestay(firstHomestayId, role);
-  const room = homestay.rooms[0];
+  const room = homestay.rooms.find((item) => item.id === draft.roomId) ?? homestay.rooms[0];
   if (!room) {
     throw new Error("Homestay chưa có phòng khả dụng để đặt.");
   }
-  const nights = 2;
-  const guestCount = Math.min(2, room.capacity);
-  const selectedServices: CheckoutPreview["selectedServices"] = [];
+  if (draft.roomId && room.id !== draft.roomId) {
+    throw new Error("Phòng đã chọn không khả dụng cho homestay này.");
+  }
+  const start = draft.checkIn ? new Date(draft.checkIn).getTime() : NaN;
+  const end = draft.checkOut ? new Date(draft.checkOut).getTime() : NaN;
+  const nights = Number.isFinite(start) && Number.isFinite(end) && end > start ? Math.ceil((end - start) / 86_400_000) : 2;
+  const requestedGuests = Number(draft.guestCount ?? 2);
+  const guestCount = Math.min(Number.isFinite(requestedGuests) && requestedGuests > 0 ? requestedGuests : 1, room.capacity);
+  const selectedServices = (draft.serviceItems ?? []).map((item) => {
+    const service = homestay.services.find((candidate) => candidate.id === item.serviceId);
+    if (!service || !Number.isInteger(item.quantity) || item.quantity < 1) return null;
+    return { id: service.id, name: service.name, quantity: item.quantity, unitPrice: service.unitPrice, total: service.unitPrice * item.quantity };
+  }).filter((item): item is CheckoutPreview["selectedServices"][number] => Boolean(item));
   const roomTotal = room.pricePerNight * nights;
-  const serviceTotal = 0;
+  const serviceTotal = selectedServices.reduce((sum, item) => sum + item.total, 0);
   const taxTotal = Math.round((roomTotal + serviceTotal) * 0.1);
 
   return {

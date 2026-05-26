@@ -1,12 +1,40 @@
 import Link from "next/link";
+import { ActionButton } from "@/components/action-button";
 import { AppTopBar, Stepper } from "@/components/customer-ui";
+import { FlashMessage } from "@/components/feedback-state";
 import { getCheckoutPreview, money } from "@/lib/api";
+import { flashFromSearchParams } from "@/lib/flash";
+import { createCheckoutAction } from "../actions";
 
 export const dynamic = "force-dynamic";
 
-export default async function CheckoutConfirmPage({ searchParams }: { searchParams: Promise<{ homestayId?: string }> }) {
+type CheckoutConfirmParams = {
+  homestayId?: string;
+  roomId?: string;
+  guestName?: string;
+  guestPhone?: string;
+  guestCount?: string;
+  checkIn?: string;
+  checkOut?: string;
+  error?: string;
+  success?: string;
+  [key: string]: string | undefined;
+};
+
+function serviceItemsFromParams(params: CheckoutConfirmParams) {
+  return Object.entries(params)
+    .filter(([key]) => key.startsWith("service:"))
+    .map(([key, value]) => ({ serviceId: key.replace("service:", ""), quantity: Number(value ?? 0) }))
+    .filter((item) => Number.isInteger(item.quantity) && item.quantity > 0);
+}
+
+export default async function CheckoutConfirmPage({ searchParams }: { searchParams: Promise<CheckoutConfirmParams> }) {
   const params = await searchParams;
-  const preview = await getCheckoutPreview(params.homestayId);
+  const preview = await getCheckoutPreview({ ...params, serviceItems: serviceItemsFromParams(params) });
+  const flash = flashFromSearchParams(params);
+  const preservedEntries = Object.entries(params).filter(([key, value]) => value && key !== "error" && key !== "success");
+  const backParams = new URLSearchParams();
+  preservedEntries.forEach(([key, value]) => backParams.set(key, value ?? ""));
 
   return (
     <main className="min-h-screen text-[#1c1c19]">
@@ -23,8 +51,10 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
           </div>
         </div>
 
-        <section className="grid gap-6 lg:grid-cols-[1fr_390px]">
+        <form action={createCheckoutAction} className="grid gap-6 lg:grid-cols-[1fr_390px]">
+          {preservedEntries.map(([key, value]) => <input key={key} type="hidden" name={key} value={value} />)}
           <div className="space-y-6">
+            <FlashMessage flash={flash} />
             <section className="card p-6 md:p-8">
               <p className="eyebrow">Booking Review</p>
               <h2 className="mt-2 font-heading text-3xl text-[#7b2914]">{preview.homestay.name}</h2>
@@ -32,7 +62,7 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
                 <div className="rounded-3xl bg-[#fdf9f4] p-5">
                   <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#466550]">Phòng</p>
                   <h3 className="mt-2 font-heading text-2xl text-[#7b2914]">{preview.room.name}</h3>
-                  <p className="mt-2 text-sm text-[#75675f]">{preview.nights} đêm · {preview.guestCount} khách</p>
+                  <p className="mt-2 text-sm text-[#75675f]">{preview.nights} đêm · {preview.guestCount} khách · {params.guestName}</p>
                   <p className="mt-4 font-bold text-[#9a4029]">{money(preview.roomTotal)}</p>
                 </div>
                 <div className="rounded-3xl bg-[#fdf9f4] p-5">
@@ -43,6 +73,19 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
                 </div>
               </div>
             </section>
+            {preview.selectedServices.length > 0 && (
+              <section className="card p-6 md:p-8">
+                <h2 className="font-heading text-3xl text-[#9a4029]">Dịch vụ đã chọn</h2>
+                <div className="mt-5 space-y-3">
+                  {preview.selectedServices.map((service) => (
+                    <div className="flex justify-between gap-4 rounded-2xl bg-[#fdf9f4] p-4 text-sm" key={service.id}>
+                      <span>{service.name} · SL {service.quantity}</span>
+                      <strong>{money(service.total)}</strong>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
 
             <section className="card p-6 md:p-8">
               <h2 className="font-heading text-3xl text-[#9a4029]">Chính sách & Điều khoản</h2>
@@ -71,10 +114,10 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
                 <p className="mt-1 text-xs text-[#75675f]">Đã bao gồm thuế, phí</p>
               </div>
             </div>
-            <Link className="btn-primary mt-6 w-full" href={`/checkout?homestayId=${preview.homestay.id}`}>Tạo booking thật</Link>
-            <Link className="btn-secondary mt-3 w-full" href={`/checkout/services?homestayId=${preview.homestay.id}`}>Quay lại</Link>
+            <ActionButton className="btn-primary mt-6 w-full" pendingLabel="Đang tạo booking...">Tạo booking và thanh toán</ActionButton>
+            <Link className="btn-secondary mt-3 w-full" href={`/checkout/services?${backParams.toString()}`}>Quay lại</Link>
           </aside>
-        </section>
+        </form>
       </div>
     </main>
   );

@@ -16,8 +16,11 @@ export const endpoints = {
   },
   owner: {
     homestays: "/api/owner/homestays",
+    homestay: (homestayId: string) => `/api/owner/homestays/${homestayId}`,
+    images: (homestayId: string) => `/api/owner/homestays/${homestayId}/images`,
     rooms: (homestayId: string) => `/api/owner/homestays/${homestayId}/rooms`,
     room: (homestayId: string, roomId: string) => `/api/owner/homestays/${homestayId}/rooms/${roomId}`,
+    rates: (homestayId: string, roomId: string) => `/api/owner/homestays/${homestayId}/rooms/${roomId}/rates`,
     services: (homestayId: string) => `/api/owner/homestays/${homestayId}/services`,
     service: (homestayId: string, serviceId: string) => `/api/owner/homestays/${homestayId}/services/${serviceId}`,
     bookings: "/api/owner/bookings",
@@ -31,6 +34,8 @@ export const endpoints = {
   },
   cms: {
     articles: "/api/cms/articles",
+    publicArticles: "/api/cms/articles/public",
+    publicArticle: (slug: string) => `/api/cms/articles/public/${slug}`,
     article: (id: string) => `/api/cms/articles/${id}`,
     publish: (id: string) => `/api/cms/articles/${id}/publish`,
     unpublish: (id: string) => `/api/cms/articles/${id}/unpublish`

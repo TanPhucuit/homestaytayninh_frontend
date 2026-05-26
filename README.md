@@ -8,60 +8,56 @@ Backend repository: `https://github.com/TanPhucuit/homestaytayninh_backend.git`
 
 ```bash
 npm install
-cp .env.example .env
+cp .env.example .env.local
 npm run dev
 ```
 
 Web: `http://localhost:3000`
-API env: `NEXT_PUBLIC_API_URL`
+
+Required local env:
+
+- `NEXT_PUBLIC_API_URL`: backend origin, without `/api`
+- `GOOGLE_CLIENT_ID`: Google OAuth web client id
+- `GOOGLE_CLIENT_SECRET`: Google OAuth web client secret, server-side only in Next route handlers
 
 ## Deploy on Vercel
 
 - Framework: Next.js
 - Build command: `npm run build`
 - Install command: `npm install`
-- Env:
-  - `NEXT_PUBLIC_API_URL`: Render backend URL
-  - `NEXT_PUBLIC_SUPABASE_URL`: Supabase project URL
-  - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`: Supabase publishable key
-
-Enable the Google provider in Supabase Auth and add the Vercel callback URL to the redirect allow list:
+- Callback URL to allow in Google Cloud OAuth client:
 
 ```text
 https://<your-vercel-domain>/auth/callback
 ```
+
+## Auth
+
+The frontend uses custom Google OAuth plus backend Redis sessions. Login flow:
+
+1. `/auth/login/google` redirects to Google OAuth.
+2. `/auth/callback` exchanges the code for a Google `id_token`.
+3. The frontend posts the `id_token` to backend `/api/auth/google-login`.
+4. Backend verifies Google and returns an app session token stored in the `htn_session` HTTP-only cookie.
+5. Server-side API calls forward `Authorization: Bearer <htn_session>` to NestJS.
 
 ## Screens
 
 - `/`: customer landing/search
 - `/homestays`: search results and filters
 - `/homestays/[id]`: homestay detail
-- `/checkout`: customer checkout, add-on services, ApiPay state panels
-- `/bookings`: customer booking history/order summary
-- `/bookings/[id]`: booking detail, payment summary, in-stay service ordering
-- `/login`: Supabase Google OAuth entry screen
-- `/owner`: owner and owner staff portal
-- `/owner/manage`: homestay, room, service, image and price management
-- `/staff`: CMS/user moderation portal
+- `/checkout`, `/checkout/services`, `/checkout/confirm`: booking flow
+- `/bookings`, `/bookings/[id]`: booking history and detail
+- `/login`: Google OAuth entry screen
+- `/owner`, `/owner/manage`, `/owner/proxy-booking`: owner and owner staff portal
+- `/staff`, `/staff/moderation`: staff CMS/moderation portal
 - `/admin`: admin dashboard
-
-## Frontend to Backend Contract
-
-Set `NEXT_PUBLIC_API_URL` to the Render backend origin, without `/api`.
-
-Example:
-
-```bash
-NEXT_PUBLIC_API_URL="https://homestaytayninh-backend.onrender.com"
-```
-
-The API client appends `/api/...` internally and forwards the Supabase bearer session to protected NestJS endpoints. Protected workflows use the persisted Supabase profile role returned by the backend; the frontend has no impersonation or mock-data mode.
 
 ## Authenticated E2E
 
-`tests/e2e-authenticated-rbac.spec.ts` checks real authenticated UI state and RBAC only when supplied with browser storage states captured after successful Supabase logins in an isolated test environment. It never fabricates session cookies or intercepts API responses.
+`tests/e2e-authenticated-rbac.spec.ts` checks real authenticated UI state and RBAC only when supplied with Playwright storage states containing real `htn_session` cookies from the Redis-backed test environment.
 
-Set `E2E_AUTH_BASE_URL` to the test deployment and provide `E2E_ADMIN_STORAGE_STATE`, `E2E_STAFF_STORAGE_STATE`, `E2E_OWNER_STORAGE_STATE`, `E2E_OWNER_STAFF_STORAGE_STATE` and `E2E_CUSTOMER_STORAGE_STATE` paths. Each storage-state file must come from signing in as the corresponding real Supabase Auth test account against that deployment.
+Set `E2E_AUTH_BASE_URL` to the test deployment and provide `E2E_ADMIN_STORAGE_STATE`, `E2E_STAFF_STORAGE_STATE`, `E2E_OWNER_STORAGE_STATE`, `E2E_OWNER_STAFF_STORAGE_STATE` and `E2E_CUSTOMER_STORAGE_STATE` paths.
 
 ```powershell
 npm run test:e2e:auth

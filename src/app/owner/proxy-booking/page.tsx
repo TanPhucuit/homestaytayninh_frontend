@@ -1,6 +1,8 @@
 import { AccessDenied } from "@/components/access-denied";
+import { ActionButton } from "@/components/action-button";
 import { OwnerShell } from "@/components/owner-ui";
 import { getOwnerHomestays } from "@/lib/api";
+import { flashFromSearchParams, FlashSearchParams } from "@/lib/flash";
 import { canAccess, getCurrentUser } from "@/lib/rbac";
 import { createProxyBookingAction } from "../actions";
 
@@ -12,8 +14,9 @@ function isoDateAfter(days: number) {
   return date.toISOString().slice(0, 10);
 }
 
-export default async function OwnerProxyBookingPage() {
+export default async function OwnerProxyBookingPage({ searchParams }: { searchParams: Promise<FlashSearchParams> }) {
   const user = await getCurrentUser();
+  const flash = flashFromSearchParams(await searchParams);
   const allowed = ["OWNER_STAFF", "ADMIN"] as const;
 
   if (user.authorizationError) {
@@ -29,7 +32,7 @@ export default async function OwnerProxyBookingPage() {
   const firstRoom = firstHomestay?.rooms[0];
 
   return (
-    <OwnerShell title="Đặt hộ khách hàng" description="Owner Staff tạo booking và chọn dịch vụ hộ khách gọi điện hoặc đặt trực tiếp tại quầy.">
+    <OwnerShell title="Đặt hộ khách hàng" description="Owner Staff tạo booking và chọn dịch vụ hộ khách gọi điện hoặc đặt trực tiếp tại quầy." flash={flash}>
       <form action={createProxyBookingAction} className="grid gap-6 lg:grid-cols-[1fr_380px]">
         <section className="card p-6">
           <h2 className="font-heading text-2xl text-[#9a4029]">Thông tin booking hộ</h2>
@@ -44,7 +47,7 @@ export default async function OwnerProxyBookingPage() {
                 {homestays.flatMap((homestay) => homestay.rooms.map((room) => <option key={room.id} value={room.id}>{homestay.name} · {room.name}</option>))}
               </select>
             </label>
-            <input className="field" name="customerId" placeholder="Customer ID" defaultValue="u-customer" />
+            <input className="field" name="customerId" placeholder="Mã hồ sơ khách đã có (có thể bỏ trống)" />
             <input className="field" name="guestName" placeholder="Tên khách" required />
             <input className="field" name="guestPhone" placeholder="Số điện thoại" required pattern="^[0-9+ ]{8,15}$" />
             <input className="field" name="guestCount" type="number" min="1" defaultValue="2" required />
@@ -61,7 +64,7 @@ export default async function OwnerProxyBookingPage() {
               {homestays.flatMap((homestay) => homestay.services.map((service) => <option key={service.id} value={service.id}>{homestay.name} · {service.name}</option>))}
             </select>
             <input className="field" name="serviceQuantity" type="number" min="0" defaultValue="0" />
-            <button className="btn-primary" type="submit" disabled={!firstRoom}>Tạo booking hộ</button>
+            <ActionButton pendingLabel="Đang tạo..." disabled={!firstRoom}>Tạo booking hộ</ActionButton>
           </div>
         </aside>
       </form>

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Article, UserProfile, UserRole, ViolationReport } from "@/lib/types";
-import { EmptyState } from "./feedback-state";
+import { ActionButton } from "./action-button";
+import { EmptyState, FlashMessage } from "./feedback-state";
+import { FlashState } from "@/lib/flash";
 import {
   createArticleAction,
   deleteArticleAction,
@@ -12,7 +14,7 @@ import {
   updateArticleAction
 } from "@/app/staff/actions";
 
-function StaffShell({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
+function StaffShell({ title, description, flash, children }: { title: string; description: string; flash?: FlashState | null; children: React.ReactNode }) {
   return (
     <main className="min-h-screen px-4 py-8 text-[#2f2926] md:px-8">
       <div className="mx-auto max-w-7xl space-y-8">
@@ -30,6 +32,7 @@ function StaffShell({ title, description, children }: { title: string; descripti
             </nav>
           </div>
         </header>
+        <FlashMessage flash={flash} />
         {children}
       </div>
     </main>
@@ -44,11 +47,12 @@ function ArticleStatus({ status }: { status: Article["status"] }) {
   );
 }
 
-export function StaffCmsPortal({ articles }: { articles: Article[] }) {
+export function StaffCmsPortal({ articles, flash }: { articles: Article[]; flash?: FlashState | null }) {
   return (
     <StaffShell
       title="Quản lý nội dung du lịch Tây Ninh"
       description="Tạo, sửa, xóa, publish/unpublish bài viết quảng bá du lịch và cẩm nang homestay theo nghiệp vụ Staff."
+      flash={flash}
     >
       <section className="grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
         <form action={createArticleAction} className="card p-6">
@@ -63,7 +67,7 @@ export function StaffCmsPortal({ articles }: { articles: Article[] }) {
               <option value="DRAFT">Bản nháp</option>
               <option value="PUBLISHED">Xuất bản ngay</option>
             </select>
-            <button className="btn-primary" type="submit">Tạo bài viết</button>
+            <ActionButton pendingLabel="Đang tạo...">Tạo bài viết</ActionButton>
           </div>
         </form>
 
@@ -82,11 +86,11 @@ export function StaffCmsPortal({ articles }: { articles: Article[] }) {
                   <div className="flex flex-wrap gap-2">
                     <form action={article.status === "PUBLISHED" ? unpublishArticleAction : publishArticleAction}>
                       <input name="articleId" type="hidden" value={article.id} />
-                      <button className="btn-secondary" type="submit">{article.status === "PUBLISHED" ? "Unpublish" : "Publish"}</button>
+                      <ActionButton className="btn-secondary" pendingLabel="Đang cập nhật...">{article.status === "PUBLISHED" ? "Unpublish" : "Publish"}</ActionButton>
                     </form>
                     <form action={deleteArticleAction}>
                       <input name="articleId" type="hidden" value={article.id} />
-                      <button className="btn-secondary" type="submit">Xóa</button>
+                      <ActionButton className="btn-secondary" pendingLabel="Đang xóa...">Xóa</ActionButton>
                     </form>
                   </div>
                 </div>
@@ -100,7 +104,7 @@ export function StaffCmsPortal({ articles }: { articles: Article[] }) {
                     <option value="DRAFT">Bản nháp</option>
                     <option value="PUBLISHED">Đã xuất bản</option>
                   </select>
-                  <button className="btn-primary justify-self-start" type="submit">Lưu chỉnh sửa</button>
+                  <ActionButton className="btn-primary justify-self-start" pendingLabel="Đang lưu...">Lưu chỉnh sửa</ActionButton>
                 </form>
               </article>
             ))
@@ -111,13 +115,14 @@ export function StaffCmsPortal({ articles }: { articles: Article[] }) {
   );
 }
 
-export function StaffModerationPortal({ reports, users, currentRole }: { reports: ViolationReport[]; users: UserProfile[]; currentRole: UserRole }) {
+export function StaffModerationPortal({ reports, users, currentRole, flash }: { reports: ViolationReport[]; users: UserProfile[]; currentRole: UserRole; flash?: FlashState | null }) {
   const manageableUsers = currentRole === "ADMIN" ? users : users.filter((user) => user.role !== "ADMIN");
 
   return (
     <StaffShell
       title="Kiểm soát người dùng và báo cáo vi phạm"
       description="Theo dõi báo cáo vi phạm, xử lý case mở và chuyển trạng thái resolved. Ban/unban user nằm trong Admin Portal."
+      flash={flash}
     >
       <section className="grid gap-4">
         {reports.length === 0 ? (
@@ -137,7 +142,7 @@ export function StaffModerationPortal({ reports, users, currentRole }: { reports
                 {report.status === "OPEN" && (
                   <form action={resolveReportAction}>
                     <input name="reportId" type="hidden" value={report.id} />
-                    <button className="btn-primary" type="submit">Đánh dấu đã xử lý</button>
+                    <ActionButton pendingLabel="Đang xử lý...">Đánh dấu đã xử lý</ActionButton>
                   </form>
                 )}
               </div>
@@ -159,9 +164,9 @@ export function StaffModerationPortal({ reports, users, currentRole }: { reports
               </div>
               <form action={user.banned ? unbanModeratedUserAction : banModeratedUserAction}>
                 <input name="userId" type="hidden" value={user.id} />
-                <button className={user.banned ? "btn-secondary" : "btn-primary"} type="submit">
+                <ActionButton className={user.banned ? "btn-secondary" : "btn-primary"} pendingLabel="Đang xử lý...">
                   {user.banned ? "Mở khóa" : "Khóa tài khoản"}
-                </button>
+                </ActionButton>
               </form>
             </article>
           ))}
