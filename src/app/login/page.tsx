@@ -1,6 +1,16 @@
 import Link from "next/link";
 
-export default function LoginPage() {
+function errorMessage(error?: string) {
+  if (error === "supabase_env") return "Frontend chưa có NEXT_PUBLIC_SUPABASE_URL hoặc NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY trên Vercel.";
+  if (error === "oauth") return "Không tạo được phiên đăng nhập Google. Kiểm tra Google provider và Redirect URL trong Supabase.";
+  if (error === "callback") return "Google callback không hợp lệ hoặc session không được tạo.";
+  return "";
+}
+
+export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+  const params = await searchParams;
+  const message = errorMessage(params.error);
+
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#fdf9f4] px-4 py-10 text-[#2b211d]">
       <section className="w-full max-w-xl rounded-3xl border border-[#eadfd3] bg-white p-8 text-center shadow-sm">
@@ -9,6 +19,11 @@ export default function LoginPage() {
         <p className="mt-3 text-sm leading-6 text-[#75675f]">
           Đăng nhập bằng Google để đặt phòng, xem lịch sử booking và truy cập portal theo vai trò đã được cấp trong hệ thống.
         </p>
+        {message && (
+          <div className="mt-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
+            {message}
+          </div>
+        )}
         <Link className="btn-primary mt-6 w-full" href="/auth/login/google?next=%2Fhomestays">
           Đăng nhập với Google
         </Link>
