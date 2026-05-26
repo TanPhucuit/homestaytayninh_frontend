@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 function errorMessage(error?: string) {
+  if (error === "api_env") return "Chưa cấu hình NEXT_PUBLIC_API_URL cho frontend nên không thể xác minh vai trò sau đăng nhập.";
   if (error === "supabase_env") return "Chưa cấu hình Supabase Auth public URL/key trên Vercel. Đây là cấu hình đăng nhập Google, không phải database secret.";
   if (error === "provider_disabled") return "Google provider chưa được bật trong Supabase Auth. Vào Supabase Dashboard > Authentication > Providers > Google để bật và nhập Client ID/Secret.";
   if (error === "auth_required") return "Bạn cần đăng nhập trước khi thực hiện thao tác này.";

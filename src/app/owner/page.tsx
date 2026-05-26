@@ -2,12 +2,14 @@ import { canAccess, getCurrentUser } from "@/lib/rbac";
 import { AccessDenied } from "@/components/access-denied";
 import { BookingListPreview, OwnerBookingOps, OwnerShell, OwnerStats } from "@/components/owner-ui";
 import { getOwnerBookings, getOwnerHomestays } from "@/lib/api";
+import { flashFromSearchParams, FlashSearchParams } from "@/lib/flash";
 import { updateOwnerBookingStatusAction } from "./actions";
 
 export const dynamic = "force-dynamic";
 
-export default async function OwnerPage() {
+export default async function OwnerPage({ searchParams }: { searchParams: Promise<FlashSearchParams> }) {
   const user = await getCurrentUser();
+  const flash = flashFromSearchParams(await searchParams);
   const allowed = ["OWNER", "OWNER_STAFF", "ADMIN"] as const;
 
   if (user.authorizationError) {
@@ -22,7 +24,7 @@ export default async function OwnerPage() {
   const homestays = await getOwnerHomestays(user.role);
 
   return (
-    <OwnerShell title="Dashboard vận hành homestay" description="Theo dõi doanh thu, booking, check-in/check-out và truy cập nhanh các nghiệp vụ owner.">
+    <OwnerShell title="Dashboard vận hành homestay" description="Theo dõi doanh thu, booking, check-in/check-out và truy cập nhanh các nghiệp vụ owner." flash={flash}>
       <div className="mb-6 flex flex-wrap gap-3">
         <a className="btn-primary" href="/owner/manage">Quản lý homestay/phòng/dịch vụ</a>
         <a className="btn-secondary" href="/owner/proxy-booking">Đặt hộ khách hàng</a>

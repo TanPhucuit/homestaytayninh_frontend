@@ -1,9 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { UserRole } from "./types";
 
-const PRODUCTION_API_URL = "https://homestaytayninh-backend.onrender.com";
-const configuredApiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
-const API_URL = configuredApiUrl && !(process.env.VERCEL && configuredApiUrl.includes("localhost")) ? configuredApiUrl : PRODUCTION_API_URL;
+const API_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
 
 export interface SessionUser {
   id: string;
@@ -48,7 +46,18 @@ export async function getCurrentUser(): Promise<SessionUser> {
   const {
     data: { session }
   } = await supabase.auth.getSession();
-  if (API_URL && session?.access_token) {
+  if (!API_URL) {
+    return {
+      id: user.id,
+      name: user.user_metadata?.name ?? user.email ?? "Customer",
+      email: user.email ?? "",
+      role: "CUSTOMER",
+      authenticated: true,
+      authorizationError: "Không thể xác minh vai trò tài khoản vì frontend chưa cấu hình NEXT_PUBLIC_API_URL."
+    };
+  }
+
+  if (session?.access_token) {
     const response = await fetch(`${API_URL}/api/auth/me`, {
       cache: "no-store",
       headers: { authorization: `Bearer ${session.access_token}` }

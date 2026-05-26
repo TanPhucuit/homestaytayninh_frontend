@@ -1,5 +1,8 @@
 import { banUserAction, createAdminUserAction, assignRoleAction, unbanUserAction } from "@/app/admin/actions";
+import { ActionButton } from "./action-button";
+import { FlashMessage } from "./feedback-state";
 import { money } from "@/lib/api";
+import { FlashState } from "@/lib/flash";
 import { SessionUser } from "@/lib/rbac";
 import { DashboardSummary, UserProfile, UserRole } from "@/lib/types";
 
@@ -21,7 +24,7 @@ function StatCard({ label, value }: { label: string; value: string }) {
   );
 }
 
-export function AdminPortal({ dashboard, users, currentUser }: { dashboard: DashboardSummary; users: UserProfile[]; currentUser: SessionUser }) {
+export function AdminPortal({ dashboard, users, currentUser, flash }: { dashboard: DashboardSummary; users: UserProfile[]; currentUser: SessionUser; flash?: FlashState | null }) {
   return (
     <main className="min-h-screen px-4 py-8 text-[#2f2926] md:px-8">
       <div className="mx-auto max-w-7xl space-y-8">
@@ -52,6 +55,8 @@ export function AdminPortal({ dashboard, users, currentUser }: { dashboard: Dash
           <a className="card p-4 font-bold text-[#466550]" href="/staff">CMS nội dung</a>
           <a className="card p-4 font-bold text-[#466550]" href="/staff/moderation">Báo cáo vi phạm</a>
         </nav>
+
+        <FlashMessage flash={flash} />
 
         <section className="grid gap-4 md:grid-cols-4">
           <StatCard label="Doanh thu đã thanh toán" value={money(dashboard.revenue)} />
@@ -103,7 +108,7 @@ export function AdminPortal({ dashboard, users, currentUser }: { dashboard: Dash
               <select className="field" name="role" defaultValue="OWNER">
                 {roles.filter((role) => role !== "CUSTOMER").map((role) => <option key={role}>{role}</option>)}
               </select>
-              <button className="btn-primary" type="submit">Tạo tài khoản</button>
+              <ActionButton pendingLabel="Đang tạo...">Tạo tài khoản</ActionButton>
             </div>
           </form>
         </section>
@@ -140,15 +145,15 @@ export function AdminPortal({ dashboard, users, currentUser }: { dashboard: Dash
                         <select className="rounded-lg border border-[#eadfd4] px-2 py-2" name="role" defaultValue={user.role}>
                           {roles.map((role) => <option key={role}>{role}</option>)}
                         </select>
-                        <button className="rounded-lg border border-[#466550] px-3 py-2 text-[#466550]" type="submit">Lưu</button>
+                        <ActionButton className="rounded-lg border border-[#466550] px-3 py-2 text-[#466550]" pendingLabel="Đang lưu...">Lưu</ActionButton>
                       </form>
                     </td>
                     <td className="rounded-r-xl px-3 py-3">
                       <form action={user.banned ? unbanUserAction : banUserAction}>
                         <input name="userId" type="hidden" value={user.id} />
-                        <button className="rounded-lg bg-[#9a4029] px-3 py-2 text-white" type="submit">
+                        <ActionButton className="rounded-lg bg-[#9a4029] px-3 py-2 text-white" pendingLabel="Đang xử lý...">
                           {user.banned ? "Unban" : "Ban"}
-                        </button>
+                        </ActionButton>
                       </form>
                     </td>
                   </tr>

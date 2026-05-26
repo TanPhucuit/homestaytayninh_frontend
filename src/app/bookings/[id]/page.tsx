@@ -1,14 +1,18 @@
 import Link from "next/link";
 import { AccessDenied } from "@/components/access-denied";
+import { ActionButton } from "@/components/action-button";
 import { BookingTotals, PageShell, PaymentBadge, ServicesDisplay, StatusBadge } from "@/components/customer-ui";
+import { FlashMessage } from "@/components/feedback-state";
 import { getBooking, getHomestay, money } from "@/lib/api";
+import { flashFromSearchParams, FlashSearchParams } from "@/lib/flash";
 import { getCurrentUser } from "@/lib/rbac";
 import { addServiceAction, markServiceServedAction, retryPaymentAction } from "./actions";
 
 export const dynamic = "force-dynamic";
 
-export default async function BookingDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function BookingDetailPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<FlashSearchParams> }) {
   const user = await getCurrentUser();
+  const flash = flashFromSearchParams(await searchParams);
   if (!user.authenticated) {
     return <AccessDenied description="Vui lòng đăng nhập để xem chi tiết booking." />;
   }
@@ -24,6 +28,9 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
 
   return (
     <PageShell eyebrow="Booking Detail" title={`Đơn ${booking.id}`} description={`${homestay.name} · ${booking.checkIn} → ${booking.checkOut}`}>
+      <div className="mb-5">
+        <FlashMessage flash={flash} />
+      </div>
       <section className="grid gap-6 lg:grid-cols-[1fr_380px]">
         <div className="space-y-6">
           <section className="card p-6">
@@ -53,7 +60,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                     <input type="hidden" name="bookingId" value={booking.id} />
                     <input type="hidden" name="serviceOrderId" value={service.id} />
                     <span>{service.name} · SL {service.quantity}</span>
-                    <button className="btn-secondary" type="submit">Đánh dấu đã phục vụ</button>
+                    <ActionButton className="btn-secondary" pendingLabel="Đang cập nhật...">Đánh dấu đã phục vụ</ActionButton>
                   </form>
                 ))}
               </div>
@@ -72,7 +79,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                   ))}
                 </select>
                 <input className="field" name="quantity" type="number" min="1" defaultValue="1" />
-                <button className="btn-primary" type="submit">Thêm dịch vụ</button>
+                <ActionButton pendingLabel="Đang thêm...">Thêm dịch vụ</ActionButton>
               </div>
             </form>
           )}
@@ -87,7 +94,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
             {canRetryPayment && (
               <form action={retryPaymentAction} className="mt-3">
                 <input type="hidden" name="bookingId" value={booking.id} />
-                <button className="btn-primary w-full" type="submit">Thử lại thanh toán</button>
+                <ActionButton className="btn-primary w-full" pendingLabel="Đang tạo...">Thử lại thanh toán</ActionButton>
               </form>
             )}
             <a className="btn-secondary mt-3 w-full" href={`/payment/result?bookingId=${booking.id}`}>Kiểm tra trạng thái</a>

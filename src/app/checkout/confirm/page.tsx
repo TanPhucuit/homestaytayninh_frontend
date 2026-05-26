@@ -1,6 +1,9 @@
 import Link from "next/link";
+import { ActionButton } from "@/components/action-button";
 import { AppTopBar, Stepper } from "@/components/customer-ui";
+import { FlashMessage } from "@/components/feedback-state";
 import { getCheckoutPreview, money } from "@/lib/api";
+import { flashFromSearchParams } from "@/lib/flash";
 import { createCheckoutAction } from "../actions";
 
 export const dynamic = "force-dynamic";
@@ -13,6 +16,8 @@ type CheckoutConfirmParams = {
   guestCount?: string;
   checkIn?: string;
   checkOut?: string;
+  error?: string;
+  success?: string;
   [key: string]: string | undefined;
 };
 
@@ -26,7 +31,10 @@ function serviceItemsFromParams(params: CheckoutConfirmParams) {
 export default async function CheckoutConfirmPage({ searchParams }: { searchParams: Promise<CheckoutConfirmParams> }) {
   const params = await searchParams;
   const preview = await getCheckoutPreview({ ...params, serviceItems: serviceItemsFromParams(params) });
-  const preservedEntries = Object.entries(params).filter(([, value]) => value);
+  const flash = flashFromSearchParams(params);
+  const preservedEntries = Object.entries(params).filter(([key, value]) => value && key !== "error" && key !== "success");
+  const backParams = new URLSearchParams();
+  preservedEntries.forEach(([key, value]) => backParams.set(key, value ?? ""));
 
   return (
     <main className="min-h-screen text-[#1c1c19]">
@@ -46,6 +54,7 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
         <form action={createCheckoutAction} className="grid gap-6 lg:grid-cols-[1fr_390px]">
           {preservedEntries.map(([key, value]) => <input key={key} type="hidden" name={key} value={value} />)}
           <div className="space-y-6">
+            <FlashMessage flash={flash} />
             <section className="card p-6 md:p-8">
               <p className="eyebrow">Booking Review</p>
               <h2 className="mt-2 font-heading text-3xl text-[#7b2914]">{preview.homestay.name}</h2>
@@ -105,8 +114,8 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
                 <p className="mt-1 text-xs text-[#75675f]">Đã bao gồm thuế, phí</p>
               </div>
             </div>
-            <button className="btn-primary mt-6 w-full" type="submit">Tạo booking và thanh toán</button>
-            <Link className="btn-secondary mt-3 w-full" href={`/checkout/services?homestayId=${preview.homestay.id}&roomId=${preview.room.id}&guestName=${encodeURIComponent(params.guestName ?? "")}&guestPhone=${encodeURIComponent(params.guestPhone ?? "")}&guestCount=${encodeURIComponent(params.guestCount ?? "")}&checkIn=${encodeURIComponent(params.checkIn ?? "")}&checkOut=${encodeURIComponent(params.checkOut ?? "")}`}>Quay lại</Link>
+            <ActionButton className="btn-primary mt-6 w-full" pendingLabel="Đang tạo booking...">Tạo booking và thanh toán</ActionButton>
+            <Link className="btn-secondary mt-3 w-full" href={`/checkout/services?${backParams.toString()}`}>Quay lại</Link>
           </aside>
         </form>
       </div>

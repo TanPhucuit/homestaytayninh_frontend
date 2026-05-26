@@ -50,7 +50,7 @@ export default async function PaymentResultPage({ searchParams }: { searchParams
     return <AccessDenied description={user.authorizationError} />;
   }
   const payment = params.bookingId ? await getPaymentStatus(params.bookingId, user?.role ?? "CUSTOMER") : null;
-  const status = payment?.status ?? normalizePaymentStatus(params.status);
+  const status = params.paymentError ? "FAILED" : (payment?.status ?? normalizePaymentStatus(params.status));
   const view = copyFor(status);
   const bookingHistoryHref = "/bookings";
 

@@ -1,4 +1,5 @@
 import { AppTopBar, Stepper } from "@/components/customer-ui";
+import { ActionButton } from "@/components/action-button";
 import { getHomestay, getHomestays, money } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
@@ -115,7 +116,7 @@ export default async function CheckoutPage({ searchParams }: { searchParams: Pro
               <div className="flex justify-between gap-4"><span className="text-[#75675f]">Dịch vụ</span><span>Nhập theo số lượng</span></div>
               <div className="flex justify-between gap-4"><span className="text-[#75675f]">Thuế/phí</span><span>Tính tại backend</span></div>
             </div>
-            <button className="btn-primary mt-6 w-full" type="submit">Tiếp tục chọn dịch vụ</button>
+            <ActionButton className="btn-primary mt-6 w-full" pendingLabel="Đang chuyển bước...">Tiếp tục chọn dịch vụ</ActionButton>
             <p className="mt-4 text-center text-xs text-[#75675f]">Thông tin thanh toán được xử lý an toàn qua backend.</p>
           </aside>
         </form>

@@ -43,7 +43,7 @@ export async function AppTopBar() {
         {user.authenticated ? (
           <div className="flex items-center gap-2">
             {user.authorizationError ? (
-              <span className="hidden rounded-full bg-[#fff3d6] px-4 py-2 text-sm font-bold text-[#7a4a12] sm:block" title={user.authorizationError}>
+              <span className="max-w-44 truncate rounded-full bg-[#fff3d6] px-3 py-2 text-xs font-bold text-[#7a4a12] sm:max-w-none sm:px-4 sm:text-sm" title={user.authorizationError}>
                 Đã đăng nhập · Lỗi quyền
               </span>
             ) : (

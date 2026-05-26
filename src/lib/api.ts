@@ -219,7 +219,8 @@ export async function getCheckoutPreview(draftOrHomestayId?: string | CheckoutDr
   const start = draft.checkIn ? new Date(draft.checkIn).getTime() : NaN;
   const end = draft.checkOut ? new Date(draft.checkOut).getTime() : NaN;
   const nights = Number.isFinite(start) && Number.isFinite(end) && end > start ? Math.ceil((end - start) / 86_400_000) : 2;
-  const guestCount = Math.min(Number(draft.guestCount ?? 2), room.capacity);
+  const requestedGuests = Number(draft.guestCount ?? 2);
+  const guestCount = Math.min(Number.isFinite(requestedGuests) && requestedGuests > 0 ? requestedGuests : 1, room.capacity);
   const selectedServices = (draft.serviceItems ?? []).map((item) => {
     const service = homestay.services.find((candidate) => candidate.id === item.serviceId);
     if (!service || !Number.isInteger(item.quantity) || item.quantity < 1) return null;

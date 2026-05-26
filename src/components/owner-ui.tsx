@@ -1,10 +1,20 @@
+import { ActionButton } from "./action-button";
 import { BookingCard, PageShell, StatusBadge } from "./customer-ui";
+import { FlashMessage } from "./feedback-state";
 import { Booking, Homestay } from "@/lib/types";
 import { money } from "@/lib/api";
+import { FlashState } from "@/lib/flash";
 import { createImageAction, createRoomRateAction, updateHomestayAction, updateRoomAction, updateServiceAction } from "@/app/owner/actions";
 
-export function OwnerShell({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
-  return <PageShell eyebrow="Owner Portal" title={title} description={description}>{children}</PageShell>;
+export function OwnerShell({ title, description, flash, children }: { title: string; description: string; flash?: FlashState | null; children: React.ReactNode }) {
+  return (
+    <PageShell eyebrow="Owner Portal" title={title} description={description}>
+      <div className="mb-5">
+        <FlashMessage flash={flash} />
+      </div>
+      {children}
+    </PageShell>
+  );
 }
 
 export function OwnerStats({ homestays, bookings }: { homestays: Homestay[]; bookings: Booking[] }) {
@@ -57,7 +67,7 @@ export function OwnerBookingOps({ bookings, homestays, action }: { bookings: Boo
                 <form action={action} key={item.status}>
                   <input type="hidden" name="bookingId" value={booking.id} />
                   <input type="hidden" name="status" value={item.status} />
-                  <button className={item.status === "CANCELLED" ? "btn-secondary" : "btn-primary"} type="submit">{item.label}</button>
+                  <ActionButton className={item.status === "CANCELLED" ? "btn-secondary" : "btn-primary"} pendingLabel="Đang cập nhật...">{item.label}</ActionButton>
                 </form>
               ))}
             </div>
@@ -94,14 +104,14 @@ export function OwnerInventory({ homestays }: { homestays: Homestay[] }) {
             <input className="field" name="capacity" type="number" min="1" defaultValue={homestay.capacity} required />
             <input className="field" name="imageUrl" type="url" defaultValue={homestay.imageUrl} required />
             <textarea className="field min-h-20 md:col-span-2" name="description" defaultValue={homestay.description} required />
-            <button className="btn-primary justify-self-start" type="submit">Lưu homestay</button>
+            <ActionButton className="btn-primary justify-self-start" pendingLabel="Đang lưu...">Lưu homestay</ActionButton>
           </form>
           <form action={createImageAction} className="mt-4 grid gap-3 rounded-2xl bg-white p-4 md:grid-cols-[1fr_1fr_120px_auto]">
             <input type="hidden" name="homestayId" value={homestay.id} />
             <input className="field" name="url" type="url" placeholder="URL hình ảnh mới" required />
             <input className="field" name="alt" placeholder="Mô tả ảnh" />
             <input className="field" name="position" type="number" min="0" defaultValue="1" />
-            <button className="btn-secondary" type="submit">Thêm ảnh</button>
+            <ActionButton className="btn-secondary" pendingLabel="Đang thêm...">Thêm ảnh</ActionButton>
           </form>
           <div className="mt-5 grid gap-4 lg:grid-cols-2">
             <div>
@@ -118,7 +128,7 @@ export function OwnerInventory({ homestays }: { homestays: Homestay[] }) {
                       <input className="field" name="capacity" type="number" min="1" defaultValue={room.capacity} required />
                       <input className="field" name="totalUnits" type="number" min="1" defaultValue={room.totalUnits} required />
                       <label className="flex items-center gap-2 text-sm"><input name="active" type="checkbox" defaultChecked={room.active} /> Đang bán</label>
-                      <button className="btn-secondary justify-self-start" type="submit">Lưu phòng</button>
+                      <ActionButton className="btn-secondary justify-self-start" pendingLabel="Đang lưu...">Lưu phòng</ActionButton>
                     </form>
                     <form action={createRoomRateAction} className="mt-3 grid gap-2 md:grid-cols-[1fr_1fr_1fr_auto]">
                       <input type="hidden" name="homestayId" value={homestay.id} />
@@ -126,7 +136,7 @@ export function OwnerInventory({ homestays }: { homestays: Homestay[] }) {
                       <input className="field" name="startDate" type="date" required />
                       <input className="field" name="endDate" type="date" required />
                       <input className="field" name="pricePerNight" type="number" min="0" placeholder="Giá theo ngày" required />
-                      <button className="btn-secondary" type="submit">Thêm giá</button>
+                      <ActionButton className="btn-secondary" pendingLabel="Đang thêm...">Thêm giá</ActionButton>
                     </form>
                   </div>
                 ))}
@@ -144,7 +154,7 @@ export function OwnerInventory({ homestays }: { homestays: Homestay[] }) {
                     <input className="field" name="unitPrice" type="number" min="0" defaultValue={service.unitPrice} required />
                     <label className="flex items-center gap-2"><input name="included" type="checkbox" defaultChecked={service.included} /> Bao gồm</label>
                     <label className="flex items-center gap-2"><input name="active" type="checkbox" defaultChecked={service.active} /> Đang bán</label>
-                    <button className="btn-secondary justify-self-start" type="submit">Lưu dịch vụ</button>
+                    <ActionButton className="btn-secondary justify-self-start" pendingLabel="Đang lưu...">Lưu dịch vụ</ActionButton>
                   </form>
                 ))}
               </div>

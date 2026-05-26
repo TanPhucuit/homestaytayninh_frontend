@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ActionButton } from "@/components/action-button";
 import { AppTopBar, Stepper } from "@/components/customer-ui";
 import { getCheckoutPreview, money } from "@/lib/api";
 
@@ -80,7 +81,7 @@ export default async function CheckoutServicesPage({ searchParams }: { searchPar
                 <p className="mt-1 text-xs text-[#75675f]">Đã bao gồm thuế, phí</p>
               </div>
             </div>
-            <button className="btn-primary mt-6 w-full" type="submit">Tiếp tục xác nhận</button>
+            <ActionButton className="btn-primary mt-6 w-full" pendingLabel="Đang chuyển bước...">Tiếp tục xác nhận</ActionButton>
             <Link className="btn-secondary mt-3 w-full" href={`/checkout?homestayId=${preview.homestay.id}&roomId=${preview.room.id}`}>Quay lại</Link>
           </aside>
         </form>

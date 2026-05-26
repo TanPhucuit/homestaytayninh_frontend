@@ -1,4 +1,18 @@
 import Link from "next/link";
+import { FlashState } from "@/lib/flash";
+
+export function FlashMessage({ flash }: { flash?: FlashState | null }) {
+  if (!flash) return null;
+  const tone = flash.type === "success"
+    ? "border-[#c8ebd0] bg-[#eef8f1] text-[#2f4d3a]"
+    : "border-[#ffdad6] bg-[#fff8f7] text-[#93000a]";
+
+  return (
+    <div className={`rounded-2xl border px-4 py-3 text-sm font-semibold ${tone}`} role={flash.type === "error" ? "alert" : "status"}>
+      {flash.message}
+    </div>
+  );
+}
 
 export function EmptyState({
   title,

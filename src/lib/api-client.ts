@@ -2,9 +2,7 @@ import "server-only";
 import { createClient } from "@/utils/supabase/server";
 import { UserRole } from "./types";
 
-const PRODUCTION_API_URL = "https://homestaytayninh-backend.onrender.com";
-const configuredApiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
-const API_URL = configuredApiUrl && !(process.env.VERCEL && configuredApiUrl.includes("localhost")) ? configuredApiUrl : PRODUCTION_API_URL;
+const API_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
 
 export class ApiClientError extends Error {
   constructor(

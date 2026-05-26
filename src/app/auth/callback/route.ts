@@ -15,7 +15,10 @@ export async function GET(request: NextRequest) {
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
-      const apiUrl = (process.env.NEXT_PUBLIC_API_URL ?? "https://homestaytayninh-backend.onrender.com").replace(/\/$/, "");
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
+      if (!apiUrl) {
+        return NextResponse.redirect(new URL("/login?error=api_env", request.nextUrl.origin));
+      }
       if (data.session?.access_token) {
         const profileResponse = await fetch(`${apiUrl}/api/auth/me`, {
           cache: "no-store",
