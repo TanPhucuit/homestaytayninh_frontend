@@ -12,24 +12,39 @@ export default async function HomestaysPage({ searchParams }: { searchParams: Pr
     <PageShell
       eyebrow="Customer Portal"
       title="Tìm homestay Tây Ninh"
-      description="Lọc theo ngày nhận/trả phòng, số khách, loại hình, mức giá và tiện ích. Dữ liệu được lấy từ backend nếu API khả dụng."
+      description="Lọc theo ngày nhận/trả phòng, số khách, loại hình, mức giá và tiện ích. Dữ liệu hiển thị từ backend production, không dùng frontend giả."
     >
-      <form className="card mb-6 grid gap-3 p-5 md:grid-cols-6" action="/homestays">
-        <input className="field" name="checkIn" type="date" defaultValue={filters.checkIn} aria-label="Ngày nhận phòng" />
-        <input className="field" name="checkOut" type="date" defaultValue={filters.checkOut} aria-label="Ngày trả phòng" />
-        <input className="field" name="guests" type="number" min="1" placeholder="Số khách" defaultValue={filters.guests} />
-        <select className="field" name="type" defaultValue={filters.type ?? ""}>
-          <option value="">Tất cả loại hình</option>
-          <option value="Phòng">Phòng</option>
-          <option value="Lều">Lều</option>
-          <option value="Nhà nguyên căn">Nhà nguyên căn</option>
-        </select>
-        <input className="field" name="maxPrice" type="number" min="0" step="50000" placeholder="Giá tối đa" defaultValue={filters.maxPrice} />
-        <button className="btn-primary" type="submit">Tìm kiếm</button>
+      <form className="mb-8 grid gap-3 rounded-[24px] bg-white/90 p-5 shadow-[0_18px_55px_rgba(123,41,20,0.08)] md:grid-cols-6" action="/homestays">
+        <label className="grid gap-2 text-xs font-bold uppercase tracking-[0.14em] text-[#89726c]">
+          Nhận phòng
+          <input className="field" name="checkIn" type="date" defaultValue={filters.checkIn} />
+        </label>
+        <label className="grid gap-2 text-xs font-bold uppercase tracking-[0.14em] text-[#89726c]">
+          Trả phòng
+          <input className="field" name="checkOut" type="date" defaultValue={filters.checkOut} />
+        </label>
+        <label className="grid gap-2 text-xs font-bold uppercase tracking-[0.14em] text-[#89726c]">
+          Số khách
+          <input className="field" name="guests" type="number" min="1" placeholder="2" defaultValue={filters.guests} />
+        </label>
+        <label className="grid gap-2 text-xs font-bold uppercase tracking-[0.14em] text-[#89726c]">
+          Loại hình
+          <select className="field" name="type" defaultValue={filters.type ?? ""}>
+            <option value="">Tất cả</option>
+            <option value="Phòng">Phòng</option>
+            <option value="Lều">Lều</option>
+            <option value="Nhà nguyên căn">Nhà nguyên căn</option>
+          </select>
+        </label>
+        <label className="grid gap-2 text-xs font-bold uppercase tracking-[0.14em] text-[#89726c]">
+          Giá tối đa
+          <input className="field" name="maxPrice" type="number" min="0" step="50000" placeholder="2.000.000" defaultValue={filters.maxPrice} />
+        </label>
+        <button className="btn-primary self-end" type="submit">Tìm kiếm</button>
       </form>
 
       {homestays.length ? (
-        <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <section className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {homestays.map((homestay) => <HomestayCard homestay={homestay} key={homestay.id} />)}
         </section>
       ) : (
