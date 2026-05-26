@@ -7,8 +7,8 @@ test.describe("Homestay Tây Ninh production smoke", () => {
   test("landing navigation and login CTA are usable", async ({ page }) => {
     await page.goto(baseURL);
     await expect(page.getByRole("link", { name: "Đăng nhập" }).first()).toBeVisible();
-    await expect(page.getByRole("link", { name: "Đặt phòng ngay" })).toBeVisible();
-    await page.getByRole("link", { name: "Đặt phòng ngay" }).click();
+    await expect(page.getByRole("link", { name: "Đặt phòng ngay" }).first()).toBeVisible();
+    await page.getByRole("link", { name: "Đặt phòng ngay" }).first().click();
     await expect(page).toHaveURL(/\/homestays/);
     await expect(page.getByRole("heading", { name: /Tìm thấy/i })).toBeVisible();
   });

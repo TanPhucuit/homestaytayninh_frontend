@@ -16,23 +16,24 @@ const money = (value: number) => new Intl.NumberFormat("vi-VN", { style: "curren
 export function ProxyBookingForm({ action, defaultCheckIn, defaultCheckOut, homestays }: ProxyBookingFormProps) {
   const [homestayId, setHomestayId] = useState(homestays[0]?.id ?? "");
   const selectedHomestay = useMemo(() => homestays.find((homestay) => homestay.id === homestayId) ?? homestays[0], [homestayId, homestays]);
-  const rooms = selectedHomestay?.rooms ?? [];
+  const rooms = selectedHomestay?.rooms.filter((room) => room.active) ?? [];
   const services = selectedHomestay ? [...selectedHomestay.includedServices, ...selectedHomestay.services].filter((service) => service.active) : [];
   const hasRooms = rooms.length > 0;
 
   return (
     <form action={action} className="grid gap-6 lg:grid-cols-[1fr_380px]">
       <section className="card p-6">
-        <h2 className="font-heading text-2xl text-[#9a4029]">Thông tin booking hộ</h2>
+        <p className="eyebrow">Đặt hộ khách hàng</p>
+        <h2 className="mt-2 font-heading text-2xl text-[#9a4029]">Thông tin booking hộ</h2>
         <div className="mt-5 grid gap-3 md:grid-cols-2">
           <label className="grid gap-2 text-sm font-semibold">Homestay
             <select className="field" name="homestayId" onChange={(event) => setHomestayId(event.target.value)} value={homestayId} required>
               {homestays.map((homestay) => <option key={homestay.id} value={homestay.id}>{homestay.name}</option>)}
             </select>
           </label>
-          <label className="grid gap-2 text-sm font-semibold">Phòng
+          <label className="grid gap-2 text-sm font-semibold">Phòng còn bán
             <select className="field" name="roomId" disabled={!hasRooms} required>
-              {rooms.map((room) => <option key={room.id} value={room.id}>{room.name} · {money(room.pricePerNight)}</option>)}
+              {rooms.map((room) => <option key={room.id} value={room.id}>{room.name} · {money(room.pricePerNight)} · tối đa {room.capacity} khách</option>)}
             </select>
           </label>
           <input className="field" name="customerId" placeholder="Mã hồ sơ khách đã có (có thể bỏ trống)" />
@@ -45,7 +46,9 @@ export function ProxyBookingForm({ action, defaultCheckIn, defaultCheckOut, home
       </section>
 
       <aside className="card h-fit p-6">
-        <h2 className="font-heading text-2xl text-[#9a4029]">Dịch vụ gọi kèm</h2>
+        <p className="eyebrow">Theo homestay đã chọn</p>
+        <h2 className="mt-2 font-heading text-2xl text-[#9a4029]">Dịch vụ gọi kèm</h2>
+        <p className="mt-2 text-sm leading-6 text-[#75675f]">Danh sách phòng và dịch vụ được lọc theo homestay đang chọn để tránh đặt nhầm.</p>
         <div className="mt-4 grid gap-3">
           <select className="field" name="serviceId" defaultValue="">
             <option value="">Không chọn dịch vụ</option>
@@ -53,7 +56,7 @@ export function ProxyBookingForm({ action, defaultCheckIn, defaultCheckOut, home
           </select>
           <input className="field" name="serviceQuantity" type="number" min="0" defaultValue="0" />
           <ActionButton pendingLabel="Đang tạo..." disabled={!hasRooms}>Tạo booking hộ</ActionButton>
-          {!hasRooms && <p className="text-sm font-semibold text-[#93000a]">Homestay này chưa có phòng khả dụng để đặt.</p>}
+          {!hasRooms && <p className="text-sm font-semibold text-[#93000a]">Homestay này chưa có phòng đang bán để đặt.</p>}
         </div>
       </aside>
     </form>

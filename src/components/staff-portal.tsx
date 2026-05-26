@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Article, UserProfile, UserRole, ViolationReport } from "@/lib/types";
 import { ActionButton } from "./action-button";
 import { AppTopBar } from "./customer-ui";
+import { ConfirmActionButton } from "./confirm-action-button";
 import { EmptyState, FlashMessage } from "./feedback-state";
 import { FlashState } from "@/lib/flash";
 import {
@@ -92,7 +93,7 @@ export function StaffCmsPortal({ articles, flash }: { articles: Article[]; flash
                     </form>
                     <form action={deleteArticleAction}>
                       <input name="articleId" type="hidden" value={article.id} />
-                      <ActionButton className="btn-secondary" pendingLabel="Đang xóa...">Xóa</ActionButton>
+                      <ConfirmActionButton className="btn-secondary" message="Ẩn/xóa bài viết này khỏi CMS? Không thao tác với dữ liệu homestay hoặc booking." pendingLabel="Đang xử lý...">Xóa</ConfirmActionButton>
                     </form>
                   </div>
                 </div>
@@ -144,7 +145,7 @@ export function StaffModerationPortal({ reports, users, currentRole, flash }: { 
                 {report.status === "OPEN" && (
                   <form action={resolveReportAction}>
                     <input name="reportId" type="hidden" value={report.id} />
-                    <ActionButton pendingLabel="Đang xử lý...">Đánh dấu đã xử lý</ActionButton>
+                    <ConfirmActionButton message="Đánh dấu report này là đã xử lý?" pendingLabel="Đang xử lý...">Đánh dấu đã xử lý</ConfirmActionButton>
                   </form>
                 )}
               </div>
@@ -166,9 +167,9 @@ export function StaffModerationPortal({ reports, users, currentRole, flash }: { 
               </div>
               <form action={user.banned ? unbanModeratedUserAction : banModeratedUserAction}>
                 <input name="userId" type="hidden" value={user.id} />
-                <ActionButton className={user.banned ? "btn-secondary" : "btn-primary"} pendingLabel="Đang xử lý...">
+                <ConfirmActionButton className={user.banned ? "btn-secondary" : "btn-primary"} message={user.banned ? "Mở khóa tài khoản này?" : "Khóa tài khoản này?"} pendingLabel="Đang xử lý...">
                   {user.banned ? "Mở khóa" : "Khóa tài khoản"}
-                </ActionButton>
+                </ConfirmActionButton>
               </form>
             </article>
           ))}

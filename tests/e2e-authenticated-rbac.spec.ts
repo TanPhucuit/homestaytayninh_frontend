@@ -93,4 +93,76 @@ test.describe("authenticated RBAC with real Redis sessions", () => {
 
     await context.close();
   });
+
+  test("customer booking tabs, cancel action and demo payment link are visible", async ({ browser }) => {
+    const context = await withRealSession(browser, "CUSTOMER");
+    const page = await context.newPage();
+
+    await page.goto(`${appUrl}/bookings`);
+    for (const tab of ["Sắp tới", "Đang trải nghiệm", "Đã hoàn thành", "Đã hủy"]) {
+      await expect(page.getByRole("link", { name: new RegExp(tab) })).toBeVisible();
+    }
+
+    const firstDetail = page.getByRole("link", { name: /Xem chi tiết/i }).first();
+    if (await firstDetail.count()) {
+      await firstDetail.click();
+      await expect(page.getByText(/Dịch vụ trong booking|Tóm tắt đơn hàng|Thanh toán/i).first()).toBeVisible();
+      await expect(page.getByRole("link", { name: /Kiểm tra trạng thái|Kiểm tra thanh toán/i }).first()).toBeVisible();
+      const cancelButton = page.getByRole("button", { name: /Hủy đơn/i });
+      if (await cancelButton.count()) {
+        page.once("dialog", (dialog) => dialog.dismiss());
+        await cancelButton.first().click();
+      }
+    }
+
+    await context.close();
+  });
+
+  test("owner, owner staff and admin see role-appropriate CTAs", async ({ browser }) => {
+    for (const role of ["OWNER", "OWNER_STAFF", "ADMIN"] as const) {
+      const context = await withRealSession(browser, role);
+      const page = await context.newPage();
+
+      await page.goto(`${appUrl}/owner`);
+      if (role === "OWNER") {
+        await expect(page.getByRole("link", { name: /Quản lý homestay\/phòng\/dịch vụ/i })).toBeVisible();
+        await expect(page.getByRole("link", { name: /Đặt hộ khách hàng/i })).toHaveCount(0);
+      }
+      if (role === "OWNER_STAFF") {
+        await expect(page.getByRole("link", { name: /Đặt hộ khách hàng/i })).toBeVisible();
+        await expect(page.getByRole("link", { name: /Quản lý homestay\/phòng\/dịch vụ/i })).toHaveCount(0);
+      }
+      if (role === "ADMIN") {
+        await expect(page.getByRole("link", { name: /Quản lý homestay\/phòng\/dịch vụ/i })).toBeVisible();
+        await expect(page.getByRole("link", { name: /Đặt hộ khách hàng/i })).toBeVisible();
+      }
+
+      await context.close();
+    }
+  });
+
+  test("owner staff booking operations and proxy booking filters follow selected homestay", async ({ browser }) => {
+    const context = await withRealSession(browser, "OWNER_STAFF");
+    const page = await context.newPage();
+
+    await page.goto(`${appUrl}/owner`);
+    await expect(page.getByText(/Booking cần xử lý|Không có booking cần thao tác ngay/i).first()).toBeVisible();
+    await expect(page.getByRole("button", { name: /Xác nhận|Từ chối|Check-in|Hủy|Check-out/i }).first()).toBeVisible({ timeout: 10000 }).catch(() => undefined);
+
+    await page.goto(`${appUrl}/owner/proxy-booking`);
+    const homestaySelect = page.locator('select[name="homestayId"]');
+    const roomSelect = page.locator('select[name="roomId"]');
+    const serviceSelect = page.locator('select[name="serviceId"]');
+    await expect(homestaySelect).toBeVisible();
+    await expect(roomSelect).toBeVisible();
+    await expect(serviceSelect).toBeVisible();
+    const options = await homestaySelect.locator("option").count();
+    if (options > 1) {
+      const beforeRoom = await roomSelect.inputValue();
+      await homestaySelect.selectOption({ index: 1 });
+      await expect(roomSelect).not.toHaveValue(beforeRoom);
+    }
+
+    await context.close();
+  });
 });

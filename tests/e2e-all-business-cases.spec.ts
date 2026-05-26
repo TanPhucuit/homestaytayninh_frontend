@@ -152,6 +152,36 @@ test.describe("All unauthenticated business cases on production", () => {
     }
   });
 
+  test("booking tabs and demo payment result expose BA labels", async ({ page }) => {
+    const failures = watchFailures(page);
+
+    await page.goto(`${baseURL}/bookings`);
+    await expect(page.getByRole("heading", { name: /Không có quyền truy cập/i })).toBeVisible();
+
+    await page.goto(`${baseURL}/payment/result?status=paid&demo=1`);
+    await expect(page.getByText(/Kết quả thanh toán/i)).toBeVisible();
+    await expect(page.getByText(/Thanh toán demo thành công|Đã thanh toán/i).first()).toBeVisible();
+
+    await page.goto(`${baseURL}/payment/result?status=pending&demo=1`);
+    await expect(page.getByText(/Thanh toán demo đang xử lý|Đang xử lý/i).first()).toBeVisible();
+    await assertNoBrokenUi(page, failures);
+  });
+
+  test("search filters are preserved through detail and checkout", async ({ page }) => {
+    const failures = watchFailures(page);
+
+    await page.goto(`${baseURL}/homestays?guests=2&checkIn=2026-06-09&checkOut=2026-06-11`);
+    await page.getByRole("link", { name: /Xem chi tiết/i }).first().click();
+    await expect(page).toHaveURL(/guests=2/);
+    await expect(page).toHaveURL(/checkIn=2026-06-09/);
+    await page.locator('main a[href^="/checkout?"]').first().click();
+    await expect(page).toHaveURL(/\/checkout/);
+    await expect(page).toHaveURL(/guestCount=2/);
+    await expect(page).toHaveURL(/checkIn=2026-06-09/);
+    await expect(page).toHaveURL(/checkOut=2026-06-11/);
+    await assertNoBrokenUi(page, failures);
+  });
+
   test("role protected portals consistently block unauthenticated access", async ({ page }) => {
     const failures = watchFailures(page);
     for (const route of ["/owner", "/owner/manage", "/owner/proxy-booking", "/staff", "/staff/moderation", "/admin"]) {
@@ -167,8 +197,8 @@ test.describe("All unauthenticated business cases on production", () => {
     await page.setViewportSize({ width: 390, height: 844 });
 
     await page.goto(baseURL);
-    await expect(page.getByRole("link", { name: /Đặt phòng ngay/i })).toBeVisible();
-    await page.getByRole("link", { name: /Đặt phòng ngay/i }).click();
+    await expect(page.getByRole("link", { name: /Đặt phòng ngay/i }).first()).toBeVisible();
+    await page.getByRole("link", { name: /Đặt phòng ngay/i }).first().click();
     await page.locator('input[name="guests"]').fill("2");
     await page.getByRole("button", { name: /Áp dụng bộ lọc/i }).click();
     await expect(page.getByRole("link", { name: /Xem chi tiết/i }).first()).toBeVisible();

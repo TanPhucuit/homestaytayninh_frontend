@@ -1,5 +1,6 @@
 import { banUserAction, createAdminUserAction, assignRoleAction, unbanUserAction } from "@/app/admin/actions";
 import { ActionButton } from "./action-button";
+import { ConfirmActionButton } from "./confirm-action-button";
 import { FlashMessage } from "./feedback-state";
 import { money } from "@/lib/api";
 import { FlashState } from "@/lib/flash";
@@ -145,15 +146,15 @@ export function AdminPortal({ dashboard, users, currentUser, flash }: { dashboar
                         <select className="rounded-lg border border-[#eadfd4] px-2 py-2" name="role" defaultValue={user.role}>
                           {roles.map((role) => <option key={role}>{role}</option>)}
                         </select>
-                        <ActionButton className="rounded-lg border border-[#466550] px-3 py-2 text-[#466550]" pendingLabel="Đang lưu...">Lưu</ActionButton>
+                        <ConfirmActionButton className="rounded-lg border border-[#466550] px-3 py-2 text-[#466550]" message="Xác nhận thay đổi vai trò tài khoản này?" pendingLabel="Đang lưu...">Lưu</ConfirmActionButton>
                       </form>
                     </td>
                     <td className="rounded-r-xl px-3 py-3">
                       <form action={user.banned ? unbanUserAction : banUserAction}>
                         <input name="userId" type="hidden" value={user.id} />
-                        <ActionButton className="rounded-lg bg-[#9a4029] px-3 py-2 text-white" pendingLabel="Đang xử lý...">
+                        <ConfirmActionButton className="rounded-lg bg-[#9a4029] px-3 py-2 text-white" message={user.banned ? "Mở khóa tài khoản này?" : "Khóa tài khoản này?"} pendingLabel="Đang xử lý...">
                           {user.banned ? "Unban" : "Ban"}
-                        </ActionButton>
+                        </ConfirmActionButton>
                       </form>
                     </td>
                   </tr>

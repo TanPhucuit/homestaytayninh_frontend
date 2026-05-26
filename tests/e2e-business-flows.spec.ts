@@ -28,9 +28,9 @@ test.describe("Homestay Tây Ninh business flows on production", () => {
 
     await page.goto(baseURL);
     await expect(page.getByRole("link", { name: /Đăng nhập/i }).first()).toBeVisible();
-    await expect(page.getByRole("link", { name: /Đặt phòng ngay/i })).toBeVisible();
+    await expect(page.getByRole("link", { name: /Đặt phòng ngay/i }).first()).toBeVisible();
 
-    await page.getByRole("link", { name: /Đặt phòng ngay/i }).click();
+    await page.getByRole("link", { name: /Đặt phòng ngay/i }).first().click();
     await expect(page).toHaveURL(/\/homestays/);
     await page.locator('input[name="guests"]').fill("2");
     await page.locator('input[name="maxPrice"]').fill("2000000");
@@ -65,7 +65,7 @@ test.describe("Homestay Tây Ninh business flows on production", () => {
     await page.goto(`${baseURL}/login`);
     await expect(page.locator('input[name="email"]')).toHaveValue("demo@gmail.com");
     await expect(page.locator('input[name="password"]')).toHaveValue("demo123");
-    await expect(page.getByRole("button", { name: /Đăng nhập bằng tài khoản/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /Đăng nhập bằng tài khoản|Đăng nhập demo/i })).toBeVisible();
     await expect(page.getByRole("link", { name: /Google/i })).toBeVisible();
     await expectNoRuntimeFailure(page, failures);
   });
