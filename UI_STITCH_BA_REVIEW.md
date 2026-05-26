@@ -58,5 +58,6 @@ Ngày rà soát: 26/05/2026
 ## Lưu ý kỹ thuật
 - Cách hiện tại ưu tiên pixel-match với Stitch. Google OAuth, refresh session, logout, RBAC lookup và bearer token sang NestJS đã được nối ở lớp Next.js.
 - Các CTA landing/search/detail đã điều hướng tới đúng route App Router mà không chỉnh HTML Stitch.
-- Checkout submit, tạo booking/payment, booking history theo dữ liệu thật và các hành động portal trong HTML iframe vẫn chưa bind mutation API; hiện đây là UI blueprint tĩnh.
+- Checkout submit đã được nối qua route nội bộ `/api/checkout/create`: tạo booking bằng NestJS, initiate payment, rồi redirect sang màn payment result của Stitch.
+- Booking history theo dữ liệu thật và các hành động portal trong HTML iframe vẫn chưa bind mutation API; hiện đây vẫn là UI blueprint tĩnh.
 - Để hoàn thiện tương tác API mà vẫn giữ visual Stitch, cần chuyển markup từng flow nghiệp vụ thành component React giữ nguyên class/token, hoặc thêm bridge có dữ liệu/validation đầy đủ cho từng form.
