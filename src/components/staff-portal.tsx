@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Article, UserProfile, UserRole, ViolationReport } from "@/lib/types";
 import { ActionButton } from "./action-button";
+import { AppTopBar } from "./customer-ui";
 import { EmptyState, FlashMessage } from "./feedback-state";
 import { FlashState } from "@/lib/flash";
 import {
@@ -17,6 +18,7 @@ import {
 function StaffShell({ title, description, flash, children }: { title: string; description: string; flash?: FlashState | null; children: React.ReactNode }) {
   return (
     <main className="min-h-screen px-4 py-8 text-[#2f2926] md:px-8">
+      <AppTopBar />
       <div className="mx-auto max-w-7xl space-y-8">
         <header className="stitch-panel bg-[#466550] p-6 text-white md:p-8">
           <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
