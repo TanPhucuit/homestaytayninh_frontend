@@ -35,13 +35,20 @@ export default async function BookingsPage({ searchParams }: { searchParams: Pro
   return (
     <main className="min-h-screen text-[#1c1c19]">
       <AppTopBar />
-
       <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
-        <h1 className="mb-6 font-heading text-4xl text-[#9a4029] md:text-5xl">Chuyến đi của bạn</h1>
-        <div className="mb-10 flex gap-4 overflow-x-auto border-b border-[#dcc0ba]">
+        <header className="mb-8 grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
+          <div>
+            <p className="eyebrow">Booking của tôi</p>
+            <h1 className="mt-2 font-heading text-4xl text-[#9a4029] md:text-5xl">Chuyến đi của bạn</h1>
+            <p className="mt-3 max-w-2xl text-[#56423d]">Theo dõi trạng thái đặt phòng, thanh toán demo và các dịch vụ đã chọn.</p>
+          </div>
+          <Link className="btn-primary" href="/homestays">Đặt thêm chuyến đi</Link>
+        </header>
+
+        <div className="mb-8 grid gap-3 rounded-2xl border border-[#eadfd4] bg-white p-2 md:grid-cols-4">
           {groups.map((group) => (
             <Link
-              className={`whitespace-nowrap pb-3 text-sm font-bold ${group === activeGroup ? "border-b-2 border-[#9a4029] text-[#9a4029]" : "text-[#75675f]"}`}
+              className={`rounded-xl px-4 py-3 text-center text-sm font-bold ${group === activeGroup ? "bg-[#9a4029] text-white shadow-[0_12px_28px_rgba(154,64,41,0.2)]" : "text-[#75675f] hover:bg-[#fdf9f4]"}`}
               href={`/bookings?statusGroup=${encodeURIComponent(group)}`}
               key={group}
             >
@@ -54,7 +61,7 @@ export default async function BookingsPage({ searchParams }: { searchParams: Pro
           <section>
             <div className="mb-6 flex items-center justify-between">
               <div>
-                <p className="eyebrow">Booking Status</p>
+                <p className="eyebrow">Trạng thái</p>
                 <h2 className="mt-2 font-heading text-3xl text-[#1c1c19]">{activeGroup}</h2>
               </div>
               <span className="rounded-full bg-[#e8f0eb] px-4 py-2 text-sm font-bold text-[#466550]">{activeBookings.length} đơn</span>
@@ -63,8 +70,8 @@ export default async function BookingsPage({ searchParams }: { searchParams: Pro
               {activeBookings.length ? activeBookings.map((booking) => {
                 const homestay = homestayById.get(booking.homestayId);
                 return (
-                  <article className="overflow-hidden rounded-2xl bg-white shadow-[0_24px_70px_rgba(123,41,20,0.1)] md:grid md:grid-cols-[340px_1fr]" key={booking.id}>
-                    <div className="min-h-72 bg-[#efe7dc] bg-cover bg-center" style={{ backgroundImage: homestay?.imageUrl ? `url(${homestay.imageUrl})` : undefined }} />
+                  <article className="overflow-hidden rounded-2xl border border-[#eadfd4] bg-white shadow-[0_24px_70px_rgba(123,41,20,0.1)] md:grid md:grid-cols-[320px_1fr]" key={booking.id}>
+                    <div className="image-shell min-h-72 bg-cover bg-center" style={{ backgroundImage: homestay?.imageUrl ? `url(${homestay.imageUrl})` : undefined }} />
                     <div className="p-6">
                       <div className="flex flex-wrap gap-2">
                         <StatusBadge status={booking.status} />
@@ -74,12 +81,12 @@ export default async function BookingsPage({ searchParams }: { searchParams: Pro
                       <p className="mt-2 text-sm text-[#75675f]">{booking.checkIn} - {booking.checkOut} · {booking.guestCount} khách</p>
                       <div className="mt-6 grid gap-4 md:grid-cols-2">
                         <div className="rounded-2xl bg-[#fdf9f4] p-4">
-                          <h3 className="font-heading text-xl text-[#9a4029]">Chi tiết đặt phòng</h3>
+                          <h3 className="font-heading text-xl text-[#9a4029]">Thông tin khách</h3>
                           <p className="mt-2 text-sm text-[#56423d]">Khách: {booking.guestName}</p>
                           <p className="text-sm text-[#56423d]">SĐT: {booking.guestPhone}</p>
                         </div>
                         <div className="rounded-2xl bg-[#fdf9f4] p-4">
-                          <h3 className="font-heading text-xl text-[#9a4029]">Dịch vụ & Tiện ích</h3>
+                          <h3 className="font-heading text-xl text-[#9a4029]">Dịch vụ & tổng tiền</h3>
                           <p className="mt-2 text-sm text-[#56423d]">{booking.services.length} dịch vụ đặt thêm</p>
                           <p className="font-bold text-[#466550]">{money(booking.grandTotal)}</p>
                         </div>

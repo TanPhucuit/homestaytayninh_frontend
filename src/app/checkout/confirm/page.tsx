@@ -41,7 +41,7 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
     <main className="min-h-screen text-[#1c1c19]">
       <AppTopBar />
       <div className="mx-auto max-w-7xl px-4 py-8 md:px-8">
-        <div className="mb-8 grid gap-6 lg:grid-cols-[1fr_380px]">
+        <div className="mb-8 grid gap-6 lg:grid-cols-[1fr_430px]">
           <div>
             <p className="eyebrow">Thanh toán</p>
             <h1 className="mt-2 font-heading text-4xl text-[#9a4029] md:text-5xl">Xác nhận đặt phòng</h1>
@@ -57,7 +57,7 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
           <div className="space-y-6">
             <FlashMessage flash={flash} />
             <section className="card p-6 md:p-8">
-              <p className="eyebrow">Booking Review</p>
+              <p className="eyebrow">Booking review</p>
               <h2 className="mt-2 font-heading text-3xl text-[#7b2914]">{preview.homestay.name}</h2>
               <div className="mt-6 grid gap-4 md:grid-cols-2">
                 <div className="rounded-2xl bg-[#fdf9f4] p-5">
@@ -75,19 +75,17 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
               </div>
             </section>
 
-            {preview.selectedServices.length > 0 && (
-              <section className="card p-6 md:p-8">
-                <h2 className="font-heading text-3xl text-[#9a4029]">Dịch vụ đã chọn</h2>
-                <div className="mt-5 space-y-3">
-                  {preview.selectedServices.map((service) => (
-                    <div className="flex justify-between gap-4 rounded-2xl bg-[#fdf9f4] p-4 text-sm" key={service.id}>
-                      <span>{service.name} · SL {service.quantity}</span>
-                      <strong>{money(service.total)}</strong>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
+            <section className="card p-6 md:p-8">
+              <h2 className="font-heading text-3xl text-[#9a4029]">Dịch vụ đã chọn</h2>
+              <div className="mt-5 space-y-3">
+                {preview.selectedServices.length ? preview.selectedServices.map((service) => (
+                  <div className="flex justify-between gap-4 rounded-2xl bg-[#fdf9f4] p-4 text-sm" key={service.id}>
+                    <span>{service.name} · SL {service.quantity}</span>
+                    <strong>{money(service.total)}</strong>
+                  </div>
+                )) : <p className="rounded-2xl bg-[#fdf9f4] p-4 text-sm text-[#75675f]">Không chọn dịch vụ bổ sung.</p>}
+              </div>
+            </section>
 
             <section className="card p-6 md:p-8">
               <h2 className="font-heading text-3xl text-[#9a4029]">Chính sách & Điều khoản</h2>

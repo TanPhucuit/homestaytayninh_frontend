@@ -27,12 +27,14 @@ export async function AppTopBar() {
     : [{ label: "Khám phá", href: "/homestays" }, { label: "Cẩm nang", href: "/articles" }];
 
   return (
-    <header className="sticky top-0 z-30 border-b border-[#dcc0ba] bg-[#fdf9f4]/90 backdrop-blur-xl">
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-4 px-4 md:px-8">
-        <Link href="/" className="font-heading text-3xl font-bold tracking-tight text-[#7b2914]">
-          Terra & Leaf
+    <header className="sticky top-0 z-30 border-b border-[#dcc0ba] bg-[#fdf9f4]/92 backdrop-blur-xl">
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-3 px-4 md:px-8">
+        <Link href="/" className="min-w-0">
+          <span className="block font-heading text-2xl font-bold leading-none tracking-tight text-[#7b2914] md:text-3xl">Terra & Leaf</span>
+          <span className="hidden text-[11px] font-bold uppercase tracking-[0.18em] text-[#466550] sm:block">Homestay Tây Ninh</span>
         </Link>
-        <nav className="hidden items-center gap-8 text-sm font-semibold text-[#56423d] md:flex">
+        <nav className="hidden items-center gap-7 text-sm font-semibold text-[#56423d] lg:flex">
+          {!user.authenticated && <Link className="hover:text-[#7b2914]" href="/">Trang chủ</Link>}
           {navItems.map((item) => (
             user.authenticated && !user.authorizationError ? (
               <a className="hover:text-[#7b2914]" href={item.href} key={item.href}>{item.label}</a>
@@ -48,14 +50,23 @@ export async function AppTopBar() {
                 Đã đăng nhập · Lỗi quyền
               </span>
             ) : (
-              <a className="hidden rounded-full bg-[#e8f0eb] px-4 py-2 text-sm font-bold text-[#466550] sm:block" href={homeForRole(user.role)}>
+              <a className="hidden rounded-full bg-[#e8f0eb] px-4 py-2 text-sm font-bold text-[#466550] md:block" href={homeForRole(user.role)}>
                 {user.role} · {user.name}
               </a>
             )}
-            <a className="btn-secondary" href="/auth/logout">Đăng xuất</a>
+            <details className="relative lg:hidden">
+              <summary className="btn-secondary list-none px-3 py-2">Menu</summary>
+              <div className="absolute right-0 mt-2 grid min-w-52 gap-2 rounded-2xl border border-[#dcc0ba] bg-white p-3 shadow-[0_20px_60px_rgba(123,41,20,0.14)]">
+                {navItems.map((item) => <a className="rounded-xl px-3 py-2 text-sm font-bold text-[#56423d] hover:bg-[#fdf9f4]" href={item.href} key={item.href}>{item.label}</a>)}
+              </div>
+            </details>
+            <a className="btn-secondary whitespace-nowrap px-3 py-2 md:px-4" href="/auth/logout">Đăng xuất</a>
           </div>
         ) : (
-          <Link className="btn-primary" href="/login">Đăng nhập</Link>
+          <div className="flex items-center gap-2">
+            <Link className="hidden btn-secondary md:inline-flex" href="/homestays">Đặt phòng ngay</Link>
+            <Link className="btn-primary px-3 py-2 md:px-5" href="/login">Đăng nhập</Link>
+          </div>
         )}
       </div>
     </header>
@@ -88,7 +99,7 @@ export function PageShell({ eyebrow, title, description, children }: { eyebrow: 
 }
 
 export function Stepper({ active }: { active: 1 | 2 | 3 }) {
-  const steps = ["Thông tin", "Dịch vụ", "Thanh toán"];
+  const steps = ["Thông tin", "Dịch vụ", "Xác nhận"];
   return (
     <div className="flex items-center justify-center">
       {steps.map((step, index) => {
@@ -98,8 +109,8 @@ export function Stepper({ active }: { active: 1 | 2 | 3 }) {
         return (
           <div className="flex flex-1 items-center last:flex-none" key={step}>
             <div className="flex flex-col items-center gap-2">
-              <div className={`grid h-9 w-9 place-items-center rounded-full border text-sm font-bold ${current ? "border-[#7b2914] bg-[#7b2914] text-white" : done ? "border-[#466550] bg-[#e8f0eb] text-[#466550]" : "border-[#dcc0ba] bg-[#ebe8e3] text-[#89726c]"}`}>
-                {done ? "OK" : number}
+              <div className={`grid h-10 w-10 place-items-center rounded-full border text-sm font-bold ${current ? "border-[#7b2914] bg-[#7b2914] text-white" : done ? "border-[#466550] bg-[#e8f0eb] text-[#466550]" : "border-[#dcc0ba] bg-[#f7f3ee] text-[#89726c]"}`}>
+                {done ? "✓" : number}
               </div>
               <span className={`text-xs font-bold ${current ? "text-[#7b2914]" : "text-[#89726c]"}`}>{step}</span>
             </div>
@@ -121,13 +132,14 @@ export function PaymentBadge({ status }: { status: PaymentStatus }) {
   return <span className={`badge ${meta.className}`}>{meta.label}</span>;
 }
 
-export function HomestayCard({ homestay }: { homestay: Homestay }) {
+export function HomestayCard({ homestay, href }: { homestay: Homestay; href?: string }) {
   return (
-    <article className="group overflow-hidden rounded-2xl bg-white shadow-[0_18px_55px_rgba(123,41,20,0.08)] transition hover:-translate-y-1 hover:shadow-[0_26px_70px_rgba(123,41,20,0.12)]">
-      <div className="relative aspect-[16/10] bg-[#efe7dc] bg-cover bg-center" style={{ backgroundImage: `url(${homestay.imageUrl})` }}>
+    <article className="group overflow-hidden rounded-2xl border border-[#eadfd4] bg-white shadow-[0_18px_55px_rgba(123,41,20,0.08)] transition hover:-translate-y-1 hover:shadow-[0_26px_70px_rgba(123,41,20,0.12)]">
+      <div className="image-shell relative aspect-[16/10] bg-cover bg-center" style={{ backgroundImage: `url(${homestay.imageUrl})` }}>
         <div className="absolute inset-0 bg-gradient-to-t from-[#1c1c19]/55 via-transparent to-transparent" />
-        <div className="absolute left-4 top-4 rounded-full bg-[#fdf9f4]/90 px-3 py-1 text-xs font-bold uppercase text-[#466550]">{homestay.type}</div>
-        <div className="absolute bottom-4 right-4 rounded-full bg-white/90 px-3 py-1 text-sm font-bold text-[#466550]">Rating {homestay.rating}</div>
+        <div className="absolute left-4 top-4 rounded-full bg-[#fdf9f4]/92 px-3 py-1 text-xs font-bold uppercase text-[#466550]">{homestay.type}</div>
+        <div className="absolute right-4 top-4 grid size-10 place-items-center rounded-full bg-white/92 text-[#9a4029] shadow-sm" aria-label="Lưu homestay">♡</div>
+        <div className="absolute bottom-4 right-4 rounded-full bg-white/92 px-3 py-1 text-sm font-bold text-[#466550]">★ {homestay.rating}</div>
       </div>
       <div className="p-5">
         <h2 className="font-heading text-2xl text-[#7b2914]">{homestay.name}</h2>
@@ -142,7 +154,7 @@ export function HomestayCard({ homestay }: { homestay: Homestay }) {
             <p className="text-xs font-semibold text-[#89726c]">Từ</p>
             <p className="text-xl font-bold text-[#466550]">{money(homestay.priceFrom)} / đêm</p>
           </div>
-          <Link className="btn-primary" href={`/homestays/${homestay.id}`}>Xem chi tiết</Link>
+          <Link className="btn-primary" href={href ?? `/homestays/${homestay.id}`}>Xem chi tiết</Link>
         </div>
       </div>
     </article>

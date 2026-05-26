@@ -20,13 +20,19 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   const googleLoginHref = next !== "/" ? `/auth/login/google?next=${encodeURIComponent(next)}` : "/auth/login/google";
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-4 py-10 text-[#2b211d]">
-      <section className="w-full max-w-xl rounded-2xl border border-[#dcc0ba] bg-white p-8 shadow-[0_30px_90px_rgba(123,41,20,0.12)]">
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-10 text-[#2b211d]">
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: "url(https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1800&q=85)" }}
+      />
+      <div className="absolute inset-0 bg-[#1c1c19]/38" />
+      <section className="relative w-full max-w-xl rounded-2xl border border-white/40 bg-[#fdf9f4]/94 p-7 shadow-[0_30px_90px_rgba(0,0,0,0.22)] backdrop-blur md:p-8">
         <div className="text-center">
-          <p className="eyebrow">Terra & Leaf</p>
-          <h1 className="mt-3 font-heading text-5xl text-[#9a4029]">Đăng nhập hệ thống</h1>
+          <div className="mx-auto grid size-14 place-items-center rounded-full bg-[#e8f0eb] font-heading text-2xl font-bold text-[#466550]">T</div>
+          <p className="eyebrow mt-5">Terra & Leaf</p>
+          <h1 className="mt-3 font-heading text-4xl text-[#9a4029] md:text-5xl">Đăng nhập hệ thống</h1>
           <p className="mt-3 text-sm leading-6 text-[#75675f]">
-            Đăng nhập để đặt phòng, xem lịch sử booking và truy cập portal theo vai trò đã được cấp.
+            Truy cập đặt phòng, lịch sử booking và portal theo vai trò đã được cấp.
           </p>
         </div>
 
@@ -36,7 +42,17 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           </div>
         )}
 
-        <form action="/auth/login/password" className="mt-7 grid gap-3" method="post">
+        <a className="btn-secondary mt-7 w-full bg-white" href={googleLoginHref}>
+          Đăng nhập với Google
+        </a>
+
+        <div className="my-6 flex items-center gap-3 text-xs font-bold uppercase text-[#89726c]">
+          <span className="h-px flex-1 bg-[#dcc0ba]" />
+          hoặc dùng tài khoản demo
+          <span className="h-px flex-1 bg-[#dcc0ba]" />
+        </div>
+
+        <form action="/auth/login/password" className="grid gap-3" method="post">
           <input type="hidden" name="next" value={next} />
           <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
             Email
@@ -46,25 +62,15 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
             Mật khẩu
             <input className="field" name="password" type="password" defaultValue="demo123" autoComplete="current-password" required />
           </label>
-          <button className="btn-primary w-full" type="submit">Đăng nhập bằng tài khoản</button>
+          <button className="btn-primary w-full" type="submit">Đăng nhập demo</button>
         </form>
 
-        <div className="my-6 flex items-center gap-3 text-xs font-bold uppercase text-[#89726c]">
-          <span className="h-px flex-1 bg-[#dcc0ba]" />
-          hoặc
-          <span className="h-px flex-1 bg-[#dcc0ba]" />
+        <div className="mt-5 rounded-2xl bg-white/78 px-4 py-3 text-center text-xs leading-5 text-[#75675f]">
+          Tài khoản demo: <strong>demo@gmail.com</strong> / <strong>demo123</strong>
         </div>
-
-        <a className="btn-secondary w-full" href={googleLoginHref}>
-          Đăng nhập với Google
-        </a>
-        <Link className="btn-secondary mt-3 w-full" href="/">
+        <Link className="btn-secondary mt-3 w-full bg-white" href="/">
           Quay về trang chủ
         </Link>
-
-        <p className="mt-6 text-center text-xs leading-5 text-[#89726c]">
-          Tài khoản demo: demo@gmail.com / demo123
-        </p>
       </section>
     </main>
   );

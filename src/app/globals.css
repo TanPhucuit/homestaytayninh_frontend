@@ -31,8 +31,7 @@ html {
 
 body {
   background:
-    radial-gradient(circle at 10% 5%, rgba(255, 218, 210, 0.55), transparent 24rem),
-    radial-gradient(circle at 90% 0%, rgba(200, 235, 208, 0.46), transparent 22rem),
+    linear-gradient(180deg, rgba(253, 249, 244, 0.96), rgba(253, 249, 244, 0.98)),
     var(--surface);
   color: var(--on-surface);
   font-family: var(--font-body), system-ui, sans-serif;
@@ -176,4 +175,19 @@ textarea {
 .badge-red {
   background: rgba(186, 26, 26, 0.1);
   color: var(--error);
+}
+
+.image-shell {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(120deg, rgba(253, 249, 244, 0.2), rgba(70, 101, 80, 0.16)),
+    #efe7dc;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-primary,
+  .btn-secondary {
+    transition: none;
+  }
 }

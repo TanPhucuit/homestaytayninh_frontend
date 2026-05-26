@@ -27,11 +27,11 @@ export default async function CheckoutServicesPage({ searchParams }: { searchPar
     <main className="min-h-screen text-[#1c1c19]">
       <AppTopBar />
       <div className="mx-auto max-w-7xl px-4 py-8 md:px-8">
-        <div className="mb-8 grid gap-6 lg:grid-cols-[1fr_380px]">
+        <div className="mb-8 grid gap-6 lg:grid-cols-[1fr_430px]">
           <div>
             <p className="eyebrow">Thanh toán</p>
             <h1 className="mt-2 font-heading text-4xl text-[#9a4029] md:text-5xl">Dịch vụ bổ sung</h1>
-            <p className="mt-3 text-[#56423d]">Chọn các dịch vụ muốn đặt cùng phòng. Có thể bỏ qua nếu không cần.</p>
+            <p className="mt-3 text-[#56423d]">Chọn dịch vụ muốn đặt cùng phòng. Có thể bỏ qua nếu không cần.</p>
           </div>
           <div className="rounded-2xl bg-white p-5 shadow-[0_18px_55px_rgba(123,41,20,0.08)]">
             <Stepper active={2} />
@@ -42,11 +42,12 @@ export default async function CheckoutServicesPage({ searchParams }: { searchPar
           {preservedEntries.map(([key, value]) => <input key={key} type="hidden" name={key} value={value} />)}
           <div className="space-y-6">
             <section className="card p-6 md:p-8">
-              <h2 className="font-heading text-3xl text-[#9a4029]">Dịch vụ đã bao gồm</h2>
+              <p className="eyebrow">Đã bao gồm</p>
+              <h2 className="mt-2 font-heading text-3xl text-[#9a4029]">Dịch vụ trong giá phòng</h2>
               <div className="mt-5 grid gap-4 md:grid-cols-3">
                 {preview.includedServices.map((service) => (
-                  <div className="rounded-2xl bg-[#fdf9f4] p-4" key={service.id}>
-                    <h3 className="font-bold text-[#1c1c19]">{service.name}</h3>
+                  <div className="rounded-2xl border border-[#d7e2da] bg-[#e8f0eb] p-4" key={service.id}>
+                    <h3 className="font-bold text-[#466550]">{service.name}</h3>
                     <p className="mt-1 text-sm text-[#75675f]">Bao gồm trong giá phòng</p>
                   </div>
                 ))}
@@ -54,17 +55,20 @@ export default async function CheckoutServicesPage({ searchParams }: { searchPar
             </section>
 
             <section className="card p-6 md:p-8">
-              <h2 className="font-heading text-3xl text-[#9a4029]">Dịch vụ đặt thêm</h2>
-              <p className="mt-2 text-[#75675f]">Nhập số lượng cho dịch vụ muốn dùng trong kỳ nghỉ.</p>
-              <div className="mt-6 space-y-4">
+              <p className="eyebrow">Chọn thêm</p>
+              <h2 className="mt-2 font-heading text-3xl text-[#9a4029]">Dịch vụ đặt thêm</h2>
+              <div className="mt-6 grid gap-4 md:grid-cols-2">
                 {preview.homestay.services.map((service) => (
-                  <label className="grid gap-4 rounded-2xl bg-[#fdf9f4] p-4 md:grid-cols-[1fr_auto]" key={service.id}>
+                  <label className="grid gap-4 rounded-2xl border border-[#eadfd4] bg-white p-4 shadow-[0_10px_30px_rgba(154,64,41,0.05)]" key={service.id}>
                     <div>
                       <h3 className="font-bold text-[#1c1c19]">{service.name}</h3>
                       {service.description && <p className="mt-1 text-sm text-[#75675f]">{service.description}</p>}
                       <p className="mt-2 font-bold text-[#9a4029]">{money(service.unitPrice)}</p>
                     </div>
-                    <input className="field h-fit w-28" name={`service:${service.id}`} type="number" min="0" defaultValue="0" aria-label={`Số lượng ${service.name}`} />
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-sm font-semibold text-[#75675f]">Số lượng</span>
+                      <input className="field h-fit w-28" name={`service:${service.id}`} type="number" min="0" defaultValue="0" aria-label={`Số lượng ${service.name}`} />
+                    </div>
                   </label>
                 ))}
               </div>
