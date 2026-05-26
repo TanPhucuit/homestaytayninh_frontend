@@ -30,10 +30,14 @@ export default async function HomePage() {
           </p>
           <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
             <Link className="btn-primary" href="/homestays">Đặt phòng ngay</Link>
-            {user.authenticated ? (
+            {user.authenticated && !user.authorizationError ? (
               <a className="rounded-xl bg-white/15 px-6 py-3 font-bold text-white ring-1 ring-white/30 backdrop-blur transition hover:bg-white/25" href={homeForRole(user.role)}>
                 Vào portal của bạn
               </a>
+            ) : user.authenticated ? (
+              <Link className="rounded-xl bg-white/15 px-6 py-3 font-bold text-white ring-1 ring-white/30 backdrop-blur transition hover:bg-white/25" href="/login?error=role_lookup">
+                Kiểm tra quyền truy cập
+              </Link>
             ) : (
               <Link className="rounded-xl bg-white/15 px-6 py-3 font-bold text-white ring-1 ring-white/30 backdrop-blur transition hover:bg-white/25" href="/login">
                 Đăng nhập với Google

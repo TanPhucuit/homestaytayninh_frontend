@@ -6,6 +6,7 @@ function errorMessage(error?: string) {
   if (error === "auth_required") return "Bạn cần đăng nhập trước khi thực hiện thao tác này.";
   if (error === "oauth") return "Không tạo được phiên đăng nhập Google. Kiểm tra Google provider và Redirect URL trong Supabase.";
   if (error === "callback") return "Google callback không hợp lệ hoặc session không được tạo.";
+  if (error === "role_lookup") return "Bạn đã xác thực Google nhưng hệ thống chưa xác minh được quyền truy cập. Vui lòng đăng nhập lại hoặc liên hệ quản trị viên.";
   return "";
 }
 

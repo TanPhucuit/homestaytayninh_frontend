@@ -1,7 +1,7 @@
 import { canAccess, getCurrentUser } from "@/lib/rbac";
 import { AccessDenied } from "@/components/access-denied";
 import { BookingListPreview, OwnerBookingOps, OwnerShell, OwnerStats } from "@/components/owner-ui";
-import { getHomestay, getOwnerBookings, getOwnerHomestays } from "@/lib/api";
+import { getOwnerBookings, getOwnerHomestays } from "@/lib/api";
 import { updateOwnerBookingStatusAction } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -19,9 +19,7 @@ export default async function OwnerPage() {
   }
 
   const bookings = await getOwnerBookings(user.role);
-  const homestays = user.role === "OWNER_STAFF"
-    ? await Promise.all([...new Set(bookings.map((booking) => booking.homestayId))].map((id) => getHomestay(id)))
-    : await getOwnerHomestays(user.role);
+  const homestays = await getOwnerHomestays(user.role);
 
   return (
     <OwnerShell title="Dashboard vận hành homestay" description="Theo dõi doanh thu, booking, check-in/check-out và truy cập nhanh các nghiệp vụ owner.">

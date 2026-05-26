@@ -21,7 +21,7 @@ const paymentMeta: Record<PaymentStatus, { label: string; className: string }> =
 
 export async function AppTopBar() {
   const user = await getCurrentUser();
-  const navItems = user.authenticated
+  const navItems = user.authenticated && !user.authorizationError
     ? navForRole(user.role)
     : [{ label: "Khám phá", href: "/homestays" }];
 
@@ -33,7 +33,7 @@ export async function AppTopBar() {
         </Link>
         <nav className="hidden items-center gap-8 text-sm font-semibold text-[#56423d] md:flex">
           {navItems.map((item) => (
-            user.authenticated ? (
+            user.authenticated && !user.authorizationError ? (
               <a className="hover:text-[#7b2914]" href={item.href} key={item.href}>{item.label}</a>
             ) : (
               <Link className="hover:text-[#7b2914]" href={item.href} key={item.href}>{item.label}</Link>
@@ -42,9 +42,15 @@ export async function AppTopBar() {
         </nav>
         {user.authenticated ? (
           <div className="flex items-center gap-2">
-            <a className="hidden rounded-full bg-[#e8f0eb] px-4 py-2 text-sm font-bold text-[#466550] sm:block" href={homeForRole(user.role)}>
-              {user.role} · {user.name}
-            </a>
+            {user.authorizationError ? (
+              <span className="hidden rounded-full bg-[#fff3d6] px-4 py-2 text-sm font-bold text-[#7a4a12] sm:block" title={user.authorizationError}>
+                Đã đăng nhập · Lỗi quyền
+              </span>
+            ) : (
+              <a className="hidden rounded-full bg-[#e8f0eb] px-4 py-2 text-sm font-bold text-[#466550] sm:block" href={homeForRole(user.role)}>
+                {user.role} · {user.name}
+              </a>
+            )}
             <a className="btn-secondary" href="/auth/logout">Đăng xuất</a>
           </div>
         ) : (

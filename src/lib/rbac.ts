@@ -22,11 +22,15 @@ export interface NavItem {
 const guestUser: SessionUser = { id: "", name: "Khách", email: "", role: "CUSTOMER", authenticated: false };
 
 export function normalizeRole(value?: string | null): UserRole {
+  return parseRole(value) ?? "CUSTOMER";
+}
+
+export function parseRole(value?: string | null): UserRole | null {
   const role = String(value ?? "").toUpperCase();
   if (role === "CUSTOMER" || role === "OWNER" || role === "OWNER_STAFF" || role === "STAFF" || role === "ADMIN") {
     return role;
   }
-  return "CUSTOMER";
+  return null;
 }
 
 export async function getCurrentUser(): Promise<SessionUser> {
@@ -52,11 +56,22 @@ export async function getCurrentUser(): Promise<SessionUser> {
 
     if (response?.ok) {
       const profile = (await response.json()) as Partial<SessionUser>;
+      const role = parseRole(profile.role);
+      if (!role) {
+        return {
+          id: profile.id ?? user.id,
+          name: profile.name ?? user.user_metadata?.name ?? user.email ?? "Customer",
+          email: profile.email ?? user.email ?? "",
+          role: "CUSTOMER",
+          authenticated: true,
+          authorizationError: "Backend trả về vai trò tài khoản không hợp lệ."
+        };
+      }
       return {
         id: profile.id ?? user.id,
         name: profile.name ?? user.user_metadata?.name ?? user.email ?? "Customer",
         email: profile.email ?? user.email ?? "",
-        role: normalizeRole(profile.role),
+        role,
         authenticated: true
       };
     }

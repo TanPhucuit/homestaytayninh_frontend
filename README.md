@@ -24,8 +24,6 @@ API env: `NEXT_PUBLIC_API_URL`
   - `NEXT_PUBLIC_API_URL`: Render backend URL
   - `NEXT_PUBLIC_SUPABASE_URL`: Supabase project URL
   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`: Supabase publishable key
-  - `NEXT_PUBLIC_AUTH_MODE`: `supabase`
-  - `NEXT_PUBLIC_ENABLE_MOCK_DATA`: `false`
 
 Enable the Google provider in Supabase Auth and add the Vercel callback URL to the redirect allow list:
 
@@ -57,4 +55,14 @@ Example:
 NEXT_PUBLIC_API_URL="https://homestaytayninh-backend.onrender.com"
 ```
 
-The API client appends `/api/...` internally and forwards the Supabase bearer session to protected NestJS endpoints. Mock API data is disabled by default and must be explicitly enabled with `NEXT_PUBLIC_ENABLE_MOCK_DATA="true"` for UI-only local development.
+The API client appends `/api/...` internally and forwards the Supabase bearer session to protected NestJS endpoints. Protected workflows use the persisted Supabase profile role returned by the backend; the frontend has no impersonation or mock-data mode.
+
+## Authenticated E2E
+
+`tests/e2e-authenticated-rbac.spec.ts` checks real authenticated UI state and RBAC only when supplied with browser storage states captured after successful Supabase logins in an isolated test environment. It never fabricates session cookies or intercepts API responses.
+
+Set `E2E_AUTH_BASE_URL` to the test deployment and provide `E2E_ADMIN_STORAGE_STATE`, `E2E_STAFF_STORAGE_STATE`, `E2E_OWNER_STORAGE_STATE`, `E2E_OWNER_STAFF_STORAGE_STATE` and `E2E_CUSTOMER_STORAGE_STATE` paths. Each storage-state file must come from signing in as the corresponding real Supabase Auth test account against that deployment.
+
+```powershell
+npm run test:e2e:auth
+```

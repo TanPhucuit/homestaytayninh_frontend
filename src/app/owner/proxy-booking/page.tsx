@@ -1,6 +1,6 @@
 import { AccessDenied } from "@/components/access-denied";
 import { OwnerShell } from "@/components/owner-ui";
-import { getHomestays } from "@/lib/api";
+import { getOwnerHomestays } from "@/lib/api";
 import { canAccess, getCurrentUser } from "@/lib/rbac";
 import { createProxyBookingAction } from "../actions";
 
@@ -24,7 +24,7 @@ export default async function OwnerProxyBookingPage() {
     return <AccessDenied description="Đặt hộ khách hàng chỉ dành cho Owner Staff hoặc Admin." />;
   }
 
-  const homestays = await getHomestays("CUSTOMER");
+  const homestays = await getOwnerHomestays(user.role);
   const firstHomestay = homestays[0];
   const firstRoom = firstHomestay?.rooms[0];
 
