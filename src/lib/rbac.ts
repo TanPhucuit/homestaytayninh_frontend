@@ -43,7 +43,7 @@ export async function getCurrentUser(): Promise<SessionUser> {
       email: "",
       role: "CUSTOMER",
       authenticated: true,
-      authorizationError: "Không thể xác minh vai trò vì frontend chưa cấu hình NEXT_PUBLIC_API_URL."
+      authorizationError: "Không thể xác minh vai trò vì chưa cấu hình máy chủ dữ liệu."
     };
   }
 
@@ -53,14 +53,14 @@ export async function getCurrentUser(): Promise<SessionUser> {
   }).catch(() => null);
 
   if (!response?.ok) {
-    const backendError = response ? `Backend trả về HTTP ${response.status}.` : "Không kết nối được backend.";
+    const serviceError = response ? `Máy chủ trả về HTTP ${response.status}.` : "Không kết nối được máy chủ dữ liệu.";
     return {
       id: "",
       name: "Người dùng đã đăng nhập",
       email: "",
       role: "CUSTOMER",
       authenticated: true,
-      authorizationError: `Không thể xác minh vai trò tài khoản. ${backendError}`
+      authorizationError: `Không thể xác minh vai trò tài khoản. ${serviceError}`
     };
   }
 
@@ -73,7 +73,7 @@ export async function getCurrentUser(): Promise<SessionUser> {
       email: profile.email ?? "",
       role: "CUSTOMER",
       authenticated: true,
-      authorizationError: "Backend trả về vai trò tài khoản không hợp lệ."
+      authorizationError: "Vai trò tài khoản không hợp lệ."
     };
   }
 
