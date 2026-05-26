@@ -6,6 +6,7 @@ function errorMessage(error?: string) {
   if (error === "auth_required") return "Ban can dang nhap truoc khi thuc hien thao tac nay.";
   if (error === "oauth") return "Khong tao duoc phien dang nhap Google. Kiem tra OAuth Client va Redirect URI trong Google Cloud.";
   if (error === "callback") return "Google callback khong hop le hoac session khong duoc tao.";
+  if (error === "backend_oauth") return "Google da xac thuc thanh cong, nhung backend chua xac minh duoc id_token. Kiem tra GOOGLE_CLIENT_ID tren backend va NEXT_PUBLIC_API_URL tren frontend.";
   if (error === "role_lookup") return "Ban da xac thuc Google nhung he thong chua xac minh duoc quyen truy cap. Vui long dang nhap lai hoac lien he quan tri vien.";
   return "";
 }

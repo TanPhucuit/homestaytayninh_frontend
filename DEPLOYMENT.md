@@ -14,6 +14,7 @@ Required env:
 - `NEXT_PUBLIC_API_URL`: deployed backend origin, without `/api`
 - `GOOGLE_CLIENT_ID`: Google OAuth web client id
 - `GOOGLE_CLIENT_SECRET`: Google OAuth web client secret
+- `GOOGLE_REDIRECT_URI`: exact callback URI registered in Google Cloud
 
 Example:
 
@@ -21,6 +22,7 @@ Example:
 NEXT_PUBLIC_API_URL="https://homestaytayninh-backend.onrender.com"
 GOOGLE_CLIENT_ID="<google-oauth-client-id>"
 GOOGLE_CLIENT_SECRET="<google-oauth-client-secret>"
+GOOGLE_REDIRECT_URI="https://<your-vercel-domain>/auth/callback"
 ```
 
 Allow this callback URL in Google Cloud OAuth:

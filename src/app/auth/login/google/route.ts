@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
 
   const state = crypto.randomUUID();
   const next = safeNext(request.nextUrl.searchParams.get("next"));
-  const redirectUri = `${origin}/auth/callback`;
+  const redirectUri = process.env.GOOGLE_REDIRECT_URI || `${origin}/auth/callback`;
   const url = new URL("https://accounts.google.com/o/oauth2/v2/auth");
   url.searchParams.set("client_id", clientId);
   url.searchParams.set("redirect_uri", redirectUri);

@@ -21,6 +21,7 @@ export async function GET(request: NextRequest) {
   const clientId = process.env.GOOGLE_CLIENT_ID;
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
   const apiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
+  const redirectUri = process.env.GOOGLE_REDIRECT_URI || `${origin}/auth/callback`;
   if (!clientId || !clientSecret) return redirectWithClearedOAuthCookies(request, "/login?error=google_env");
   if (!apiUrl) return redirectWithClearedOAuthCookies(request, "/login?error=api_env");
 
@@ -33,7 +34,7 @@ export async function GET(request: NextRequest) {
       client_secret: clientSecret,
       code,
       grant_type: "authorization_code",
-      redirect_uri: `${origin}/auth/callback`
+      redirect_uri: redirectUri
     })
   }).catch(() => null);
 
@@ -48,7 +49,10 @@ export async function GET(request: NextRequest) {
     body: JSON.stringify({ idToken: tokenPayload.id_token })
   }).catch(() => null);
 
-  if (!loginResponse?.ok) return redirectWithClearedOAuthCookies(request, "/login?error=role_lookup");
+  if (!loginResponse?.ok) {
+    const suffix = loginResponse ? `&status=${loginResponse.status}` : "";
+    return redirectWithClearedOAuthCookies(request, `/login?error=backend_oauth${suffix}`);
+  }
   const login = (await loginResponse.json()) as BackendLoginResponse;
   const role = parseRole(login.user?.role);
   if (!login.sessionToken || !role) return redirectWithClearedOAuthCookies(request, "/login?error=role_lookup");

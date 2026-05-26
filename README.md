@@ -19,6 +19,7 @@ Required local env:
 - `NEXT_PUBLIC_API_URL`: backend origin, without `/api`
 - `GOOGLE_CLIENT_ID`: Google OAuth web client id
 - `GOOGLE_CLIENT_SECRET`: Google OAuth web client secret, server-side only in Next route handlers
+- `GOOGLE_REDIRECT_URI`: exact callback URI registered in Google Cloud, for example `http://localhost:3000/auth/callback`
 
 ## Deploy on Vercel
 
