@@ -43,6 +43,22 @@ function nightsBetween(checkIn?: string, checkOut?: string) {
   return Math.ceil((end.getTime() - start.getTime()) / 86_400_000);
 }
 
+function formatDate(value?: string) {
+  const date = dateFromIso(value);
+  return date ? new Intl.DateTimeFormat("vi-VN").format(date) : "Chưa chọn";
+}
+
+function detailRoomsHref(homestayId?: string, params?: CheckoutConfirmParams, roomIds: string[] = []) {
+  if (!homestayId) return "/homestays";
+  const query = new URLSearchParams();
+  const selectedRooms = roomIds.length ? roomIds : selectedRoomIds(params ?? {});
+  if (selectedRooms.length) query.set("roomIds", selectedRooms.join(","));
+  if (params?.checkIn) query.set("checkIn", params.checkIn);
+  if (params?.checkOut) query.set("checkOut", params.checkOut);
+  if (params?.guests ?? params?.guestCount) query.set("guests", params.guests ?? params.guestCount ?? "2");
+  return `/homestays/${homestayId}${query.toString() ? `?${query.toString()}` : ""}#rooms`;
+}
+
 function serviceSelections(params: CheckoutConfirmParams, roomIds: string[]) {
   return Object.entries(params)
     .filter(([key, value]) => key.startsWith("service:") && Number(value) > 0)
@@ -56,7 +72,7 @@ function serviceSelections(params: CheckoutConfirmParams, roomIds: string[]) {
     .filter((item) => item.roomId && item.serviceId && Number.isInteger(item.quantity) && item.quantity > 0);
 }
 
-function Notice({ message, homestayId }: { message: string; homestayId?: string }) {
+function Notice({ message, homestayId, params }: { message: string; homestayId?: string; params?: CheckoutConfirmParams }) {
   return (
     <main className="min-h-screen text-[#1c1c19]">
       <AppTopBar />
@@ -65,7 +81,7 @@ function Notice({ message, homestayId }: { message: string; homestayId?: string 
           <p className="eyebrow">Xác nhận</p>
           <h1 className="mt-3 font-heading text-4xl text-[#9a4029]">Cần kiểm tra lại</h1>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-[#75675f]">{message}</p>
-          <a className="btn-primary mt-6" href={homestayId ? `/homestays/${homestayId}#rooms` : "/homestays"}>Quay lại chọn phòng</a>
+          <a className="btn-primary mt-6" href={detailRoomsHref(homestayId, params)}>Quay lại chọn phòng</a>
         </section>
       </div>
     </main>
@@ -77,12 +93,12 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
   const flash = flashFromSearchParams(params);
   const roomIds = selectedRoomIds(params);
   if (!params.homestayId) return <Notice message="Vui lòng chọn homestay trước khi xác nhận đặt phòng." />;
-  if (roomIds.length === 0) return <Notice homestayId={params.homestayId} message="Vui lòng chọn ít nhất một phòng trước khi xác nhận." />;
+  if (roomIds.length === 0) return <Notice homestayId={params.homestayId} params={params} message="Vui lòng chọn ít nhất một phòng trước khi xác nhận." />;
 
   const homestay = await getHomestay(params.homestayId, "CUSTOMER");
   const rooms = roomIds.map((roomId) => homestay.rooms.find((room) => room.id === roomId)).filter((room): room is NonNullable<typeof room> => Boolean(room));
   if (rooms.length !== roomIds.length) {
-    return <Notice homestayId={homestay.id} message="Một hoặc nhiều phòng đã chọn không còn khả dụng. Vui lòng chọn lại phòng." />;
+    return <Notice homestayId={homestay.id} params={params} message="Một hoặc nhiều phòng đã chọn không còn khả dụng. Vui lòng chọn lại phòng." />;
   }
 
   const nights = nightsBetween(params.checkIn, params.checkOut);
@@ -103,6 +119,8 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
   const backParams = new URLSearchParams();
   preservedEntries.forEach(([key, value]) => backParams.set(key, value ?? ""));
   const canCreateBooking = rooms.length === 1;
+  const detailBackHref = detailRoomsHref(homestay.id, params, roomIds);
+  const servicesBackHref = `/checkout/services?${backParams.toString()}`;
 
   return (
     <main className="min-h-screen text-[#1c1c19]">
@@ -125,8 +143,8 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
           <div className="space-y-6">
             <FlashMessage flash={flash} />
             {!canCreateBooking && (
-              <div className="rounded-2xl border border-[#ffdad6] bg-[#fff8f7] p-4 text-sm font-semibold text-[#93000a]">
-                Hiện hệ thống chỉ hỗ trợ tạo đơn cho một phòng mỗi lần. Vui lòng quay lại và chọn một phòng để thanh toán.
+              <div className="rounded-2xl border border-[#ffdad6] bg-[#fff8f7] p-4 text-sm font-semibold text-[#93000a]" data-testid="multi-room-blocker">
+                Hiện hệ thống chỉ hỗ trợ đặt một phòng mỗi lần. Vui lòng quay lại chọn phòng và chỉ giữ lại một phòng để tiếp tục.
               </div>
             )}
             <section className="card p-6 md:p-8">
@@ -135,8 +153,8 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
               <div className="mt-6 overflow-hidden rounded-2xl border border-[#e8e1d5] bg-white">
                 {[
                   ["Homestay", homestay.name],
-                  ["Ngày nhận phòng", params.checkIn ?? "Chưa chọn"],
-                  ["Ngày trả phòng", params.checkOut ?? "Chưa chọn"],
+                  ["Ngày nhận phòng", formatDate(params.checkIn)],
+                  ["Ngày trả phòng", formatDate(params.checkOut)],
                   ["Số đêm", `${nights} đêm`],
                   ["Số khách", `${guestCount} khách`],
                   ["Khách đặt", params.guestName ?? ""],
@@ -220,6 +238,8 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
             <h2 className="border-b border-[#e8e1d5] pb-4 font-heading text-2xl text-[#1c1c19]">Tóm tắt đơn đặt</h2>
             <p className="mt-5 text-sm text-[#75675f]">{rooms.length} phòng · {nights} đêm · {guestCount} khách</p>
             <div className="mt-5 space-y-3 text-sm">
+              <div className="flex justify-between"><span>Nhận phòng</span><strong data-testid="confirm-check-in-display">{formatDate(params.checkIn)}</strong></div>
+              <div className="flex justify-between"><span>Trả phòng</span><strong data-testid="confirm-check-out-display">{formatDate(params.checkOut)}</strong></div>
               <div className="flex justify-between"><span>Tiền phòng</span><strong>{money(roomTotal)}</strong></div>
               <div className="flex justify-between"><span>Dịch vụ</span><strong>{money(serviceTotal)}</strong></div>
               <div className="flex justify-between"><span>Thuế 10%</span><strong>{money(taxTotal)}</strong></div>
@@ -228,10 +248,16 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
                 <p className="mt-1 text-xs text-[#75675f]">Đã bao gồm thuế/phí nếu có</p>
               </div>
             </div>
-            <ActionButton className="btn-primary mt-6 w-full" disabled={!canCreateBooking} pendingLabel="Đang tạo thanh toán...">
-              {canCreateBooking ? "Thanh toán qua ApiPay" : "Chọn một phòng để thanh toán"}
-            </ActionButton>
-            <Link className="btn-secondary mt-3 w-full" href={`/checkout/services?${backParams.toString()}`}>Quay lại dịch vụ</Link>
+            {canCreateBooking ? (
+              <>
+                <ActionButton className="btn-primary mt-6 w-full" pendingLabel="Đang tạo thanh toán...">
+                  Thanh toán qua ApiPay
+                </ActionButton>
+                <Link className="btn-secondary mt-3 w-full" href={servicesBackHref}>Quay lại dịch vụ</Link>
+              </>
+            ) : (
+              <Link className="btn-primary mt-6 w-full" data-testid="back-to-room-selection" href={detailBackHref}>Quay lại chọn phòng</Link>
+            )}
           </aside>
         </form>
       </div>

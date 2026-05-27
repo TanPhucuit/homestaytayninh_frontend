@@ -12,6 +12,7 @@ type DetailSearchParams = {
   checkOut?: string;
   guests?: string;
   guestCount?: string;
+  roomIds?: string;
 };
 
 type GalleryImage = {
@@ -99,6 +100,7 @@ export default async function HomestayDetailPage({ params, searchParams }: { par
   const gallery = buildGalleryImages(homestay);
   const mapHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(homestay.location)}`;
   const guestCount = filters.guestCount ?? filters.guests ?? "2";
+  const selectedRoomIds = (filters.roomIds ?? "").split(",").map((roomId) => roomId.trim()).filter(Boolean);
   const selectableRooms = rooms.map((room, index) => ({
     id: room.id,
     name: room.name,
@@ -194,6 +196,7 @@ export default async function HomestayDetailPage({ params, searchParams }: { par
           <RoomSelectionCheckout
             homestayId={homestay.id}
             rooms={selectableRooms}
+            initialRoomIds={selectedRoomIds}
             initialCheckIn={filters.checkIn}
             initialCheckOut={filters.checkOut}
             initialGuests={guestCount}

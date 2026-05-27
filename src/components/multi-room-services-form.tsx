@@ -9,6 +9,7 @@ type MultiRoomServicesFormProps = {
   homestayId: string;
   rooms: Room[];
   services: Service[];
+  initialSelectedServices?: string[];
   checkIn: string;
   checkOut: string;
   guests: string;
@@ -34,8 +35,23 @@ function selectionKey(roomId: string, serviceId: string) {
   return `${roomId}:${serviceId}`;
 }
 
-export function MultiRoomServicesForm({ homestayId, rooms, services, checkIn, checkOut, guests, backHref }: MultiRoomServicesFormProps) {
-  const [selected, setSelected] = useState<Record<string, boolean>>({});
+function initialSelectedState(keys: string[] | undefined, rooms: Room[], services: Service[]) {
+  const roomIds = new Set(rooms.map((room) => room.id));
+  const serviceIds = new Set(services.map((service) => service.id));
+  return (keys ?? []).reduce<Record<string, boolean>>((state, key) => {
+    const [roomId, serviceId] = key.split(":");
+    if (roomIds.has(roomId) && serviceIds.has(serviceId)) state[key] = true;
+    return state;
+  }, {});
+}
+
+function formatDate(value?: string) {
+  const date = dateFromIso(value);
+  return date ? new Intl.DateTimeFormat("vi-VN").format(date) : "Chưa chọn";
+}
+
+export function MultiRoomServicesForm({ homestayId, rooms, services, initialSelectedServices, checkIn, checkOut, guests, backHref }: MultiRoomServicesFormProps) {
+  const [selected, setSelected] = useState<Record<string, boolean>>(() => initialSelectedState(initialSelectedServices, rooms, services));
   const nights = nightsBetween(checkIn, checkOut);
   const roomTotal = rooms.reduce((sum, room) => sum + room.pricePerNight * nights, 0);
   const selectedServices = useMemo(() => {
@@ -146,6 +162,8 @@ export function MultiRoomServicesForm({ homestayId, rooms, services, checkIn, ch
         <h2 className="border-b border-[#e8e1d5] pb-4 font-heading text-2xl text-[#1c1c19]">Tóm tắt đơn đặt</h2>
         <p className="mt-4 text-sm text-[#75675f]">{rooms.length} phòng · {nights} đêm · {guests} khách</p>
         <div className="mt-5 space-y-3 text-sm">
+          <div className="flex justify-between gap-4"><span>Nhận phòng</span><strong data-testid="services-check-in-display">{formatDate(checkIn)}</strong></div>
+          <div className="flex justify-between gap-4"><span>Trả phòng</span><strong data-testid="services-check-out-display">{formatDate(checkOut)}</strong></div>
           <div className="flex justify-between gap-4"><span>Tổng tiền phòng</span><strong data-testid="services-room-total">{money(roomTotal)}</strong></div>
           <div>
             <div className="flex justify-between gap-4"><span>Dịch vụ bổ sung</span><strong data-testid="services-service-total">{money(serviceTotal)}</strong></div>

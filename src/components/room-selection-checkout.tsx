@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Room } from "@/lib/types";
 
 type SelectableRoom = Pick<Room, "id" | "name" | "roomType" | "pricePerNight" | "capacity"> & {
@@ -12,6 +12,7 @@ type SelectableRoom = Pick<Room, "id" | "name" | "roomType" | "pricePerNight" | 
 type RoomSelectionCheckoutProps = {
   homestayId: string;
   rooms: SelectableRoom[];
+  initialRoomIds?: string[];
   initialCheckIn?: string;
   initialCheckOut?: string;
   initialGuests: string;
@@ -32,8 +33,18 @@ function nightsBetween(checkIn?: string, checkOut?: string) {
   return Math.ceil((end.getTime() - start.getTime()) / 86_400_000);
 }
 
-export function RoomSelectionCheckout({ homestayId, rooms, initialCheckIn, initialCheckOut, initialGuests }: RoomSelectionCheckoutProps) {
-  const [selectedRoomIds, setSelectedRoomIds] = useState<string[]>([]);
+function validInitialRoomIds(roomIds: string[] | undefined, rooms: SelectableRoom[]) {
+  const availableIds = new Set(rooms.map((room) => room.id));
+  return (roomIds ?? []).filter((roomId, index, values) => availableIds.has(roomId) && values.indexOf(roomId) === index);
+}
+
+function formatDate(value?: string) {
+  const date = dateFromIso(value);
+  return date ? new Intl.DateTimeFormat("vi-VN").format(date) : "Chưa chọn";
+}
+
+export function RoomSelectionCheckout({ homestayId, rooms, initialRoomIds, initialCheckIn, initialCheckOut, initialGuests }: RoomSelectionCheckoutProps) {
+  const [selectedRoomIds, setSelectedRoomIds] = useState<string[]>(() => validInitialRoomIds(initialRoomIds, rooms));
   const [checkIn, setCheckIn] = useState(initialCheckIn ?? "");
   const [checkOut, setCheckOut] = useState(initialCheckOut ?? "");
   const [guests, setGuests] = useState(initialGuests || "2");
@@ -51,6 +62,21 @@ export function RoomSelectionCheckout({ homestayId, rooms, initialCheckIn, initi
     : !datesValid
         ? "Chọn ngày hợp lệ để tiếp tục"
         : "Tiếp tục thanh toán";
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (selectedRoomIds.length) {
+      params.set("roomIds", selectedRoomIds.join(","));
+    } else {
+      params.delete("roomIds");
+    }
+    if (checkIn) params.set("checkIn", checkIn);
+    if (checkOut) params.set("checkOut", checkOut);
+    if (guests) params.set("guests", guests);
+    params.delete("guestCount");
+    const nextUrl = `${window.location.pathname}${params.toString() ? `?${params.toString()}` : ""}${window.location.hash}`;
+    window.history.replaceState(null, "", nextUrl);
+  }, [checkIn, checkOut, guests, selectedRoomIds]);
 
   function toggleRoom(roomId: string) {
     setMessage("");
@@ -177,6 +203,9 @@ export function RoomSelectionCheckout({ homestayId, rooms, initialCheckIn, initi
         )}
 
         <div className="mt-5 space-y-3 border-t border-[#e8e1d5] pt-5 text-sm text-[#56423d]">
+          <div className="flex justify-between gap-4"><span>Nhận phòng</span><strong data-testid="summary-check-in-display">{formatDate(checkIn)}</strong></div>
+          <div className="flex justify-between gap-4"><span>Trả phòng</span><strong data-testid="summary-check-out-display">{formatDate(checkOut)}</strong></div>
+          <div className="flex justify-between gap-4"><span>Số khách</span><strong data-testid="summary-guests-display">{guests || "0"}</strong></div>
           <div className="flex justify-between gap-4"><span>Số đêm</span><strong data-testid="summary-nights">{numberOfNights}</strong></div>
           <div className="flex justify-between gap-4"><span>Tổng tiền phòng</span><strong data-testid="summary-room-total">{money(roomTotal)}</strong></div>
           <div className="flex justify-between gap-4"><span>Thuế/phụ phí 10%</span><strong data-testid="summary-tax-total">{money(taxTotal)}</strong></div>

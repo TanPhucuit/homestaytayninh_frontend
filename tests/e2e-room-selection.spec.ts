@@ -8,7 +8,7 @@ function parseVnd(text: string) {
 
 async function openFirstDetail(page: Page) {
   await page.goto(`${baseURL}/homestays?checkIn=2026-06-12&checkOut=2026-06-14&guests=3`);
-  await page.getByRole("link", { name: /Xem chi tiết/i }).first().click();
+  await page.getByRole("link", { name: /Chi tiết|Xem chi tiết/i }).first().click();
   await expect(page.getByTestId("continue-checkout")).toBeVisible();
 }
 
@@ -96,5 +96,56 @@ test.describe("multi-select room summary", () => {
     await expect(page).toHaveURL(/\/checkout\/confirm/);
     await expect(page).toHaveURL(/roomIds=/);
     await expect(page.getByRole("heading", { name: "Xác nhận đặt phòng" })).toBeVisible();
+  });
+
+  test("quay lại từ confirm nhiều phòng giữ phòng đã chọn và cho tiếp tục với một phòng", async ({ page }) => {
+    await openFirstDetail(page);
+    const roomCards = page.locator('[data-testid^="room-card-"]');
+    test.skip(await roomCards.count() < 2, "Homestay hiện tại chỉ có một phòng để kiểm tra luồng nhiều phòng.");
+
+    await selectRoom(roomCards, 0);
+    await selectRoom(roomCards, 1);
+    await expect(page.getByTestId("selected-room-row")).toHaveCount(2);
+    await expect(page.getByTestId("summary-check-in-display")).toHaveText("12/6/2026");
+    await expect(page.getByTestId("summary-check-out-display")).toHaveText("14/6/2026");
+
+    await page.getByTestId("continue-checkout").click();
+    await expect(page).toHaveURL(/\/checkout\/services/);
+    await expect(page).toHaveURL(/roomIds=/);
+    await expect(page.getByTestId("services-check-in-display")).toHaveText("12/6/2026");
+
+    await page.getByRole("button", { name: "Tiếp tục xác nhận" }).click();
+    await expect(page).toHaveURL(/\/checkout\/confirm/);
+    await expect(page.getByTestId("multi-room-blocker")).toContainText("Hiện hệ thống chỉ hỗ trợ đặt một phòng mỗi lần");
+    await expect(page.getByRole("button", { name: /Chọn một phòng để thanh toán/i })).toHaveCount(0);
+
+    await page.getByTestId("back-to-room-selection").click();
+    await expect(page).toHaveURL(/\/homestays\/.+#rooms/);
+    await expect(page.getByTestId("selected-room-row")).toHaveCount(2);
+    await expect(page.getByRole("button", { name: "Bỏ chọn" })).toHaveCount(2);
+
+    const twoRoomTotal = await summaryTotal(page, "summary-room-total");
+    await roomCards.nth(0).getByRole("button", { name: "Bỏ chọn" }).click();
+    await expect(page.getByTestId("selected-room-row")).toHaveCount(1);
+    expect(await summaryTotal(page, "summary-room-total")).toBeLessThan(twoRoomTotal);
+
+    await page.getByTestId("continue-checkout").click();
+    await expect(page).toHaveURL(/\/checkout\/services/);
+    const serviceCards = page.locator('[data-testid^="service-card-"]');
+    if (await serviceCards.count()) {
+      await serviceCards.first().getByRole("button", { name: "Thêm" }).click();
+      await expect(page.getByTestId("selected-service-row")).toHaveCount(1);
+    }
+
+    await page.getByRole("button", { name: "Tiếp tục xác nhận" }).click();
+    await expect(page).toHaveURL(/\/checkout\/confirm/);
+    await expect(page.getByTestId("multi-room-blocker")).toHaveCount(0);
+    await expect(page.getByTestId("confirm-check-in-display")).toHaveText("12/6/2026");
+
+    await page.getByRole("link", { name: "Quay lại dịch vụ" }).click();
+    await expect(page).toHaveURL(/\/checkout\/services/);
+    if (await serviceCards.count()) {
+      await expect(page.getByTestId("selected-service-row")).toHaveCount(1);
+    }
   });
 });

@@ -25,7 +25,28 @@ function selectedRoomIds(params: CheckoutServiceParams) {
   return params.roomId ? [params.roomId] : [];
 }
 
-function Notice({ message, homestayId }: { message: string; homestayId?: string }) {
+function selectedServiceKeys(params: CheckoutServiceParams) {
+  return Object.entries(params)
+    .filter(([key, value]) => key.startsWith("service:") && Number(value) > 0)
+    .map(([key]) => {
+      const [, roomId, serviceId] = key.split(":");
+      return serviceId ? `${roomId}:${serviceId}` : "";
+    })
+    .filter(Boolean);
+}
+
+function detailRoomsHref(homestayId?: string, params?: CheckoutServiceParams, roomIds: string[] = []) {
+  if (!homestayId) return "/homestays";
+  const query = new URLSearchParams();
+  const selectedRooms = roomIds.length ? roomIds : selectedRoomIds(params ?? {});
+  if (selectedRooms.length) query.set("roomIds", selectedRooms.join(","));
+  if (params?.checkIn) query.set("checkIn", params.checkIn);
+  if (params?.checkOut) query.set("checkOut", params.checkOut);
+  if (params?.guests ?? params?.guestCount) query.set("guests", params.guests ?? params.guestCount ?? "2");
+  return `/homestays/${homestayId}${query.toString() ? `?${query.toString()}` : ""}#rooms`;
+}
+
+function Notice({ message, homestayId, params }: { message: string; homestayId?: string; params?: CheckoutServiceParams }) {
   return (
     <main className="min-h-screen text-[#1c1c19]">
       <AppTopBar />
@@ -34,7 +55,7 @@ function Notice({ message, homestayId }: { message: string; homestayId?: string 
           <p className="eyebrow">Dịch vụ bổ sung</p>
           <h1 className="mt-3 font-heading text-4xl text-[#9a4029]">Cần chọn lại phòng</h1>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-[#75675f]">{message}</p>
-          <a className="btn-primary mt-6" href={homestayId ? `/homestays/${homestayId}` : "/homestays"}>Quay lại chọn phòng</a>
+          <a className="btn-primary mt-6" href={detailRoomsHref(homestayId, params)}>Quay lại chọn phòng</a>
         </section>
       </div>
     </main>
@@ -46,18 +67,14 @@ export default async function CheckoutServicesPage({ searchParams }: { searchPar
   const roomIds = selectedRoomIds(params);
   if (params.roomIds || roomIds.length > 1) {
     if (!params.homestayId) return <Notice message="Vui lòng chọn homestay và phòng trước khi chọn dịch vụ." />;
-    if (roomIds.length === 0) return <Notice homestayId={params.homestayId} message="Vui lòng chọn ít nhất một phòng trước khi chọn dịch vụ." />;
+    if (roomIds.length === 0) return <Notice homestayId={params.homestayId} params={params} message="Vui lòng chọn ít nhất một phòng trước khi chọn dịch vụ." />;
 
     const homestay = await getHomestay(params.homestayId, "CUSTOMER");
     const rooms = roomIds.map((roomId) => homestay.rooms.find((room) => room.id === roomId)).filter((room): room is NonNullable<typeof room> => Boolean(room));
     if (rooms.length !== roomIds.length) {
-      return <Notice homestayId={params.homestayId} message="Một hoặc nhiều phòng đã chọn không còn khả dụng. Vui lòng chọn lại phòng." />;
+      return <Notice homestayId={params.homestayId} params={params} message="Một hoặc nhiều phòng đã chọn không còn khả dụng. Vui lòng chọn lại phòng." />;
     }
-    const query = new URLSearchParams();
-    if (params.checkIn) query.set("checkIn", params.checkIn);
-    if (params.checkOut) query.set("checkOut", params.checkOut);
-    if (params.guests ?? params.guestCount) query.set("guests", params.guests ?? params.guestCount ?? "2");
-    const backHref = `/homestays/${homestay.id}${query.toString() ? `?${query.toString()}` : ""}#rooms`;
+    const backHref = detailRoomsHref(homestay.id, params, roomIds);
 
     return (
       <main className="min-h-screen text-[#1c1c19]">
@@ -77,6 +94,7 @@ export default async function CheckoutServicesPage({ searchParams }: { searchPar
             homestayId={homestay.id}
             rooms={rooms}
             services={homestay.services.filter((service) => service.active !== false && !service.included)}
+            initialSelectedServices={selectedServiceKeys(params)}
             checkIn={params.checkIn ?? ""}
             checkOut={params.checkOut ?? ""}
             guests={params.guests ?? params.guestCount ?? "2"}
