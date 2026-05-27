@@ -133,32 +133,51 @@ export function PaymentBadge({ status }: { status: PaymentStatus }) {
 }
 
 export function HomestayCard({ homestay, href }: { homestay: Homestay; href?: string }) {
+  const visibleAmenities = homestay.amenities.slice(0, 3);
+  const extraAmenityCount = Math.max(0, homestay.amenities.length - visibleAmenities.length);
+
   return (
-    <article className="group overflow-hidden rounded-2xl border border-[#eadfd4] bg-white shadow-[0_18px_55px_rgba(123,41,20,0.08)] transition hover:-translate-y-1 hover:shadow-[0_26px_70px_rgba(123,41,20,0.12)]">
-      <div className="image-shell relative aspect-[16/10] bg-cover bg-center" style={{ backgroundImage: `url(${homestay.imageUrl})` }}>
-        <div className="absolute inset-0 bg-gradient-to-t from-[#1c1c19]/55 via-transparent to-transparent" />
-        <div className="absolute left-4 top-4 rounded-full bg-[#fdf9f4]/92 px-3 py-1 text-xs font-bold uppercase text-[#466550]">{homestay.type}</div>
-        <button className="absolute right-4 top-4 grid size-10 place-items-center rounded-full bg-white/92 text-xl text-[#9a4029] shadow-sm transition hover:bg-white" type="button" aria-label="Lưu homestay">
+    <article className="group overflow-hidden rounded-2xl border border-[#e7d9cf] bg-[#fffdfb] shadow-[0_18px_50px_rgba(72,45,32,0.07)] transition duration-300 hover:-translate-y-1 hover:border-[#d9c2b4] hover:shadow-[0_24px_70px_rgba(72,45,32,0.11)]">
+      <div className="image-shell relative aspect-[4/3]">
+        <div
+          className="absolute inset-0 bg-cover bg-center transition duration-700 ease-out group-hover:scale-[1.04]"
+          style={{ backgroundImage: `url(${homestay.imageUrl})` }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#1f1712]/45 via-[#1f1712]/5 to-transparent" />
+        <div className="absolute left-4 top-4 rounded-full border border-white/50 bg-[#fdf9f4]/90 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-[#466550] backdrop-blur">{homestay.type}</div>
+        <button className="absolute right-4 top-4 grid size-9 place-items-center rounded-full border border-white/55 bg-[#fdf9f4]/88 text-lg text-[#9a4029] shadow-sm transition hover:bg-white" type="button" aria-label="Lưu homestay">
           ♡
         </button>
-        <div className="absolute bottom-4 right-4 rounded-full bg-white/92 px-3 py-1 text-sm font-bold text-[#466550]">★ {homestay.rating}</div>
+        <div className="absolute bottom-4 right-4 rounded-full bg-[#fdf9f4]/92 px-3 py-1 text-xs font-bold text-[#466550] shadow-sm backdrop-blur">★ {homestay.rating}</div>
       </div>
-      <div className="p-5">
-        <h2 className="font-heading text-2xl text-[#7b2914]">{homestay.name}</h2>
-        <p className="mt-1 text-sm font-semibold text-[#89726c]">{homestay.location}</p>
-        <p className="mt-2 line-clamp-2 text-sm leading-6 text-[#56423d]">{homestay.description}</p>
-        <div className="mt-4 flex flex-wrap gap-2">
-          <span className="rounded-full bg-[#e8f0eb] px-3 py-1 text-xs font-semibold text-[#466550]">Tối đa {homestay.capacity} khách</span>
-          {homestay.amenities.slice(0, 4).map((amenity) => (
-            <span className="rounded-full bg-[#ffdad2] px-3 py-1 text-xs font-semibold text-[#7b2914]" key={amenity}>{amenity}</span>
-          ))}
+
+      <div className="space-y-4 p-4 sm:p-5">
+        <div className="space-y-1.5">
+          <h2 className="line-clamp-1 font-heading text-[1.35rem] leading-tight text-[#2c211c]">{homestay.name}</h2>
+          <p className="line-clamp-1 text-xs font-semibold uppercase tracking-[0.08em] text-[#89726c]">{homestay.location}</p>
         </div>
-        <div className="mt-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
-          <div>
-            <p className="text-xs font-semibold text-[#89726c]">Từ</p>
-            <p className="text-xl font-bold text-[#466550]">{money(homestay.priceFrom)} / đêm</p>
+
+        <p className="line-clamp-2 min-h-11 text-sm leading-6 text-[#5f514a]">{homestay.description}</p>
+
+        <div className="flex flex-wrap gap-1.5">
+          {visibleAmenities.map((amenity) => (
+            <span className="rounded-full bg-[#f2ebe4] px-2.5 py-1 text-[11px] font-bold text-[#6f564b]" key={amenity}>{amenity}</span>
+          ))}
+          {extraAmenityCount > 0 && (
+            <span className="rounded-full bg-[#e8f0eb] px-2.5 py-1 text-[11px] font-bold text-[#466550]">+{extraAmenityCount}</span>
+          )}
+        </div>
+
+        <div className="flex items-end justify-between gap-4 border-t border-[#eadfd4] pt-4">
+          <div className="min-w-0">
+            <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#9a4029]">Từ</p>
+            <p className="mt-1 whitespace-nowrap">
+              <span className="font-heading text-2xl font-bold leading-none text-[#9a4029]">{money(homestay.priceFrom)}</span>
+              <span className="ml-1 text-xs font-semibold text-[#89726c]">/đêm</span>
+            </p>
+            <p className="mt-1 text-xs font-semibold text-[#89726c]">Tối đa {homestay.capacity} khách</p>
           </div>
-          <Link className="btn-primary" href={href ?? `/homestays/${homestay.id}`}>Xem chi tiết</Link>
+          <Link className="rounded-full bg-[#9a4029] px-4 py-2.5 text-sm font-bold text-white shadow-[0_10px_24px_rgba(154,64,41,0.16)] transition hover:-translate-y-0.5 hover:bg-[#84331f]" href={href ?? `/homestays/${homestay.id}`}>Chi tiết</Link>
         </div>
       </div>
     </article>

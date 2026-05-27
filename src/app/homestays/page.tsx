@@ -77,7 +77,7 @@ export default async function HomestaysPage({ searchParams }: { searchParams: Pr
 
             {visibleHomestays.length ? (
               <>
-                <div className="grid gap-6 md:grid-cols-2 2xl:grid-cols-3">
+                <div className="grid gap-6 md:grid-cols-2 xl:gap-7">
                   {visibleHomestays.map((homestay) => (
                     <HomestayCard homestay={homestay} href={detailHrefWithSearch(homestay.id, filters)} key={homestay.id} />
                   ))}
