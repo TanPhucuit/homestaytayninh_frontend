@@ -114,11 +114,10 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
             <div className="mt-5 space-y-3 text-sm">
               <div className="flex justify-between"><span>Tiền phòng</span><strong>{money(preview.roomTotal)}</strong></div>
               <div className="flex justify-between"><span>Dịch vụ</span><strong>{money(preview.serviceTotal)}</strong></div>
-              <div className="flex justify-between"><span>Phí dọn phòng</span><strong>{money(preview.cleaningFee)}</strong></div>
               <div className="flex justify-between"><span>Thuế 10%</span><strong>{money(preview.taxTotal)}</strong></div>
               <div className="border-t border-[#e8e1d5] pt-4">
                 <div className="flex justify-between text-lg"><span className="font-bold">Tổng cộng</span><strong className="text-[#9a4029]">{money(preview.grandTotal)}</strong></div>
-                <p className="mt-1 text-xs text-[#75675f]">Đã bao gồm thuế, phí</p>
+                <p className="mt-1 text-xs text-[#75675f]">Đã bao gồm thuế/phí nếu có</p>
               </div>
             </div>
             <ActionButton className="btn-primary mt-6 w-full" pendingLabel="Đang tạo thanh toán...">Thanh toán qua ApiPay</ActionButton>

@@ -242,8 +242,7 @@ export async function getCheckoutPreview(draftOrHomestayId?: string | CheckoutDr
   }).filter((item): item is CheckoutPreview["selectedServices"][number] => Boolean(item));
   const roomTotal = room.pricePerNight * nights;
   const serviceTotal = selectedServices.reduce((sum, item) => sum + item.total, 0);
-  const cleaningFee = 200_000;
-  const taxTotal = Math.round((roomTotal + serviceTotal + cleaningFee) * 0.1);
+  const taxTotal = Math.round((roomTotal + serviceTotal) * 0.1);
 
   return {
     homestay,
@@ -254,8 +253,7 @@ export async function getCheckoutPreview(draftOrHomestayId?: string | CheckoutDr
     selectedServices,
     roomTotal,
     serviceTotal,
-    cleaningFee,
     taxTotal,
-    grandTotal: roomTotal + serviceTotal + cleaningFee + taxTotal
+    grandTotal: roomTotal + serviceTotal + taxTotal
   };
 }

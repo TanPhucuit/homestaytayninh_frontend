@@ -109,7 +109,6 @@ export interface CheckoutPreview {
   selectedServices: Array<{ id: string; name: string; quantity: number; unitPrice: number; total: number }>;
   roomTotal: number;
   serviceTotal: number;
-  cleaningFee: number;
   taxTotal: number;
   grandTotal: number;
 }

@@ -31,8 +31,8 @@ export function CheckoutServicesForm({ preview, preservedEntries, backHref }: Ch
   const serviceTotal = useMemo(() => {
     return addOnServices.reduce((sum, service) => sum + service.unitPrice * (quantities[service.id] ?? 0), 0);
   }, [addOnServices, quantities]);
-  const taxTotal = Math.round((preview.roomTotal + serviceTotal + preview.cleaningFee) * 0.1);
-  const grandTotal = preview.roomTotal + serviceTotal + preview.cleaningFee + taxTotal;
+  const taxTotal = Math.round((preview.roomTotal + serviceTotal) * 0.1);
+  const grandTotal = preview.roomTotal + serviceTotal + taxTotal;
 
   function setQuantity(serviceId: string, quantity: number) {
     setQuantities((current) => ({ ...current, [serviceId]: Number.isFinite(quantity) && quantity > 0 ? Math.floor(quantity) : 0 }));
@@ -104,7 +104,6 @@ export function CheckoutServicesForm({ preview, preservedEntries, backHref }: Ch
         <div className="mt-5 space-y-3 text-sm">
           <div className="flex justify-between"><span>Tiền phòng</span><strong>{money(preview.roomTotal)}</strong></div>
           <div className="flex justify-between"><span>Dịch vụ bổ sung</span><strong>{money(serviceTotal)}</strong></div>
-          <div className="flex justify-between"><span>Phí dọn phòng</span><strong>{money(preview.cleaningFee)}</strong></div>
           <div className="flex justify-between"><span>Thuế 10%</span><strong>{money(taxTotal)}</strong></div>
           <div className="border-t border-[#e8e1d5] pt-4">
             <div className="flex justify-between text-lg"><span className="font-bold">Tổng cộng</span><strong className="text-[#9a4029]">{money(grandTotal)}</strong></div>

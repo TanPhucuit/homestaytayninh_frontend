@@ -136,9 +136,8 @@ export default async function HomestayDetailPage({ params, searchParams }: { par
   const nights = nightsBetween(filters.checkIn, filters.checkOut);
   const pricePerNight = mainRoom?.pricePerNight ?? homestay.priceFrom;
   const roomTotal = pricePerNight * nights;
-  const cleaningFee = 200_000;
-  const taxTotal = Math.round((roomTotal + cleaningFee) * 0.1);
-  const grandTotal = roomTotal + cleaningFee + taxTotal;
+  const taxTotal = Math.round(roomTotal * 0.1);
+  const grandTotal = roomTotal + taxTotal;
 
   return (
     <main className="min-h-screen pb-24 text-[#1c1c19] lg:pb-0">
@@ -319,7 +318,6 @@ export default async function HomestayDetailPage({ params, searchParams }: { par
           </div>
           <div className="mt-5 space-y-3 border-b border-[#e8e1d5] pb-5 text-sm text-[#56423d]">
             <div className="flex justify-between gap-4"><span>{money(pricePerNight)} x {nights} đêm</span><strong>{money(roomTotal)}</strong></div>
-            <div className="flex justify-between gap-4"><span>Phí dọn phòng</span><strong>{money(cleaningFee)}</strong></div>
             <div className="flex justify-between gap-4"><span>Thuế 10%</span><strong>{money(taxTotal)}</strong></div>
           </div>
           <div className="mt-5 flex justify-between gap-4">
@@ -335,7 +333,7 @@ export default async function HomestayDetailPage({ params, searchParams }: { par
         <div className="fixed inset-x-0 bottom-0 z-30 border-t border-[#dcc0ba] bg-[#fdf9f4]/95 p-3 shadow-[0_-12px_40px_rgba(123,41,20,0.12)] backdrop-blur lg:hidden">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-3">
             <div>
-              <p className="text-xs font-bold text-[#75675f]">{nights} đêm · gồm phí và thuế</p>
+              <p className="text-xs font-bold text-[#75675f]">{nights} đêm · gồm thuế/phí nếu có</p>
               <p className="font-bold text-[#466550]">{money(grandTotal)}</p>
             </div>
             <Link className="btn-primary px-5 py-3" href={checkoutHref(homestay.id, mainRoom.id, filters)}>Tiếp tục đặt phòng</Link>
