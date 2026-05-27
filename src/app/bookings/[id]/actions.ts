@@ -2,9 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { addBookingService, initiatePayment, setBookingServiceStatus, updateBookingStatus } from "@/lib/api";
+import { addBookingService, getBooking, initiatePayment, setBookingServiceStatus, updateBookingStatus } from "@/lib/api";
 import { actionErrorMessage } from "@/lib/action-errors";
 import { ApiClientError } from "@/lib/api-client";
+import { canCreateOrRetryPayment, paymentActionUnavailableReason } from "@/lib/booking-rules";
 import { flashUrl } from "@/lib/flash";
 
 function redirectToLogin(bookingId: string): never {
@@ -56,8 +57,21 @@ export async function cancelBookingAction(formData: FormData) {
 export async function retryPaymentAction(formData: FormData) {
   const bookingId = String(formData.get("bookingId") ?? "");
   let checkoutUrl: string | undefined;
+  let booking: Awaited<ReturnType<typeof getBooking>> | undefined;
   let paymentError: unknown;
   if (!bookingId) redirect(flashUrl("/bookings", "error", "Thiếu booking để thử lại thanh toán."));
+  try {
+    booking = await getBooking(bookingId, "CUSTOMER");
+  } catch (error) {
+    if (error instanceof ApiClientError && error.status === 401) redirectToLogin(bookingId);
+    redirect(flashUrl(`/bookings/${bookingId}`, "error", actionErrorMessage(error)));
+  }
+  if (!booking) {
+    redirect(flashUrl(`/bookings/${bookingId}`, "error", "Không tìm thấy đơn để thanh toán."));
+  }
+  if (!canCreateOrRetryPayment(booking)) {
+    redirect(flashUrl(`/bookings/${bookingId}`, "error", paymentActionUnavailableReason(booking) ?? "Đơn này không còn trong trạng thái có thể thanh toán."));
+  }
   try {
     const payment = await initiatePayment(bookingId, "CUSTOMER");
     checkoutUrl = payment.checkoutUrl;

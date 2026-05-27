@@ -5,6 +5,7 @@ import { ConfirmActionButton } from "@/components/confirm-action-button";
 import { BookingTotals, PageShell, PaymentBadge, ServicesDisplay, StatusBadge } from "@/components/customer-ui";
 import { FlashMessage } from "@/components/feedback-state";
 import { getBooking, getHomestay, money } from "@/lib/api";
+import { canCreateOrRetryPayment, canViewPaymentStatus, paymentActionUnavailableReason } from "@/lib/booking-rules";
 import { flashFromSearchParams, FlashSearchParams } from "@/lib/flash";
 import { getCurrentUser } from "@/lib/rbac";
 import { addServiceAction, cancelBookingAction, markServiceServedAction, retryPaymentAction } from "./actions";
@@ -28,7 +29,9 @@ export default async function BookingDetailPage({ params, searchParams }: { para
   const canAddService = booking.status === "IN_STAY" && isOpsRole;
   const canCancel = user.role === "CUSTOMER" && (booking.status === "PENDING" || booking.status === "CONFIRMED");
   const isPaid = booking.payment?.status === "PAID";
-  const canRetryPayment = !booking.payment || booking.payment.status === "INITIATED" || booking.payment.status === "PENDING" || booking.payment.status === "FAILED";
+  const canRetryPayment = canCreateOrRetryPayment(booking);
+  const canCheckPayment = canViewPaymentStatus(booking);
+  const paymentNotice = paymentActionUnavailableReason(booking);
 
   return (
     <PageShell eyebrow="Chi tiết đơn đặt" title={`Đơn ${booking.id}`} description={`${homestay.name} · ${booking.checkIn} → ${booking.checkOut}`}>
@@ -103,7 +106,8 @@ export default async function BookingDetailPage({ params, searchParams }: { para
           <section className="card p-6">
             <h2 className="font-heading text-2xl text-[#9a4029]">Thanh toán</h2>
             <p className="mt-3 text-sm text-[#75675f]">Số tiền: {money(booking.payment?.amount ?? booking.grandTotal)}</p>
-            {!booking.payment && <p className="mt-2 text-sm text-[#75675f]">Đơn này chưa có giao dịch thanh toán. Bạn có thể tạo lại thanh toán qua ApiPay.</p>}
+            {!booking.payment && canRetryPayment && <p className="mt-2 text-sm text-[#75675f]">Đơn này chưa có giao dịch thanh toán. Bạn có thể tạo lại thanh toán qua ApiPay.</p>}
+            {paymentNotice && !isPaid && <p className="mt-2 rounded-xl bg-[#fdf3ef] px-4 py-3 text-sm font-semibold text-[#9a4029]">{paymentNotice}</p>}
             {canRetryPayment && (
               <form action={retryPaymentAction} className="mt-3">
                 <input type="hidden" name="bookingId" value={booking.id} />
@@ -113,7 +117,7 @@ export default async function BookingDetailPage({ params, searchParams }: { para
             {isPaid ? (
               <div className="mt-3 rounded-xl border border-[#d7e2da] bg-[#e8f0eb] px-4 py-3 text-center text-sm font-bold text-[#466550]">Đã thanh toán</div>
             ) : (
-              <a className="btn-secondary mt-3 w-full" href={`/payment/result?bookingId=${booking.id}&status=${booking.payment?.status ?? "pending"}`}>Kiểm tra trạng thái</a>
+              canCheckPayment ? <a className="btn-secondary mt-3 w-full" href={`/payment/result?bookingId=${booking.id}&status=${booking.payment?.status ?? "pending"}`}>Kiểm tra trạng thái</a> : null
             )}
           </section>
           {canCancel && (

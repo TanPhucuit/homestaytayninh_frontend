@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { Booking, BookingStatus, Homestay, PaymentStatus, Service } from "@/lib/types";
 import { money } from "@/lib/api";
+import { canViewPaymentStatus } from "@/lib/booking-rules";
 import { getCurrentUser, homeForRole, navForRole } from "@/lib/rbac";
 
 const statusMeta: Record<BookingStatus, { label: string; className: string; group: string }> = {
@@ -206,7 +207,7 @@ export function BookingCard({ booking, homestay }: { booking: Booking; homestay?
       </div>
       <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
         <a className="btn-primary" href={`/bookings/${booking.id}`}>Xem chi tiết</a>
-        {(booking.payment?.status === "INITIATED" || booking.payment?.status === "PENDING" || booking.payment?.status === "FAILED") && (
+        {canViewPaymentStatus(booking) && (
           <a className="btn-secondary" href={`/payment/result?bookingId=${booking.id}`}>Kiểm tra thanh toán</a>
         )}
       </div>

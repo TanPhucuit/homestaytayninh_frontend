@@ -3,6 +3,7 @@ import { AccessDenied } from "@/components/access-denied";
 import { AppTopBar, PaymentBadge, StatusBadge, statusGroup } from "@/components/customer-ui";
 import { EmptyState } from "@/components/feedback-state";
 import { getBookings, getHomestays, money } from "@/lib/api";
+import { canViewPaymentStatus } from "@/lib/booking-rules";
 import { getCurrentUser } from "@/lib/rbac";
 
 export const dynamic = "force-dynamic";
@@ -71,7 +72,7 @@ export default async function BookingsPage({ searchParams }: { searchParams: Pro
                 const homestay = homestayById.get(booking.homestayId);
                 const imageUrl = homestay?.images?.[0]?.url ?? homestay?.imageUrl;
                 const isPaid = booking.payment?.status === "PAID";
-                const canCheckPayment = booking.payment?.status === "INITIATED" || booking.payment?.status === "PENDING" || booking.payment?.status === "FAILED";
+                const canCheckPayment = canViewPaymentStatus(booking);
                 return (
                   <article className="overflow-hidden rounded-2xl border border-[#eadfd4] bg-white shadow-[0_24px_70px_rgba(123,41,20,0.1)] md:grid md:grid-cols-[320px_1fr]" key={booking.id}>
                     <div className="image-shell min-h-52 md:min-h-72">
