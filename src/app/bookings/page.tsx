@@ -69,9 +69,20 @@ export default async function BookingsPage({ searchParams }: { searchParams: Pro
             <div className="grid gap-5">
               {activeBookings.length ? activeBookings.map((booking) => {
                 const homestay = homestayById.get(booking.homestayId);
+                const imageUrl = homestay?.images?.[0]?.url ?? homestay?.imageUrl;
+                const isPaid = booking.payment?.status === "PAID";
+                const canCheckPayment = booking.payment?.status === "INITIATED" || booking.payment?.status === "PENDING" || booking.payment?.status === "FAILED";
                 return (
                   <article className="overflow-hidden rounded-2xl border border-[#eadfd4] bg-white shadow-[0_24px_70px_rgba(123,41,20,0.1)] md:grid md:grid-cols-[320px_1fr]" key={booking.id}>
-                    <div className="image-shell min-h-52 bg-cover bg-center md:min-h-72" style={{ backgroundImage: homestay?.imageUrl ? `url(${homestay.imageUrl})` : undefined }} />
+                    <div className="image-shell min-h-52 md:min-h-72">
+                      {imageUrl ? (
+                        <img className="h-full min-h-52 w-full object-cover md:min-h-72" src={imageUrl} alt={homestay?.name ?? "Ảnh homestay"} />
+                      ) : (
+                        <div className="grid h-full min-h-52 place-items-center px-6 text-center text-sm font-bold text-[#75675f] md:min-h-72">
+                          Chưa có ảnh homestay
+                        </div>
+                      )}
+                    </div>
                     <div className="p-5 md:p-6">
                       <div className="flex flex-wrap gap-2">
                         <StatusBadge status={booking.status} />
@@ -93,7 +104,8 @@ export default async function BookingsPage({ searchParams }: { searchParams: Pro
                       </div>
                       <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                         <a className="btn-primary flex-1" href={`/bookings/${booking.id}`}>Xem chi tiết</a>
-                        <a className="btn-secondary flex-1" href={`/payment/result?bookingId=${booking.id}&status=${booking.payment?.status ?? "pending"}`}>Kiểm tra thanh toán</a>
+                        {canCheckPayment && <a className="btn-secondary flex-1" href={`/payment/result?bookingId=${booking.id}&status=${booking.payment?.status ?? "pending"}`}>Kiểm tra thanh toán</a>}
+                        {isPaid && <span className="btn-secondary flex-1 cursor-default border-[#d7e2da] bg-[#e8f0eb] text-[#466550]">Đã thanh toán</span>}
                       </div>
                     </div>
                   </article>

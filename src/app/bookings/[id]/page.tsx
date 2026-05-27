@@ -27,6 +27,7 @@ export default async function BookingDetailPage({ params, searchParams }: { para
   const isOpsRole = user.role === "OWNER_STAFF" || user.role === "ADMIN";
   const canAddService = booking.status === "IN_STAY" && isOpsRole;
   const canCancel = user.role === "CUSTOMER" && (booking.status === "PENDING" || booking.status === "CONFIRMED");
+  const isPaid = booking.payment?.status === "PAID";
   const canRetryPayment = !booking.payment || booking.payment.status === "INITIATED" || booking.payment.status === "PENDING" || booking.payment.status === "FAILED";
 
   return (
@@ -109,7 +110,11 @@ export default async function BookingDetailPage({ params, searchParams }: { para
                 <ActionButton className="btn-primary w-full" pendingLabel="Đang tạo...">Thanh toán qua ApiPay</ActionButton>
               </form>
             )}
-            <a className="btn-secondary mt-3 w-full" href={`/payment/result?bookingId=${booking.id}&status=${booking.payment?.status ?? "pending"}`}>Kiểm tra trạng thái</a>
+            {isPaid ? (
+              <div className="mt-3 rounded-xl border border-[#d7e2da] bg-[#e8f0eb] px-4 py-3 text-center text-sm font-bold text-[#466550]">Đã thanh toán</div>
+            ) : (
+              <a className="btn-secondary mt-3 w-full" href={`/payment/result?bookingId=${booking.id}&status=${booking.payment?.status ?? "pending"}`}>Kiểm tra trạng thái</a>
+            )}
           </section>
           {canCancel && (
             <form action={cancelBookingAction} className="card p-6">
