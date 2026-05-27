@@ -15,6 +15,14 @@ function normalizePaymentStatus(value?: string): PaymentStatus {
   return "PENDING";
 }
 
+function cleanPaymentError(value?: string) {
+  if (!value) return undefined;
+  if (/internal server error|backend|payload|json|api/i.test(value)) {
+    return "Không thể tạo liên kết thanh toán lúc này. Vui lòng thử lại sau hoặc liên hệ hỗ trợ.";
+  }
+  return value;
+}
+
 function copyFor(status: PaymentStatus) {
   if (status === "PAID") {
     return {
@@ -42,6 +50,7 @@ function copyFor(status: PaymentStatus) {
 
 export default async function PaymentResultPage({ searchParams }: { searchParams: Promise<{ status?: string; bookingId?: string; paymentError?: string; demo?: string }> }) {
   const params = await searchParams;
+  const paymentError = cleanPaymentError(params.paymentError);
   const user = params.bookingId ? await getCurrentUser() : null;
   if (params.bookingId && !user?.authenticated) {
     return <AccessDenied description="Vui lòng đăng nhập để xem trạng thái thanh toán của đơn đặt." />;
@@ -50,7 +59,7 @@ export default async function PaymentResultPage({ searchParams }: { searchParams
     return <AccessDenied description={user.authorizationError} />;
   }
   const payment = params.bookingId ? await getPaymentStatus(params.bookingId, user?.role ?? "CUSTOMER") : null;
-  const status = params.paymentError ? "FAILED" : (payment?.status ?? normalizePaymentStatus(params.status));
+  const status = paymentError ? "FAILED" : (payment?.status ?? normalizePaymentStatus(params.status));
   const view = copyFor(status);
 
   return (
@@ -62,9 +71,9 @@ export default async function PaymentResultPage({ searchParams }: { searchParams
         <p className="eyebrow mt-8">Kết quả thanh toán</p>
         <h1 className="mt-3 font-heading text-4xl text-[#9a4029] md:text-5xl">{view.title}</h1>
         <p className="mx-auto mt-4 max-w-lg text-sm leading-6 text-[#75675f]">{view.description}</p>
-        {params.paymentError && (
+        {paymentError && (
           <div className="mx-auto mt-5 max-w-md rounded-2xl border border-[#ffdad6] bg-[#fff8f7] p-5 text-sm font-semibold text-[#93000a]">
-            Không hoàn tất thanh toán: {params.paymentError}
+            Không hoàn tất thanh toán: {paymentError}
           </div>
         )}
         <div className="mt-5 flex justify-center">
