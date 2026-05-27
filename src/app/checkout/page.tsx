@@ -1,12 +1,13 @@
 import { CheckoutInfoForm } from "@/components/checkout-info-form";
 import { AppTopBar, Stepper } from "@/components/customer-ui";
-import { getHomestay, getHomestays } from "@/lib/api";
+import { getHomestay } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
 
 type CheckoutParams = {
   homestayId?: string;
   roomId?: string;
+  roomIds?: string;
   checkIn?: string;
   checkOut?: string;
   guestCount?: string;
@@ -20,14 +21,47 @@ function isoDateAfter(days: number) {
   return date.toISOString().slice(0, 10);
 }
 
+function selectedRoomIds(params: CheckoutParams) {
+  if (params.roomIds) {
+    return params.roomIds.split(",").map((item) => item.trim()).filter(Boolean);
+  }
+  return params.roomId ? [params.roomId] : [];
+}
+
+function CheckoutSelectionNotice({ message, homestayId }: { message: string; homestayId?: string }) {
+  const backHref = homestayId ? `/homestays/${homestayId}` : "/homestays";
+  return (
+    <main className="min-h-screen text-[#1c1c19]">
+      <AppTopBar />
+      <div className="mx-auto max-w-3xl px-4 py-12 md:px-8">
+        <section className="card p-6 text-center md:p-8">
+          <p className="eyebrow">Checkout</p>
+          <h1 className="mt-3 font-heading text-4xl text-[#9a4029]">Cần chọn lại phòng</h1>
+          <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-[#75675f]">{message}</p>
+          <a className="btn-primary mt-6" href={backHref}>Quay lại chọn phòng</a>
+        </section>
+      </div>
+    </main>
+  );
+}
+
 export default async function CheckoutPage({ searchParams }: { searchParams: Promise<CheckoutParams> }) {
   const params = await searchParams;
-  const homestays = await getHomestays("CUSTOMER");
-  const selectedId = params.homestayId ?? homestays[0]?.id;
-  const homestay = await getHomestay(selectedId, "CUSTOMER");
-  const room = homestay.rooms.find((item) => item.id === params.roomId) ?? homestay.rooms[0];
-  if (!room || (params.roomId && room.id !== params.roomId)) {
-    throw new Error("Phòng không khả dụng cho homestay này.");
+  const roomIds = selectedRoomIds(params);
+  if (!params.homestayId) {
+    return <CheckoutSelectionNotice message="Vui lòng chọn homestay và phòng trước khi thanh toán." />;
+  }
+  if (roomIds.length === 0) {
+    return <CheckoutSelectionNotice homestayId={params.homestayId} message="Vui lòng chọn một phòng để tiếp tục thanh toán." />;
+  }
+  if (roomIds.length > 1) {
+    return <CheckoutSelectionNotice homestayId={params.homestayId} message="Hiện hệ thống chỉ hỗ trợ đặt một phòng mỗi lần. Vui lòng chọn một phòng để tiếp tục." />;
+  }
+
+  const homestay = await getHomestay(params.homestayId, "CUSTOMER");
+  const room = homestay.rooms.find((item) => item.id === roomIds[0]);
+  if (!room) {
+    return <CheckoutSelectionNotice homestayId={params.homestayId} message="Phòng đã chọn không khả dụng cho homestay này. Vui lòng chọn lại phòng khác." />;
   }
 
   const defaultCheckIn = params.checkIn ?? isoDateAfter(14);

@@ -1,7 +1,7 @@
-import Link from "next/link";
 import type { ReactNode } from "react";
 import { AppTopBar } from "@/components/customer-ui";
 import { HomestayGallery } from "@/components/homestay-gallery";
+import { RoomSelectionCheckout } from "@/components/room-selection-checkout";
 import { getHomestay, money } from "@/lib/api";
 import { Homestay, Room } from "@/lib/types";
 
@@ -34,39 +34,6 @@ const featuredAmenities = [
   { label: "Chỗ đậu xe rộng rãi", icon: "parking" },
   { label: "Không gian sân vườn", icon: "garden" }
 ] as const;
-
-function checkoutHref(homestayId: string, roomId: string | undefined, params: DetailSearchParams) {
-  const guestCount = params.guestCount ?? params.guests;
-  const query = new URLSearchParams();
-  query.set("homestayId", homestayId);
-  if (roomId) query.set("roomId", roomId);
-  if (params.checkIn) query.set("checkIn", params.checkIn);
-  if (params.checkOut) query.set("checkOut", params.checkOut);
-  if (guestCount) {
-    query.set("guestCount", guestCount);
-    query.set("guests", guestCount);
-  }
-  return `/checkout?${query.toString()}`;
-}
-
-function dateFromIso(value?: string) {
-  if (!value) return null;
-  const date = new Date(`${value}T00:00:00`);
-  return Number.isNaN(date.getTime()) ? null : date;
-}
-
-function nightsBetween(checkIn?: string, checkOut?: string) {
-  const start = dateFromIso(checkIn);
-  const end = dateFromIso(checkOut);
-  if (!start || !end || end <= start) return 2;
-  return Math.max(1, Math.ceil((end.getTime() - start.getTime()) / 86_400_000));
-}
-
-function formatStayDate(value?: string) {
-  const date = dateFromIso(value);
-  if (!date) return "Chưa chọn";
-  return new Intl.DateTimeFormat("vi-VN", { day: "2-digit", month: "2-digit" }).format(date);
-}
 
 function buildGalleryImages(homestay: Homestay) {
   const rawImages: GalleryImage[] = [
@@ -129,18 +96,19 @@ export default async function HomestayDetailPage({ params, searchParams }: { par
   const homestay = await getHomestay(id);
   const activeRooms = homestay.rooms.filter((room) => room.active);
   const rooms = activeRooms.length ? activeRooms : homestay.rooms;
-  const mainRoom = rooms[0] ?? homestay.rooms[0];
   const gallery = buildGalleryImages(homestay);
   const mapHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(homestay.location)}`;
   const guestCount = filters.guestCount ?? filters.guests ?? "2";
-  const nights = nightsBetween(filters.checkIn, filters.checkOut);
-  const pricePerNight = mainRoom?.pricePerNight ?? homestay.priceFrom;
-  const roomTotal = pricePerNight * nights;
-  const taxTotal = Math.round(roomTotal * 0.1);
-  const grandTotal = roomTotal + taxTotal;
-  const hasMultipleRooms = rooms.length > 1;
-  const primaryCtaHref = hasMultipleRooms || !mainRoom ? "#rooms" : checkoutHref(homestay.id, mainRoom.id, filters);
-  const primaryCtaLabel = hasMultipleRooms || !mainRoom ? "Chọn phòng" : "Đặt phòng";
+  const selectableRooms = rooms.map((room, index) => ({
+    id: room.id,
+    name: room.name,
+    roomType: room.roomType,
+    pricePerNight: room.pricePerNight,
+    capacity: room.capacity,
+    area: roomArea(room),
+    description: roomDescription(room, homestay.location),
+    thumbnail: room.imageUrl ?? gallery[(index + 1) % gallery.length]?.url ?? homestay.imageUrl
+  }));
 
   return (
     <main className="min-h-screen pb-24 text-[#1c1c19] lg:pb-0">
@@ -159,14 +127,14 @@ export default async function HomestayDetailPage({ params, searchParams }: { par
           </div>
           <div className="flex flex-wrap gap-2">
             <a className="btn-secondary" href={mapHref} rel="noreferrer" target="_blank">Xem bản đồ</a>
-            <a className="btn-primary" href={primaryCtaHref}>{primaryCtaLabel}</a>
+            <a className="btn-primary" href="#rooms">Chọn phòng</a>
           </div>
         </div>
 
         <HomestayGallery images={gallery} />
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-10 px-4 pb-20 md:px-8 lg:grid-cols-[1fr_380px] lg:items-start">
+      <section className="mx-auto max-w-7xl px-4 pb-20 md:px-8">
         <div className="space-y-10">
           <div className="flex flex-wrap gap-2">
             {highlightTags.map((tag) => (
@@ -223,38 +191,13 @@ export default async function HomestayDetailPage({ params, searchParams }: { par
             )}
           </section>
 
-          <section className="border-b border-[#e8e1d5] pb-10" id="rooms">
-            <p className="eyebrow">Lựa chọn không gian</p>
-            <h2 className="mt-2 font-heading text-3xl text-[#1c1c19]">Chọn phòng của bạn</h2>
-            <div className="mt-6 space-y-5">
-              {rooms.map((room, index) => {
-                const thumbnail = room.imageUrl ?? gallery[(index + 1) % gallery.length]?.url ?? homestay.imageUrl;
-                return (
-                  <article className="group grid gap-5 rounded-2xl border border-[#dcc0ba] bg-white p-4 shadow-[0_14px_45px_rgba(123,41,20,0.06)] transition hover:border-[#9a4029] md:grid-cols-[220px_1fr]" key={room.id}>
-                    <div className="image-shell aspect-[4/3] overflow-hidden rounded-xl bg-cover bg-center" style={{ backgroundImage: `url(${thumbnail})` }} />
-                    <div className="flex min-w-0 flex-col justify-between">
-                      <div>
-                        <h3 className="font-heading text-2xl text-[#1c1c19]">{room.name}</h3>
-                        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm font-semibold text-[#75675f]">
-                          <span className="inline-flex items-center gap-1"><DetailIcon name="group" /> {room.capacity} khách</span>
-                          <span className="inline-flex items-center gap-1"><DetailIcon name="bed" /> {room.roomType}</span>
-                          <span className="inline-flex items-center gap-1"><DetailIcon name="area" /> {roomArea(room)}</span>
-                        </div>
-                        <p className="mt-3 line-clamp-2 text-sm leading-6 text-[#56423d]">{roomDescription(room, homestay.location)}</p>
-                      </div>
-                      <div className="mt-5 flex flex-col justify-between gap-3 border-t border-[#e8e1d5] pt-4 sm:flex-row sm:items-end">
-                        <div>
-                          <p className="text-xs font-bold uppercase text-[#89726c]">Giá mỗi đêm</p>
-                          <p className="font-heading text-2xl font-bold text-[#9a4029]">{money(room.pricePerNight)}</p>
-                        </div>
-                        <Link className="btn-secondary" href={checkoutHref(homestay.id, room.id, filters)}>Chọn phòng</Link>
-                      </div>
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
-          </section>
+          <RoomSelectionCheckout
+            homestayId={homestay.id}
+            rooms={selectableRooms}
+            initialCheckIn={filters.checkIn}
+            initialCheckOut={filters.checkOut}
+            initialGuests={guestCount}
+          />
 
           <section className="border-b border-[#e8e1d5] pb-10">
             <h2 className="font-heading text-3xl text-[#1c1c19]">Dịch vụ có thể đặt thêm</h2>
@@ -294,57 +237,7 @@ export default async function HomestayDetailPage({ params, searchParams }: { par
             </div>
           </section>
         </div>
-
-        <aside className="hidden h-fit rounded-2xl border border-[#dcc0ba] bg-white p-6 shadow-[0_24px_80px_rgba(123,41,20,0.1)] lg:sticky lg:top-28 lg:block">
-          <div className="border-b border-[#e8e1d5] pb-5">
-            <p className="text-xs font-bold uppercase text-[#89726c]">Từ</p>
-            <div className="mt-1 flex items-end gap-1">
-              <span className="font-heading text-3xl font-bold text-[#9a4029]">{money(pricePerNight)}</span>
-              <span className="pb-1 text-sm text-[#75675f]">/ đêm</span>
-            </div>
-          </div>
-          <div className="mt-5 overflow-hidden rounded-xl border border-[#dcc0ba]">
-            <div className="grid grid-cols-2 divide-x divide-[#dcc0ba]">
-              <div className="p-3">
-                <p className="text-[11px] font-black uppercase text-[#89726c]">Nhận phòng</p>
-                <p className="mt-1 font-bold text-[#1c1c19]">{formatStayDate(filters.checkIn)}</p>
-              </div>
-              <div className="p-3">
-                <p className="text-[11px] font-black uppercase text-[#89726c]">Trả phòng</p>
-                <p className="mt-1 font-bold text-[#1c1c19]">{formatStayDate(filters.checkOut)}</p>
-              </div>
-            </div>
-            <div className="border-t border-[#dcc0ba] p-3">
-              <p className="text-[11px] font-black uppercase text-[#89726c]">Khách</p>
-              <p className="mt-1 font-bold text-[#1c1c19]">{guestCount} khách</p>
-            </div>
-          </div>
-          <div className="mt-5 space-y-3 border-b border-[#e8e1d5] pb-5 text-sm text-[#56423d]">
-            <div className="flex justify-between gap-4"><span>{money(pricePerNight)} x {nights} đêm</span><strong>{money(roomTotal)}</strong></div>
-            <div className="flex justify-between gap-4"><span>Thuế 10%</span><strong>{money(taxTotal)}</strong></div>
-          </div>
-          <div className="mt-5 flex justify-between gap-4">
-            <span className="font-heading text-2xl font-bold text-[#1c1c19]">Tổng tiền</span>
-            <strong className="font-heading text-2xl text-[#9a4029]">{money(grandTotal)}</strong>
-          </div>
-          <a className="btn-primary mt-6 w-full" href={primaryCtaHref}>{hasMultipleRooms ? "Chọn phòng để đặt" : "Tiếp tục đặt phòng"}</a>
-          <p className="mt-4 text-center text-xs text-[#75675f]">
-            {hasMultipleRooms ? "Chọn đúng phòng trước khi sang checkout." : "Bạn vẫn chưa bị trừ tiền"}
-          </p>
-        </aside>
       </section>
-
-      {mainRoom && (
-        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-[#dcc0ba] bg-[#fdf9f4]/95 p-3 shadow-[0_-12px_40px_rgba(123,41,20,0.12)] backdrop-blur lg:hidden">
-          <div className="mx-auto flex max-w-7xl items-center justify-between gap-3">
-            <div>
-              <p className="text-xs font-bold text-[#75675f]">{hasMultipleRooms ? "Chọn phòng phù hợp" : `${nights} đêm · gồm thuế/phí nếu có`}</p>
-              <p className="font-bold text-[#466550]">{money(grandTotal)}</p>
-            </div>
-            <a className="btn-primary px-5 py-3" href={primaryCtaHref}>{hasMultipleRooms ? "Chọn phòng" : "Tiếp tục đặt phòng"}</a>
-          </div>
-        </div>
-      )}
     </main>
   );
 }

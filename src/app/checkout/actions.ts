@@ -7,15 +7,32 @@ import { ApiClientError } from "@/lib/api-client";
 import { flashUrl } from "@/lib/flash";
 
 function serviceItemsFromForm(formData: FormData) {
+  const roomIds = selectedRoomIdsFromForm(formData);
   return Array.from(formData.entries())
     .filter(([key]) => key.startsWith("service:"))
-    .map(([key, value]) => ({ serviceId: key.replace("service:", ""), quantity: Number(value) }))
+    .map(([key, value]) => {
+      const [, maybeRoomId, maybeServiceId] = key.split(":");
+      const serviceId = maybeServiceId ? maybeServiceId : maybeRoomId;
+      const roomId = maybeServiceId ? maybeRoomId : roomIds[0];
+      return { roomId, serviceId, quantity: Number(value) };
+    })
+    .filter((item) => !item.roomId || roomIds.length <= 1 || item.roomId === roomIds[0])
+    .map(({ serviceId, quantity }) => ({ serviceId, quantity }))
     .filter((item) => Number.isInteger(item.quantity) && item.quantity > 0);
+}
+
+function selectedRoomIdsFromForm(formData: FormData) {
+  const roomIds = String(formData.get("roomIds") ?? "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+  const roomId = String(formData.get("roomId") ?? "");
+  return roomIds.length ? roomIds : roomId ? [roomId] : [];
 }
 
 function checkoutNextPath(formData: FormData) {
   const params = new URLSearchParams();
-  ["homestayId", "roomId", "guestName", "guestPhone", "guestEmail", "guestCount", "checkIn", "checkOut", "notes"].forEach((key) => {
+  ["homestayId", "roomId", "roomIds", "guestName", "guestPhone", "guestEmail", "guestCount", "guests", "checkIn", "checkOut", "notes"].forEach((key) => {
     const value = String(formData.get(key) ?? "");
     if (value) params.set(key, value);
   });
@@ -36,6 +53,7 @@ function isValidEmail(value: string) {
 
 export async function createCheckoutAction(formData: FormData) {
   const homestayId = String(formData.get("homestayId") ?? "");
+  const roomIds = selectedRoomIdsFromForm(formData);
   const guestName = String(formData.get("guestName") ?? "").trim();
   const guestPhone = String(formData.get("guestPhone") ?? "").trim();
   const guestEmail = String(formData.get("guestEmail") ?? "").trim();
@@ -46,6 +64,12 @@ export async function createCheckoutAction(formData: FormData) {
   let createError: unknown;
   let paymentError: unknown;
 
+  if (roomIds.length === 0) {
+    redirect(flashUrl(checkoutNextPath(formData), "error", "Vui lòng chọn một phòng để tiếp tục thanh toán."));
+  }
+  if (roomIds.length > 1) {
+    redirect(flashUrl(checkoutNextPath(formData), "error", "Hiện hệ thống chỉ hỗ trợ đặt một phòng mỗi lần. Vui lòng chọn một phòng để tiếp tục."));
+  }
   if (guestName.length < 2) {
     redirect(flashUrl(checkoutNextPath(formData), "error", "Vui lòng nhập họ tên khách đặt phòng."));
   }
@@ -63,10 +87,10 @@ export async function createCheckoutAction(formData: FormData) {
     const booking = await createBooking(
       {
         homestayId,
-        roomId: String(formData.get("roomId") ?? ""),
+        roomId: roomIds[0],
         guestName,
         guestPhone,
-        guestCount: Math.max(1, Number(formData.get("guestCount") ?? 1)),
+        guestCount: Math.max(1, Number(formData.get("guestCount") ?? formData.get("guests") ?? 1)),
         checkIn: String(formData.get("checkIn") ?? ""),
         checkOut: String(formData.get("checkOut") ?? ""),
         serviceItems: serviceItemsFromForm(formData)

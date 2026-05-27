@@ -22,23 +22,17 @@ test.describe("Homestay Tây Ninh production smoke", () => {
   });
 
   test("customer search, detail and checkout steps are usable", async ({ page }) => {
-    await page.goto(`${baseURL}/homestays`);
-    await page.locator('input[name="guests"]').fill("2");
-    await page.getByRole("button", { name: /Áp dụng|Tìm kiếm/ }).first().click();
+    await page.goto(`${baseURL}/homestays?checkIn=2026-06-12&checkOut=2026-06-14&guests=2`);
     await expect(page.getByRole("link", { name: "Xem chi tiết" }).first()).toBeVisible();
     await page.getByRole("link", { name: "Xem chi tiết" }).first().click();
-    await expect(page.getByRole("link", { name: /Chọn phòng|Tiếp tục đặt phòng/ }).first()).toBeVisible();
-    await page.getByRole("link", { name: /Chọn phòng|Tiếp tục đặt phòng/ }).first().click();
-    if (!page.url().includes("/checkout")) {
-      await page.locator('a[href^="/checkout"]').first().click();
-    }
-    await expect(page.getByRole("heading", { name: "Hoàn tất đặt phòng" })).toBeVisible();
-    await page.getByPlaceholder("Nguyễn Văn A").fill("Nguyễn Test");
-    await page.getByPlaceholder("0901234567").fill("0901234567");
-    await page.getByRole("button", { name: "Tiếp tục chọn dịch vụ" }).click();
+    await expect(page.getByTestId("continue-checkout")).toBeDisabled();
+    await page.getByRole("button", { name: "Chọn phòng" }).first().click();
+    await page.getByTestId("continue-checkout").click();
     await expect(page).toHaveURL(/\/checkout\/services/);
     await page.getByRole("button", { name: "Tiếp tục xác nhận" }).click();
     await expect(page.getByRole("heading", { name: "Xác nhận đặt phòng" })).toBeVisible();
+    await page.getByPlaceholder("Nguyễn Văn A").fill("Nguyễn Test");
+    await page.getByPlaceholder("0901234567").fill("0901234567");
   });
 
   test("private booking history is guarded and public payment result renders", async ({ page }) => {

@@ -6,7 +6,7 @@ import { getCurrentUser, homeForRole } from "@/lib/rbac";
 
 export const dynamic = "force-dynamic";
 
-const heroImage = "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=2200&q=85";
+const heroImage = "/images/demo/tay-ninh-5.jpg";
 
 export default async function HomePage() {
   const [homestays, user] = await Promise.all([getHomestays("CUSTOMER"), getCurrentUser()]);
