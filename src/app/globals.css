@@ -27,6 +27,7 @@
 
 html {
   scroll-behavior: smooth;
+  background: var(--surface);
 }
 
 body {
@@ -52,6 +53,12 @@ textarea {
   font: inherit;
 }
 
+button,
+a,
+summary {
+  -webkit-tap-highlight-color: transparent;
+}
+
 .card {
   border: 1px solid var(--sand-border);
   border-radius: var(--radius-card);
@@ -71,6 +78,7 @@ textarea {
   background: var(--primary-container);
   color: white;
   padding: 0.85rem 1.25rem;
+  min-height: 44px;
   font-weight: 800;
   display: inline-flex;
   align-items: center;
@@ -95,6 +103,7 @@ textarea {
   border: 1.5px solid rgba(70, 101, 80, 0.34);
   color: var(--secondary);
   padding: 0.8rem 1.15rem;
+  min-height: 44px;
   font-weight: 800;
   background: rgba(255, 255, 255, 0.72);
   display: inline-flex;
@@ -185,9 +194,122 @@ textarea {
     #efe7dc;
 }
 
+.search-panel {
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--radius-panel);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow-panel);
+}
+
+.search-panel-home {
+  padding: 1rem;
+}
+
+.search-panel-sidebar,
+.search-panel-mobile {
+  padding: 1.25rem;
+}
+
+.check-row {
+  display: flex;
+  min-height: 42px;
+  align-items: center;
+  gap: 0.7rem;
+  border: 1px solid var(--sand-border);
+  border-radius: 12px;
+  background: rgba(253, 249, 244, 0.72);
+  padding: 0.65rem 0.75rem;
+  color: var(--on-surface-variant);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.check-row input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--primary-container);
+}
+
+.price-slider {
+  width: 100%;
+  accent-color: var(--primary-container);
+}
+
+.react-datepicker-wrapper,
+.react-datepicker__input-container {
+  display: block;
+  width: 100%;
+}
+
+.react-datepicker {
+  border: 1px solid var(--outline-variant) !important;
+  border-radius: 16px !important;
+  overflow: hidden;
+  font-family: var(--font-body), system-ui, sans-serif !important;
+  box-shadow: 0 18px 55px rgba(123, 41, 20, 0.12);
+}
+
+.react-datepicker__header {
+  border-bottom: 1px solid var(--sand-border) !important;
+  background: var(--surface) !important;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--in-range,
+.react-datepicker__day--keyboard-selected {
+  background: var(--primary-container) !important;
+  color: white !important;
+}
+
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(120deg, rgba(253, 249, 244, 0.92), rgba(232, 225, 213, 0.92)),
+    #eadfd3;
+}
+
+.skeleton-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.62), transparent);
+  animation: shimmer 1.45s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (max-width: 640px) {
+  .card,
+  .stitch-panel,
+  .surface-panel,
+  .table-card {
+    border-radius: 14px;
+  }
+
+  .field {
+    min-height: 44px;
+  }
+
+  .search-panel-home,
+  .search-panel-sidebar,
+  .search-panel-mobile {
+    padding: 1rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .btn-primary,
   .btn-secondary {
     transition: none;
+  }
+
+  .skeleton-shimmer::after {
+    animation: none;
   }
 }

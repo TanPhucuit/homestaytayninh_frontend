@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AppTopBar, HomestayCard } from "@/components/customer-ui";
+import { SearchBar } from "@/components/search-bar";
 import { getHomestays, money } from "@/lib/api";
 import { getCurrentUser, homeForRole } from "@/lib/rbac";
 
@@ -32,7 +33,7 @@ export default async function HomePage() {
               <Link className="btn-primary" href="/homestays">Đặt phòng ngay</Link>
               {user.authenticated && !user.authorizationError ? (
                 <Link className="rounded-xl bg-white/15 px-6 py-3 font-bold text-white ring-1 ring-white/30 backdrop-blur transition hover:bg-white/25" href={homeForRole(user.role)}>
-                  Vào portal của bạn
+                  Vào khu vực của bạn
                 </Link>
               ) : user.authenticated ? (
                 <Link className="rounded-xl bg-white/15 px-6 py-3 font-bold text-white ring-1 ring-white/30 backdrop-blur transition hover:bg-white/25" href="/login?error=role_lookup">
@@ -48,7 +49,7 @@ export default async function HomePage() {
           <div className="hidden rounded-2xl border border-white/28 bg-[#fdf9f4]/14 p-5 text-sm font-semibold text-white shadow-[0_30px_90px_rgba(0,0,0,0.22)] backdrop-blur-md lg:block">
             <div className="grid gap-3">
               <div className="rounded-xl bg-white/12 p-4">Homestay đã kiểm duyệt</div>
-              <div className="rounded-xl bg-white/12 p-4">Thanh toán demo minh bạch</div>
+              <div className="rounded-xl bg-white/12 p-4">Thanh toán ApiPay minh bạch</div>
               <div className="rounded-xl bg-white/12 p-4">Theo dõi booking theo thời gian thực</div>
             </div>
           </div>
@@ -56,30 +57,7 @@ export default async function HomePage() {
       </section>
 
       <section className="relative z-20 mx-auto -mt-28 max-w-6xl px-4 md:px-8">
-        <form action="/homestays" className="stitch-panel grid gap-3 p-4 md:grid-cols-[1fr_1fr_0.8fr_0.8fr_auto] md:p-5">
-          <label className="grid gap-2 text-xs font-black uppercase text-[#89726c]">
-            Nhận phòng
-            <input className="field" name="checkIn" type="date" />
-          </label>
-          <label className="grid gap-2 text-xs font-black uppercase text-[#89726c]">
-            Trả phòng
-            <input className="field" name="checkOut" type="date" />
-          </label>
-          <label className="grid gap-2 text-xs font-black uppercase text-[#89726c]">
-            Số khách
-            <input className="field" name="guests" type="number" min="1" placeholder="2" />
-          </label>
-          <label className="grid gap-2 text-xs font-black uppercase text-[#89726c]">
-            Loại hình
-            <select className="field" name="type" defaultValue="">
-              <option value="">Tất cả</option>
-              <option value="Phòng">Phòng</option>
-              <option value="Lều">Lều</option>
-              <option value="Nhà nguyên căn">Nhà nguyên căn</option>
-            </select>
-          </label>
-          <button className="btn-primary self-end" type="submit">Tìm kiếm</button>
-        </form>
+        <SearchBar variant="home" />
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-18 md:px-8 md:py-20">

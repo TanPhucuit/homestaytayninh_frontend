@@ -15,7 +15,7 @@ export default async function BookingDetailPage({ params, searchParams }: { para
   const user = await getCurrentUser();
   const flash = flashFromSearchParams(await searchParams);
   if (!user.authenticated) {
-    return <AccessDenied description="Vui lòng đăng nhập để xem chi tiết booking." />;
+    return <AccessDenied description="Vui lòng đăng nhập để xem chi tiết đơn đặt." />;
   }
   if (user.authorizationError) {
     return <AccessDenied description={user.authorizationError} />;
@@ -27,10 +27,10 @@ export default async function BookingDetailPage({ params, searchParams }: { para
   const isOpsRole = user.role === "OWNER_STAFF" || user.role === "ADMIN";
   const canAddService = booking.status === "IN_STAY" && isOpsRole;
   const canCancel = user.role === "CUSTOMER" && (booking.status === "PENDING" || booking.status === "CONFIRMED");
-  const canRetryPayment = booking.payment?.status === "INITIATED" || booking.payment?.status === "PENDING" || booking.payment?.status === "FAILED";
+  const canRetryPayment = !booking.payment || booking.payment.status === "INITIATED" || booking.payment.status === "PENDING" || booking.payment.status === "FAILED";
 
   return (
-    <PageShell eyebrow="Booking Detail" title={`Đơn ${booking.id}`} description={`${homestay.name} · ${booking.checkIn} → ${booking.checkOut}`}>
+    <PageShell eyebrow="Chi tiết đơn đặt" title={`Đơn ${booking.id}`} description={`${homestay.name} · ${booking.checkIn} → ${booking.checkOut}`}>
       <div className="mb-5">
         <FlashMessage flash={flash} />
       </div>
@@ -41,7 +41,7 @@ export default async function BookingDetailPage({ params, searchParams }: { para
               <div>
                 <div className="flex flex-wrap gap-2">
                   <StatusBadge status={booking.status} />
-                  {booking.payment?.status ? <PaymentBadge status={booking.payment.status} /> : <span className="rounded-full bg-[#fff3d6] px-3 py-1 text-xs font-bold text-[#7a4a12]">Thanh toán demo</span>}
+                  {booking.payment?.status ? <PaymentBadge status={booking.payment.status} /> : <span className="rounded-full bg-[#fff3d6] px-3 py-1 text-xs font-bold text-[#7a4a12]">Chưa có giao dịch thanh toán</span>}
                 </div>
                 <h2 className="mt-4 font-heading text-3xl text-[#9a4029]">{homestay.name}</h2>
                 <p className="mt-2 text-sm leading-6 text-[#75675f]">
@@ -74,7 +74,7 @@ export default async function BookingDetailPage({ params, searchParams }: { para
             <form action={addServiceAction} className="card p-6">
               <input type="hidden" name="bookingId" value={booking.id} />
               <h2 className="font-heading text-2xl text-[#9a4029]">Thêm dịch vụ khi khách đang lưu trú</h2>
-              <p className="mt-2 text-sm text-[#75675f]">Owner Staff ghi nhận dịch vụ phát sinh và cộng vào hóa đơn booking.</p>
+              <p className="mt-2 text-sm text-[#75675f]">Nhân viên homestay ghi nhận dịch vụ phát sinh và cộng vào hóa đơn của đơn đặt.</p>
               <div className="mt-4 grid gap-3 md:grid-cols-[1fr_120px_160px]">
                 <select className="field" name="serviceId" required>
                   {homestay.services.map((service) => (
@@ -102,14 +102,14 @@ export default async function BookingDetailPage({ params, searchParams }: { para
           <section className="card p-6">
             <h2 className="font-heading text-2xl text-[#9a4029]">Thanh toán</h2>
             <p className="mt-3 text-sm text-[#75675f]">Số tiền: {money(booking.payment?.amount ?? booking.grandTotal)}</p>
-            {!booking.payment && <p className="mt-2 text-sm text-[#75675f]">Đơn này đang dùng trạng thái thanh toán demo, chưa có giao dịch tiền thật.</p>}
+            {!booking.payment && <p className="mt-2 text-sm text-[#75675f]">Đơn này chưa có giao dịch thanh toán. Bạn có thể tạo lại thanh toán qua ApiPay.</p>}
             {canRetryPayment && (
               <form action={retryPaymentAction} className="mt-3">
                 <input type="hidden" name="bookingId" value={booking.id} />
-                <ActionButton className="btn-primary w-full" pendingLabel="Đang tạo...">Thử lại thanh toán demo</ActionButton>
+                <ActionButton className="btn-primary w-full" pendingLabel="Đang tạo...">Thanh toán qua ApiPay</ActionButton>
               </form>
             )}
-            <a className="btn-secondary mt-3 w-full" href={`/payment/result?bookingId=${booking.id}&status=${booking.payment?.status ?? "paid"}&demo=${booking.payment ? "0" : "1"}`}>Kiểm tra trạng thái</a>
+            <a className="btn-secondary mt-3 w-full" href={`/payment/result?bookingId=${booking.id}&status=${booking.payment?.status ?? "pending"}`}>Kiểm tra trạng thái</a>
           </section>
           {canCancel && (
             <form action={cancelBookingAction} className="card p-6">

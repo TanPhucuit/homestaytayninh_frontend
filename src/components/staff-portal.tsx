@@ -24,7 +24,7 @@ function StaffShell({ title, description, flash, children }: { title: string; de
         <header className="stitch-panel bg-[#466550] p-6 text-white md:p-8">
           <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
             <div>
-              <p className="text-sm uppercase tracking-[0.25em] text-white/70">Staff Portal</p>
+              <p className="text-sm uppercase tracking-[0.25em] text-white/70">Khu vực nội dung</p>
               <h1 className="mt-2 font-heading text-4xl">{title}</h1>
               <p className="mt-3 max-w-2xl text-sm leading-6 text-white/80">{description}</p>
             </div>
@@ -54,7 +54,7 @@ export function StaffCmsPortal({ articles, flash }: { articles: Article[]; flash
   return (
     <StaffShell
       title="Quản lý nội dung du lịch Tây Ninh"
-      description="Tạo, sửa, xóa, publish/unpublish bài viết quảng bá du lịch và cẩm nang homestay theo nghiệp vụ Staff."
+      description="Tạo, sửa, xóa, xuất bản hoặc ẩn bài viết quảng bá du lịch và cẩm nang homestay."
       flash={flash}
     >
       <section className="grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
@@ -89,7 +89,7 @@ export function StaffCmsPortal({ articles, flash }: { articles: Article[]; flash
                   <div className="flex flex-wrap gap-2">
                     <form action={article.status === "PUBLISHED" ? unpublishArticleAction : publishArticleAction}>
                       <input name="articleId" type="hidden" value={article.id} />
-                      <ActionButton className="btn-secondary" pendingLabel="Đang cập nhật...">{article.status === "PUBLISHED" ? "Unpublish" : "Publish"}</ActionButton>
+                    <ActionButton className="btn-secondary" pendingLabel="Đang cập nhật...">{article.status === "PUBLISHED" ? "Ẩn bài" : "Xuất bản"}</ActionButton>
                     </form>
                     <form action={deleteArticleAction}>
                       <input name="articleId" type="hidden" value={article.id} />
@@ -124,19 +124,19 @@ export function StaffModerationPortal({ reports, users, currentRole, flash }: { 
   return (
     <StaffShell
       title="Kiểm soát người dùng và báo cáo vi phạm"
-      description="Theo dõi báo cáo vi phạm, xử lý case mở và chuyển trạng thái resolved. Ban/unban user nằm trong Admin Portal."
+      description="Theo dõi báo cáo vi phạm, xử lý trường hợp đang mở và chuyển sang trạng thái đã xử lý. Việc phân quyền do khu vực quản trị thực hiện."
       flash={flash}
     >
       <section className="grid gap-4">
         {reports.length === 0 ? (
-          <EmptyState title="Không có báo cáo vi phạm" description="Khi có report từ người dùng, Staff sẽ xử lý tại màn hình này." />
+          <EmptyState title="Không có báo cáo vi phạm" description="Khi có báo cáo từ người dùng, nhân viên sẽ xử lý tại màn hình này." />
         ) : (
           reports.map((report) => (
             <article className="card p-5" key={report.id}>
               <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
                 <div>
                   <span className={report.status === "OPEN" ? "badge badge-red" : "badge badge-green"}>{report.status === "OPEN" ? "Đang mở" : "Đã xử lý"}</span>
-                  <h2 className="mt-3 font-heading text-2xl text-[#9a4029]">Report {report.id}</h2>
+                  <h2 className="mt-3 font-heading text-2xl text-[#9a4029]">Báo cáo {report.id}</h2>
                   <p className="mt-2 text-sm text-[#75675f]">
                     Người báo cáo: {report.reporterId} · Người bị báo cáo: {report.reportedUserId}
                   </p>
@@ -155,7 +155,7 @@ export function StaffModerationPortal({ reports, users, currentRole, flash }: { 
       </section>
       <section className="card p-6">
         <h2 className="font-heading text-3xl text-[#9a4029]">Kiểm soát tài khoản</h2>
-        <p className="mt-2 text-sm text-[#75675f]">Staff có thể khóa hoặc mở khóa tài khoản khi xử lý vi phạm; phân quyền chỉ do Admin thực hiện.</p>
+        <p className="mt-2 text-sm text-[#75675f]">Nhân viên có thể khóa hoặc mở khóa tài khoản khi xử lý vi phạm; phân quyền chỉ do quản trị viên thực hiện.</p>
         <div className="mt-5 grid gap-3">
           {manageableUsers.length === 0 ? (
             <EmptyState title="Chưa có người dùng" description="Danh sách người dùng sẽ hiển thị khi hệ thống có tài khoản." />

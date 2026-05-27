@@ -10,7 +10,7 @@ import { createImageAction, createRoomRateAction, updateHomestayAction, updateRo
 
 export function OwnerShell({ title, description, flash, children }: { title: string; description: string; flash?: FlashState | null; children: ReactNode }) {
   return (
-    <PageShell eyebrow="Owner Portal" title={title} description={description}>
+    <PageShell eyebrow="Vận hành homestay" title={title} description={description}>
       <div className="mb-5">
         <FlashMessage flash={flash} />
       </div>
@@ -65,7 +65,7 @@ export function OwnerBookingOps({ bookings, homestays, action }: { bookings: Boo
               <h3 className="mt-3 font-heading text-2xl text-[#9a4029]">{homestayById.get(booking.homestayId)?.name ?? booking.homestayId}</h3>
               <p className="mt-1 text-sm text-[#75675f]">{booking.guestName} · {booking.checkIn} → {booking.checkOut} · {money(booking.grandTotal)}</p>
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap">
               {(nextActions[booking.status] ?? []).map((item) => (
                 <form action={action} key={item.status}>
                   <input type="hidden" name="bookingId" value={booking.id} />

@@ -16,7 +16,7 @@ export default async function StaffPage({ searchParams }: { searchParams: Promis
   }
 
   if (!canAccess(user.role, [...allowed])) {
-    return <AccessDenied description="Staff Portal chỉ dành cho Staff hoặc Admin." />;
+    return <AccessDenied description="Khu vực nội dung chỉ dành cho Staff hoặc Admin." />;
   }
 
   const articles = await getArticles(user.role === "ADMIN" ? "ADMIN" : "STAFF");

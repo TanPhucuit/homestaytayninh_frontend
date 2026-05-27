@@ -60,7 +60,7 @@ export interface Booking {
   grandTotal: number;
   services: Array<{ id: string; name: string; quantity: number; unitPrice: number; total: number; status: string }>;
   includedServices?: Service[];
-  payment?: { id: string; provider?: string; status: PaymentStatus; amount: number; checkoutUrl?: string };
+  payment?: { id: string; provider?: string; status: PaymentStatus; amount: number; checkoutUrl?: string; qrUrl?: string };
 }
 
 export interface UserProfile {
@@ -109,6 +109,7 @@ export interface CheckoutPreview {
   selectedServices: Array<{ id: string; name: string; quantity: number; unitPrice: number; total: number }>;
   roomTotal: number;
   serviceTotal: number;
+  cleaningFee: number;
   taxTotal: number;
   grandTotal: number;
 }

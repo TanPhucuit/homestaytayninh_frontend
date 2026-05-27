@@ -1,11 +1,11 @@
 import Link from "next/link";
 
 function errorMessage(error?: string) {
-  if (error === "api_env") return "Chưa cấu hình máy chủ dữ liệu nên chưa thể đăng nhập.";
-  if (error === "google_env") return "Chưa cấu hình Google OAuth.";
+  if (error === "api_env") return "Hệ thống đăng nhập chưa sẵn sàng. Vui lòng thử lại sau.";
+  if (error === "google_env") return "Đăng nhập Google chưa sẵn sàng. Vui lòng thử cách khác.";
   if (error === "auth_required") return "Bạn cần đăng nhập trước khi thực hiện thao tác này.";
   if (error === "oauth") return "Không tạo được phiên đăng nhập Google. Vui lòng thử lại.";
-  if (error === "callback") return "Google callback không hợp lệ hoặc phiên đăng nhập không được tạo.";
+  if (error === "callback") return "Phiên đăng nhập Google không hợp lệ hoặc chưa được tạo.";
   if (error === "google_verify") return "Google đã xác thực thành công, nhưng hệ thống chưa xác minh được tài khoản.";
   if (error === "role_lookup") return "Hệ thống chưa xác minh được quyền truy cập. Vui lòng đăng nhập lại hoặc liên hệ quản trị viên.";
   if (error === "password_required") return "Vui lòng nhập email và mật khẩu.";
@@ -32,7 +32,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           <p className="eyebrow mt-5">Terra & Leaf</p>
           <h1 className="mt-3 font-heading text-4xl text-[#9a4029] md:text-5xl">Đăng nhập hệ thống</h1>
           <p className="mt-3 text-sm leading-6 text-[#75675f]">
-            Truy cập đặt phòng, lịch sử booking và portal theo vai trò đã được cấp.
+            Truy cập đặt phòng, lịch sử booking và khu vực làm việc theo vai trò đã được cấp.
           </p>
         </div>
 

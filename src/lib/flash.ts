@@ -18,5 +18,5 @@ export function flashFromSearchParams(params?: FlashSearchParams): FlashState | 
 
 export function flashUrl(path: string, type: FlashState["type"], message: string) {
   const params = new URLSearchParams({ [type]: message });
-  return `${path}?${params.toString()}`;
+  return `${path}${path.includes("?") ? "&" : "?"}${params.toString()}`;
 }

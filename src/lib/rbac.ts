@@ -43,7 +43,7 @@ export async function getCurrentUser(): Promise<SessionUser> {
       email: "",
       role: "CUSTOMER",
       authenticated: true,
-      authorizationError: "Không thể xác minh vai trò vì chưa cấu hình máy chủ dữ liệu."
+      authorizationError: "Hệ thống đăng nhập chưa sẵn sàng. Vui lòng thử lại sau."
     };
   }
 
@@ -53,7 +53,7 @@ export async function getCurrentUser(): Promise<SessionUser> {
   }).catch(() => null);
 
   if (!response?.ok) {
-    const serviceError = response ? `Máy chủ trả về HTTP ${response.status}.` : "Không kết nối được máy chủ dữ liệu.";
+    const serviceError = response ? "Hệ thống đang xử lý chưa ổn định." : "Không kết nối được hệ thống đăng nhập.";
     return {
       id: "",
       name: "Người dùng đã đăng nhập",
@@ -109,7 +109,7 @@ export function navForRole(role: UserRole): NavItem[] {
       { label: "Chuyến đi của tôi", href: "/bookings" }
     ],
     OWNER: [
-      { label: "Dashboard chủ nhà", href: "/owner" },
+      { label: "Bảng điều khiển chủ nhà", href: "/owner" },
       { label: "Quản lý homestay", href: "/owner/manage" }
     ],
     OWNER_STAFF: [

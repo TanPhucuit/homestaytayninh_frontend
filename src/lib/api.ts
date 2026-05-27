@@ -8,9 +8,12 @@ export interface HomestayFilters {
   checkIn?: string;
   checkOut?: string;
   guests?: string;
-  type?: string;
+  type?: string | string[];
+  price?: string;
   maxPrice?: string;
-  amenity?: string;
+  amenity?: string | string[];
+  amenities?: string | string[];
+  page?: string;
 }
 
 export interface CheckoutDraft {
@@ -18,16 +21,23 @@ export interface CheckoutDraft {
   roomId?: string;
   guestName?: string;
   guestPhone?: string;
+  guestEmail?: string;
   guestCount?: string;
   checkIn?: string;
   checkOut?: string;
+  notes?: string;
   serviceItems?: Array<{ serviceId: string; quantity: number }>;
 }
 
 function queryString(filters?: HomestayFilters) {
   const params = new URLSearchParams();
   Object.entries(filters ?? {}).forEach(([key, value]) => {
-    if (value) params.set(key, value);
+    if (!value) return;
+    if (Array.isArray(value)) {
+      value.filter(Boolean).forEach((item) => params.append(key, item));
+      return;
+    }
+    params.set(key, value);
   });
   const query = params.toString();
   return query ? `?${query}` : "";
@@ -232,7 +242,8 @@ export async function getCheckoutPreview(draftOrHomestayId?: string | CheckoutDr
   }).filter((item): item is CheckoutPreview["selectedServices"][number] => Boolean(item));
   const roomTotal = room.pricePerNight * nights;
   const serviceTotal = selectedServices.reduce((sum, item) => sum + item.total, 0);
-  const taxTotal = Math.round((roomTotal + serviceTotal) * 0.1);
+  const cleaningFee = 200_000;
+  const taxTotal = Math.round((roomTotal + serviceTotal + cleaningFee) * 0.1);
 
   return {
     homestay,
@@ -243,7 +254,8 @@ export async function getCheckoutPreview(draftOrHomestayId?: string | CheckoutDr
     selectedServices,
     roomTotal,
     serviceTotal,
+    cleaningFee,
     taxTotal,
-    grandTotal: roomTotal + serviceTotal + taxTotal
+    grandTotal: roomTotal + serviceTotal + cleaningFee + taxTotal
   };
 }

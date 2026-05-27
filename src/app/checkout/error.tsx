@@ -3,6 +3,5 @@
 import { RouteError } from "@/components/route-error";
 
 export default function Error({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
-  return <RouteError reset={reset} title="Checkout gặp lỗi" />;
+  return <RouteError reset={reset} title="Không thể tiếp tục thanh toán" />;
 }
-

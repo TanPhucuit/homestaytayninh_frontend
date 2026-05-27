@@ -19,7 +19,7 @@ export default async function BookingsPage({ searchParams }: { searchParams: Pro
   const user = await getCurrentUser();
   const params = await searchParams;
   if (!user.authenticated) {
-    return <AccessDenied description="Vui lòng đăng nhập để xem lịch sử booking của bạn." />;
+    return <AccessDenied description="Vui lòng đăng nhập để xem lịch sử đặt phòng của bạn." />;
   }
   if (user.authorizationError) {
     return <AccessDenied description={user.authorizationError} />;
@@ -38,14 +38,14 @@ export default async function BookingsPage({ searchParams }: { searchParams: Pro
       <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
         <header className="mb-8 grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
           <div>
-            <p className="eyebrow">Booking của tôi</p>
+            <p className="eyebrow">Đơn đặt của tôi</p>
             <h1 className="mt-2 font-heading text-4xl text-[#9a4029] md:text-5xl">Chuyến đi của bạn</h1>
-            <p className="mt-3 max-w-2xl text-[#56423d]">Theo dõi trạng thái đặt phòng, thanh toán demo và các dịch vụ đã chọn.</p>
+            <p className="mt-3 max-w-2xl text-[#56423d]">Theo dõi trạng thái đặt phòng, thanh toán và các dịch vụ đã chọn.</p>
           </div>
           <Link className="btn-primary" href="/homestays">Đặt thêm chuyến đi</Link>
         </header>
 
-        <div className="mb-8 grid gap-3 rounded-2xl border border-[#eadfd4] bg-white p-2 md:grid-cols-4">
+        <div className="mb-8 grid grid-cols-2 gap-3 rounded-2xl border border-[#eadfd4] bg-white p-2 md:grid-cols-4">
           {groups.map((group) => (
             <Link
               className={`rounded-xl px-4 py-3 text-center text-sm font-bold ${group === activeGroup ? "bg-[#9a4029] text-white shadow-[0_12px_28px_rgba(154,64,41,0.2)]" : "text-[#75675f] hover:bg-[#fdf9f4]"}`}
@@ -71,8 +71,8 @@ export default async function BookingsPage({ searchParams }: { searchParams: Pro
                 const homestay = homestayById.get(booking.homestayId);
                 return (
                   <article className="overflow-hidden rounded-2xl border border-[#eadfd4] bg-white shadow-[0_24px_70px_rgba(123,41,20,0.1)] md:grid md:grid-cols-[320px_1fr]" key={booking.id}>
-                    <div className="image-shell min-h-72 bg-cover bg-center" style={{ backgroundImage: homestay?.imageUrl ? `url(${homestay.imageUrl})` : undefined }} />
-                    <div className="p-6">
+                    <div className="image-shell min-h-52 bg-cover bg-center md:min-h-72" style={{ backgroundImage: homestay?.imageUrl ? `url(${homestay.imageUrl})` : undefined }} />
+                    <div className="p-5 md:p-6">
                       <div className="flex flex-wrap gap-2">
                         <StatusBadge status={booking.status} />
                         {booking.payment?.status && <PaymentBadge status={booking.payment.status} />}
@@ -93,18 +93,18 @@ export default async function BookingsPage({ searchParams }: { searchParams: Pro
                       </div>
                       <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                         <a className="btn-primary flex-1" href={`/bookings/${booking.id}`}>Xem chi tiết</a>
-                        <a className="btn-secondary flex-1" href={`/payment/result?bookingId=${booking.id}&status=${booking.payment?.status ?? "paid"}&demo=${booking.payment ? "0" : "1"}`}>Kiểm tra thanh toán</a>
+                        <a className="btn-secondary flex-1" href={`/payment/result?bookingId=${booking.id}&status=${booking.payment?.status ?? "pending"}`}>Kiểm tra thanh toán</a>
                       </div>
                     </div>
                   </article>
                 );
               }) : (
-                <div className="rounded-2xl border border-dashed border-[#dcc0ba] bg-white/70 p-8 text-[#75675f]">Chưa có booking trong nhóm này.</div>
+                <div className="rounded-2xl border border-dashed border-[#dcc0ba] bg-white/70 p-8 text-[#75675f]">Chưa có đơn đặt trong nhóm này.</div>
               )}
             </div>
           </section>
         ) : (
-          <EmptyState title="Bạn chưa có booking" description="Hãy tìm homestay phù hợp và tạo đơn đặt phòng đầu tiên." actionHref="/homestays" actionLabel="Tìm homestay" />
+          <EmptyState title="Bạn chưa có đơn đặt" description="Hãy tìm homestay phù hợp và tạo đơn đặt phòng đầu tiên." actionHref="/homestays" actionLabel="Tìm homestay" />
         )}
       </div>
     </main>

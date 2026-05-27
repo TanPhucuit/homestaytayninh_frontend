@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { addBookingService, setBookingServiceStatus, updateBookingStatus } from "@/lib/api";
+import { addBookingService, initiatePayment, setBookingServiceStatus, updateBookingStatus } from "@/lib/api";
 import { actionErrorMessage } from "@/lib/action-errors";
 import { ApiClientError } from "@/lib/api-client";
 import { flashUrl } from "@/lib/flash";
@@ -55,6 +55,21 @@ export async function cancelBookingAction(formData: FormData) {
 
 export async function retryPaymentAction(formData: FormData) {
   const bookingId = String(formData.get("bookingId") ?? "");
+  let checkoutUrl: string | undefined;
+  let paymentError: unknown;
   if (!bookingId) redirect(flashUrl("/bookings", "error", "Thiếu booking để thử lại thanh toán."));
-  redirect(`/payment/result?bookingId=${bookingId}&status=paid&demo=1`);
+  try {
+    const payment = await initiatePayment(bookingId, "CUSTOMER");
+    checkoutUrl = payment.checkoutUrl;
+  } catch (error) {
+    if (error instanceof ApiClientError && error.status === 401) redirectToLogin(bookingId);
+    paymentError = error;
+  }
+  if (paymentError) {
+    redirect(`/payment/result?bookingId=${bookingId}&status=failed&paymentError=${encodeURIComponent(actionErrorMessage(paymentError))}`);
+  }
+  if (checkoutUrl) {
+    redirect(checkoutUrl);
+  }
+  redirect(`/payment/result?bookingId=${bookingId}&status=pending`);
 }

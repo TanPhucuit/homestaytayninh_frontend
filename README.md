@@ -4,22 +4,21 @@ Next.js frontend for Homestay Tay Ninh. Deploy this repository to Vercel.
 
 Backend repository: `https://github.com/TanPhucuit/homestaytayninh_backend.git`
 
-## Run
+## Production Configuration
 
 ```bash
 npm install
-cp .env.example .env.local
-npm run dev
+npm run build
 ```
 
-Web: `http://localhost:3000`
+Web: `https://homestaytayninh-frontend.vercel.app`
 
-Required local env:
+Required env:
 
 - `NEXT_PUBLIC_API_URL`: backend origin, without `/api`
 - `GOOGLE_CLIENT_ID`: Google OAuth web client id
 - `GOOGLE_CLIENT_SECRET`: Google OAuth web client secret, server-side only in Next route handlers
-- `GOOGLE_REDIRECT_URI`: exact callback URI registered in Google Cloud, for example `http://localhost:3000/auth/callback`
+- `GOOGLE_REDIRECT_URI`: exact callback URI registered in Google Cloud, `https://homestaytayninh-frontend.vercel.app/auth/callback`
 
 ## Deploy on Vercel
 
@@ -29,7 +28,7 @@ Required local env:
 - Callback URL to allow in Google Cloud OAuth client:
 
 ```text
-https://<your-vercel-domain>/auth/callback
+https://homestaytayninh-frontend.vercel.app/auth/callback
 ```
 
 ## Auth

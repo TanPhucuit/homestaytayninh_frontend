@@ -14,7 +14,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
   }
 
   if (!canAccess(user.role, [...allowed])) {
-    return <AccessDenied description="Admin Portal chỉ dành cho tài khoản Admin." />;
+    return <AccessDenied description="Khu vực quản trị chỉ dành cho tài khoản Admin." />;
   }
 
   const [dashboard, users] = await Promise.all([getDashboard("ADMIN"), getUsers("ADMIN")]);

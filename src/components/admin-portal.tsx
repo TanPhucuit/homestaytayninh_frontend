@@ -13,7 +13,7 @@ const permissionCards: Array<{ role: UserRole; title: string; permissions: strin
   { role: "OWNER", title: "Chủ homestay", permissions: ["Quản lý homestay và phòng", "Cập nhật giá, hình ảnh, dịch vụ"] },
   { role: "OWNER_STAFF", title: "Nhân viên homestay", permissions: ["Xử lý booking/check-in/out", "Đặt hộ và thêm dịch vụ in-stay"] },
   { role: "STAFF", title: "Vận hành hệ thống", permissions: ["CMS bài viết", "Xử lý báo cáo, ban/unban user"] },
-  { role: "ADMIN", title: "Quản trị viên", permissions: ["Dashboard toàn hệ thống", "Tạo tài khoản và phân quyền", "Truy cập mọi portal"] }
+  { role: "ADMIN", title: "Quản trị viên", permissions: ["Bảng điều khiển toàn hệ thống", "Tạo tài khoản và phân quyền", "Truy cập các khu vực nghiệp vụ"] }
 ];
 
 function StatCard({ label, value }: { label: string; value: string }) {
@@ -32,10 +32,10 @@ export function AdminPortal({ dashboard, users, currentUser, flash }: { dashboar
         <header className="stitch-panel bg-[#466550] p-6 text-white md:p-8">
           <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
             <div>
-              <p className="text-sm uppercase tracking-[0.25em] text-white/70">Admin Portal</p>
+              <p className="text-sm uppercase tracking-[0.25em] text-white/70">Khu vực quản trị</p>
               <h1 className="mt-2 font-heading text-4xl">Quản trị Homestay Tây Ninh</h1>
               <p className="mt-2 max-w-2xl text-sm leading-6 text-white/80">
-                Dashboard tổng quan, quản lý tài khoản, phân quyền và kiểm soát trạng thái người dùng theo BA.
+                Bảng tổng quan, quản lý tài khoản, phân quyền và kiểm soát trạng thái người dùng theo nghiệp vụ.
               </p>
             </div>
             <div className="flex flex-col gap-3 text-sm">
@@ -51,7 +51,7 @@ export function AdminPortal({ dashboard, users, currentUser, flash }: { dashboar
         </header>
 
         <nav className="grid gap-3 md:grid-cols-4">
-          <a className="card border-2 border-[#9a4029] p-4 font-bold text-[#9a4029]" href="/admin">Tổng quan Admin</a>
+          <a className="card border-2 border-[#9a4029] p-4 font-bold text-[#9a4029]" href="/admin">Tổng quan quản trị</a>
           <a className="card p-4 font-bold text-[#466550]" href="/owner">Vận hành booking</a>
           <a className="card p-4 font-bold text-[#466550]" href="/staff">CMS nội dung</a>
           <a className="card p-4 font-bold text-[#466550]" href="/staff/moderation">Báo cáo vi phạm</a>
@@ -70,7 +70,7 @@ export function AdminPortal({ dashboard, users, currentUser, flash }: { dashboar
           <div className="flex flex-col justify-between gap-2 md:flex-row md:items-end">
             <div>
               <h2 className="font-heading text-2xl text-[#9a4029]">Phạm vi quyền theo vai trò</h2>
-              <p className="mt-1 text-sm text-[#56423d]">Đối chiếu nhanh UI và quyền nghiệp vụ đã khai báo trong hệ thống.</p>
+              <p className="mt-1 text-sm text-[#56423d]">Đối chiếu nhanh giao diện và quyền nghiệp vụ đã khai báo trong hệ thống.</p>
             </div>
             <span className="badge bg-[#e8f0eb] text-[#466550]">5 vai trò</span>
           </div>
@@ -125,8 +125,8 @@ export function AdminPortal({ dashboard, users, currentUser, flash }: { dashboar
                 <tr>
                   <th className="px-3 py-2">Tên</th>
                   <th className="px-3 py-2">Email</th>
-                  <th className="px-3 py-2">Role</th>
-                  <th className="px-3 py-2">Auth</th>
+                  <th className="px-3 py-2">Vai trò</th>
+                  <th className="px-3 py-2">Đăng nhập</th>
                   <th className="px-3 py-2">Trạng thái</th>
                   <th className="px-3 py-2">Phân quyền</th>
                   <th className="px-3 py-2">Hành động</th>
@@ -138,7 +138,7 @@ export function AdminPortal({ dashboard, users, currentUser, flash }: { dashboar
                     <td className="rounded-l-xl px-3 py-3 font-semibold">{user.name}</td>
                     <td className="px-3 py-3">{user.email}</td>
                     <td className="px-3 py-3">{user.role}</td>
-                    <td className="px-3 py-3">{user.authLinked ? "Đã liên kết" : "Chờ Google login"}</td>
+                    <td className="px-3 py-3">{user.authLinked ? "Đã liên kết" : "Chờ đăng nhập Google"}</td>
                     <td className="px-3 py-3">{user.banned ? "Bị khóa" : "Hoạt động"}</td>
                     <td className="px-3 py-3">
                       <form action={assignRoleAction} className="flex gap-2">
@@ -153,7 +153,7 @@ export function AdminPortal({ dashboard, users, currentUser, flash }: { dashboar
                       <form action={user.banned ? unbanUserAction : banUserAction}>
                         <input name="userId" type="hidden" value={user.id} />
                         <ConfirmActionButton className="rounded-lg bg-[#9a4029] px-3 py-2 text-white" message={user.banned ? "Mở khóa tài khoản này?" : "Khóa tài khoản này?"} pendingLabel="Đang xử lý...">
-                          {user.banned ? "Unban" : "Ban"}
+                          {user.banned ? "Mở khóa" : "Khóa"}
                         </ConfirmActionButton>
                       </form>
                     </td>

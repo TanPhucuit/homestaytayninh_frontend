@@ -22,7 +22,7 @@ export default async function ArticlesPage() {
               <p className="mt-3 line-clamp-3 text-sm leading-6 text-[#56423d]">{article.excerpt}</p>
             </Link>
           )) : (
-            <EmptyState title="Chưa có bài viết" description="Staff sẽ xuất bản cẩm nang du lịch tại đây." />
+          <EmptyState title="Chưa có bài viết" description="Đội ngũ nội dung sẽ xuất bản cẩm nang du lịch tại đây." />
           )}
         </div>
       </section>

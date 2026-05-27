@@ -15,12 +15,12 @@ function normalizePaymentStatus(value?: string): PaymentStatus {
   return "PENDING";
 }
 
-function copyFor(status: PaymentStatus, isDemo: boolean) {
+function copyFor(status: PaymentStatus) {
   if (status === "PAID") {
     return {
       icon: "OK",
       tone: "bg-[#e8f0eb] text-[#466550]",
-      title: isDemo ? "Thanh toán demo thành công" : "Thanh toán thành công",
+      title: "Thanh toán thành công",
       description: "Đơn đặt phòng của bạn đã được ghi nhận. Bạn có thể xem chi tiết trong Chuyến đi của tôi."
     };
   }
@@ -29,30 +29,29 @@ function copyFor(status: PaymentStatus, isDemo: boolean) {
       icon: "!",
       tone: "bg-[#ffdad6] text-[#93000a]",
       title: "Thanh toán chưa hoàn tất",
-      description: "Giao dịch chưa hoàn tất hoặc đã hết hạn. Bạn có thể thử lại từ trang chi tiết booking."
+      description: "Giao dịch chưa hoàn tất hoặc đã hết hạn. Bạn có thể thử lại từ trang chi tiết đơn đặt."
     };
   }
   return {
     icon: "...",
     tone: "bg-[#fff3d6] text-[#7a4a12]",
-    title: isDemo ? "Thanh toán demo đang xử lý" : "Thanh toán đang xử lý",
+    title: "Thanh toán đang xử lý",
     description: "Trạng thái giao dịch đang chờ xác nhận. Vui lòng kiểm tra lại sau ít phút."
   };
 }
 
 export default async function PaymentResultPage({ searchParams }: { searchParams: Promise<{ status?: string; bookingId?: string; paymentError?: string; demo?: string }> }) {
   const params = await searchParams;
-  const isDemo = params.demo === "1";
   const user = params.bookingId ? await getCurrentUser() : null;
   if (params.bookingId && !user?.authenticated) {
-    return <AccessDenied description="Vui lòng đăng nhập để xem trạng thái thanh toán của booking." />;
+    return <AccessDenied description="Vui lòng đăng nhập để xem trạng thái thanh toán của đơn đặt." />;
   }
   if (user?.authorizationError) {
     return <AccessDenied description={user.authorizationError} />;
   }
-  const payment = params.bookingId && !isDemo ? await getPaymentStatus(params.bookingId, user?.role ?? "CUSTOMER") : null;
-  const status = params.paymentError ? "FAILED" : (isDemo ? normalizePaymentStatus(params.status) : (payment?.status ?? normalizePaymentStatus(params.status)));
-  const view = copyFor(status, isDemo);
+  const payment = params.bookingId ? await getPaymentStatus(params.bookingId, user?.role ?? "CUSTOMER") : null;
+  const status = params.paymentError ? "FAILED" : (payment?.status ?? normalizePaymentStatus(params.status));
+  const view = copyFor(status);
 
   return (
     <main className="flex min-h-screen items-center justify-center px-4 py-10 text-[#1c1c19]">
@@ -63,11 +62,6 @@ export default async function PaymentResultPage({ searchParams }: { searchParams
         <p className="eyebrow mt-8">Kết quả thanh toán</p>
         <h1 className="mt-3 font-heading text-4xl text-[#9a4029] md:text-5xl">{view.title}</h1>
         <p className="mx-auto mt-4 max-w-lg text-sm leading-6 text-[#75675f]">{view.description}</p>
-        {isDemo && (
-          <div className="mx-auto mt-5 max-w-md rounded-2xl bg-[#fff3d6] p-4 text-sm font-semibold text-[#7a4a12]">
-            Đây là kết quả mô phỏng để hoàn thiện quy trình đặt phòng. Chưa có giao dịch tiền thật.
-          </div>
-        )}
         {params.paymentError && (
           <div className="mx-auto mt-5 max-w-md rounded-2xl border border-[#ffdad6] bg-[#fff8f7] p-5 text-sm font-semibold text-[#93000a]">
             Không hoàn tất thanh toán: {params.paymentError}

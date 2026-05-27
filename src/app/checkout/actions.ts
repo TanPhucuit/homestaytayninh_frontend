@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { createBooking } from "@/lib/api";
+import { createBooking, initiatePayment } from "@/lib/api";
 import { actionErrorMessage } from "@/lib/action-errors";
 import { ApiClientError } from "@/lib/api-client";
 import { flashUrl } from "@/lib/flash";
@@ -15,31 +15,54 @@ function serviceItemsFromForm(formData: FormData) {
 
 function checkoutNextPath(formData: FormData) {
   const params = new URLSearchParams();
-  ["homestayId", "roomId", "guestName", "guestPhone", "guestCount", "checkIn", "checkOut"].forEach((key) => {
+  ["homestayId", "roomId", "guestName", "guestPhone", "guestEmail", "guestCount", "checkIn", "checkOut", "notes"].forEach((key) => {
     const value = String(formData.get(key) ?? "");
     if (value) params.set(key, value);
   });
   Array.from(formData.entries())
-    .filter(([key, value]) => key.startsWith("service:") && String(value))
+    .filter(([key, value]) => key.startsWith("service:") && Number(value) > 0)
     .forEach(([key, value]) => params.set(key, String(value)));
   const query = params.toString();
   return query ? `/checkout/confirm?${query}` : "/checkout";
 }
 
+function isValidPhone(value: string) {
+  return /^(?:\+?84|0)[0-9\s.-]{8,12}$/.test(value);
+}
+
+function isValidEmail(value: string) {
+  return !value || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
 export async function createCheckoutAction(formData: FormData) {
   const homestayId = String(formData.get("homestayId") ?? "");
+  const guestName = String(formData.get("guestName") ?? "").trim();
+  const guestPhone = String(formData.get("guestPhone") ?? "").trim();
+  const guestEmail = String(formData.get("guestEmail") ?? "").trim();
   let bookingId: string | undefined;
+  let checkoutUrl: string | undefined;
   let authRequired = false;
   let roleDenied = false;
   let createError: unknown;
+  let paymentError: unknown;
+
+  if (guestName.length < 2) {
+    redirect(flashUrl(checkoutNextPath(formData), "error", "Vui lòng nhập họ tên khách đặt phòng."));
+  }
+  if (!isValidPhone(guestPhone)) {
+    redirect(flashUrl(checkoutNextPath(formData), "error", "Số điện thoại chưa đúng định dạng."));
+  }
+  if (!isValidEmail(guestEmail)) {
+    redirect(flashUrl(checkoutNextPath(formData), "error", "Email chưa đúng định dạng."));
+  }
 
   try {
     const booking = await createBooking(
       {
         homestayId,
         roomId: String(formData.get("roomId") ?? ""),
-        guestName: String(formData.get("guestName") ?? "").trim(),
-        guestPhone: String(formData.get("guestPhone") ?? "").trim(),
+        guestName,
+        guestPhone,
         guestCount: Math.max(1, Number(formData.get("guestCount") ?? 1)),
         checkIn: String(formData.get("checkIn") ?? ""),
         checkOut: String(formData.get("checkOut") ?? ""),
@@ -48,13 +71,17 @@ export async function createCheckoutAction(formData: FormData) {
       "CUSTOMER"
     );
     bookingId = booking.id;
+    const payment = await initiatePayment(booking.id, "CUSTOMER");
+    checkoutUrl = payment.checkoutUrl;
   } catch (error) {
     if (error instanceof ApiClientError && error.status === 401) {
       authRequired = true;
     } else if (error instanceof ApiClientError && error.status === 403) {
       roleDenied = true;
-    } else {
+    } else if (!bookingId) {
       createError = error;
+    } else {
+      paymentError = error;
     }
   }
 
@@ -70,6 +97,12 @@ export async function createCheckoutAction(formData: FormData) {
   if (!bookingId) {
     redirect(flashUrl(checkoutNextPath(formData), "error", "Booking chưa được tạo. Vui lòng thử lại."));
   }
+  if (paymentError) {
+    redirect(`/payment/result?bookingId=${bookingId}&status=failed&paymentError=${encodeURIComponent(actionErrorMessage(paymentError))}`);
+  }
+  if (checkoutUrl) {
+    redirect(checkoutUrl);
+  }
 
-  redirect(`/payment/result?bookingId=${bookingId}&status=paid&demo=1`);
+  redirect(`/payment/result?bookingId=${bookingId}&status=pending`);
 }

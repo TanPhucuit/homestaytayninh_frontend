@@ -22,13 +22,13 @@ Example:
 NEXT_PUBLIC_API_URL="https://homestaytayninh-backend.onrender.com"
 GOOGLE_CLIENT_ID="<google-oauth-client-id>"
 GOOGLE_CLIENT_SECRET="<google-oauth-client-secret>"
-GOOGLE_REDIRECT_URI="https://<your-vercel-domain>/auth/callback"
+GOOGLE_REDIRECT_URI="https://homestaytayninh-frontend.vercel.app/auth/callback"
 ```
 
 Allow this callback URL in Google Cloud OAuth:
 
 ```text
-https://<your-vercel-domain>/auth/callback
+https://homestaytayninh-frontend.vercel.app/auth/callback
 ```
 
 The web app stores only the backend-issued `htn_session` HTTP-only cookie and forwards it as a bearer token to NestJS server-side API calls.

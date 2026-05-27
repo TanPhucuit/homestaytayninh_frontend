@@ -1,6 +1,5 @@
 import { PageSkeleton } from "@/components/feedback-state";
 
 export default function Loading() {
-  return <PageSkeleton title="Đang tải checkout" rows={4} />;
+  return <PageSkeleton title="Đang tải thông tin đặt phòng" rows={4} variant="detail" />;
 }
-

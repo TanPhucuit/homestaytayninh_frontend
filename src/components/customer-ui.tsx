@@ -138,13 +138,17 @@ export function HomestayCard({ homestay, href }: { homestay: Homestay; href?: st
       <div className="image-shell relative aspect-[16/10] bg-cover bg-center" style={{ backgroundImage: `url(${homestay.imageUrl})` }}>
         <div className="absolute inset-0 bg-gradient-to-t from-[#1c1c19]/55 via-transparent to-transparent" />
         <div className="absolute left-4 top-4 rounded-full bg-[#fdf9f4]/92 px-3 py-1 text-xs font-bold uppercase text-[#466550]">{homestay.type}</div>
-        <div className="absolute right-4 top-4 grid size-10 place-items-center rounded-full bg-white/92 text-[#9a4029] shadow-sm" aria-label="Lưu homestay">♡</div>
+        <button className="absolute right-4 top-4 grid size-10 place-items-center rounded-full bg-white/92 text-xl text-[#9a4029] shadow-sm transition hover:bg-white" type="button" aria-label="Lưu homestay">
+          ♡
+        </button>
         <div className="absolute bottom-4 right-4 rounded-full bg-white/92 px-3 py-1 text-sm font-bold text-[#466550]">★ {homestay.rating}</div>
       </div>
       <div className="p-5">
         <h2 className="font-heading text-2xl text-[#7b2914]">{homestay.name}</h2>
+        <p className="mt-1 text-sm font-semibold text-[#89726c]">{homestay.location}</p>
         <p className="mt-2 line-clamp-2 text-sm leading-6 text-[#56423d]">{homestay.description}</p>
         <div className="mt-4 flex flex-wrap gap-2">
+          <span className="rounded-full bg-[#e8f0eb] px-3 py-1 text-xs font-semibold text-[#466550]">Tối đa {homestay.capacity} khách</span>
           {homestay.amenities.slice(0, 4).map((amenity) => (
             <span className="rounded-full bg-[#ffdad2] px-3 py-1 text-xs font-semibold text-[#7b2914]" key={amenity}>{amenity}</span>
           ))}
@@ -181,7 +185,7 @@ export function BookingCard({ booking, homestay }: { booking: Booking; homestay?
           <p className="text-2xl font-bold text-[#466550]">{money(booking.grandTotal)}</p>
         </div>
       </div>
-      <div className="mt-5 flex flex-wrap gap-2">
+      <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
         <a className="btn-primary" href={`/bookings/${booking.id}`}>Xem chi tiết</a>
         {(booking.payment?.status === "INITIATED" || booking.payment?.status === "PENDING" || booking.payment?.status === "FAILED") && (
           <a className="btn-secondary" href={`/payment/result?bookingId=${booking.id}`}>Kiểm tra thanh toán</a>

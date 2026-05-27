@@ -19,7 +19,7 @@ export default async function OwnerPage({ searchParams }: { searchParams: Promis
   }
 
   if (!canAccess(user.role, [...allowed])) {
-    return <AccessDenied description="Owner Portal chỉ dành cho Owner, Owner Staff hoặc Admin." />;
+    return <AccessDenied description="Khu vực vận hành homestay chỉ dành cho Owner, Owner Staff hoặc Admin." />;
   }
 
   const bookings = await getOwnerBookings(user.role);
@@ -29,7 +29,7 @@ export default async function OwnerPage({ searchParams }: { searchParams: Promis
   const canOperateBooking = user.role === "OWNER_STAFF" || user.role === "ADMIN";
 
   return (
-    <OwnerShell title="Dashboard vận hành homestay" description="Theo dõi booking, check-in/check-out và truy cập nhanh các nghiệp vụ owner." flash={flash}>
+    <OwnerShell title="Bảng điều khiển vận hành homestay" description="Theo dõi booking, check-in/check-out và truy cập nhanh các nghiệp vụ của chủ homestay." flash={flash}>
       <div className="mb-6 flex flex-wrap gap-3">
         {canManageInventory && <a className="btn-primary" href="/owner/manage">Quản lý homestay/phòng/dịch vụ</a>}
         {canOperateBooking && <a className="btn-secondary" href="/owner/proxy-booking">Đặt hộ khách hàng</a>}

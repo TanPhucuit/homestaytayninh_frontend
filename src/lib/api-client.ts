@@ -34,7 +34,7 @@ async function authHeaders(): Promise<HeadersInit> {
 
 async function apiFetch<T>(path: string, _role: UserRole, init?: NextRequestInit): Promise<T> {
   if (!API_URL) {
-    throw new ApiClientError("NEXT_PUBLIC_API_URL is not configured.", undefined, path);
+    throw new ApiClientError("Hệ thống chưa sẵn sàng. Vui lòng thử lại sau.", undefined, path);
   }
 
   const headers = new Headers(init?.headers);
@@ -57,7 +57,7 @@ async function apiFetch<T>(path: string, _role: UserRole, init?: NextRequestInit
 
   if (!response.ok) {
     const envelope = payload as ApiEnvelope<unknown>;
-    throw new ApiClientError(envelope?.error ?? envelope?.message ?? `API request failed with ${response.status}`, response.status, path);
+    throw new ApiClientError(envelope?.error ?? envelope?.message ?? "Không thể tiếp tục, vui lòng thử lại.", response.status, path);
   }
 
   return unwrapResponse<T>(payload);
