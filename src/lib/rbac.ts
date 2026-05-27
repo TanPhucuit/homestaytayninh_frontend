@@ -123,6 +123,7 @@ export function navForRole(role: UserRole): NavItem[] {
     ADMIN: [
       { label: "Tổng quan", href: "/admin" },
       { label: "Vận hành chủ nhà", href: "/owner" },
+      { label: "Quản lý homestay", href: "/owner/manage" },
       { label: "Nội dung & kiểm duyệt", href: "/staff" }
     ]
   };

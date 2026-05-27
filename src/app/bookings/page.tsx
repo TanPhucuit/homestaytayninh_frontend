@@ -25,6 +25,9 @@ export default async function BookingsPage({ searchParams }: { searchParams: Pro
   if (user.authorizationError) {
     return <AccessDenied description={user.authorizationError} />;
   }
+  if (user.role !== "CUSTOMER") {
+    return <AccessDenied description="Chuyến đi của tôi chỉ dành cho tài khoản khách hàng. Vui lòng dùng khu vực vận hành theo vai trò của bạn." />;
+  }
 
   const [bookings, homestays] = await Promise.all([getBookings(user.role), getHomestays("CUSTOMER")]);
   const homestayById = new Map(homestays.map((homestay) => [homestay.id, homestay]));

@@ -50,9 +50,10 @@ export function AdminPortal({ dashboard, users, currentUser, flash }: { dashboar
           </div>
         </header>
 
-        <nav className="grid gap-3 md:grid-cols-4">
+        <nav className="grid gap-3 md:grid-cols-5">
           <a className="card border-2 border-[#9a4029] p-4 font-bold text-[#9a4029]" href="/admin">Tổng quan quản trị</a>
           <a className="card p-4 font-bold text-[#466550]" href="/owner">Vận hành booking</a>
+          <a className="card p-4 font-bold text-[#466550]" href="/owner/manage">Quản lý homestay</a>
           <a className="card p-4 font-bold text-[#466550]" href="/staff">CMS nội dung</a>
           <a className="card p-4 font-bold text-[#466550]" href="/staff/moderation">Báo cáo vi phạm</a>
         </nav>

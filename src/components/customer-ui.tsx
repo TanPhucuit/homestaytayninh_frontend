@@ -74,6 +74,43 @@ export async function AppTopBar() {
   );
 }
 
+async function PageQuickLinks() {
+  const user = await getCurrentUser();
+  if (user.authenticated && !user.authorizationError) {
+    const roleLinks: Record<string, Array<{ label: string; href: string }>> = {
+      CUSTOMER: [
+        { label: "Trang chủ", href: "/" },
+        { label: "Tìm homestay", href: "/homestays" },
+        { label: "Booking của tôi", href: "/bookings" }
+      ],
+      OWNER: [
+        { label: "Dashboard chủ nhà", href: "/owner" },
+        { label: "Quản lý homestay", href: "/owner/manage" }
+      ],
+      OWNER_STAFF: [
+        { label: "Booking vận hành", href: "/owner" },
+        { label: "Đặt hộ khách", href: "/owner/proxy-booking" }
+      ],
+      STAFF: [
+        { label: "CMS nội dung", href: "/staff" },
+        { label: "Kiểm soát người dùng", href: "/staff/moderation" }
+      ],
+      ADMIN: [
+        { label: "Tổng quan Admin", href: "/admin" },
+        { label: "Quản lý homestay", href: "/owner/manage" },
+        { label: "Vận hành booking", href: "/owner" }
+      ]
+    };
+    return roleLinks[user.role].map((item) => <Link className="btn-secondary" href={item.href} key={item.href}>{item.label}</Link>);
+  }
+  return (
+    <>
+      <Link className="btn-secondary" href="/">Trang chủ</Link>
+      <Link className="btn-secondary" href="/homestays">Tìm homestay</Link>
+    </>
+  );
+}
+
 export function PageShell({ eyebrow, title, description, children }: { eyebrow: string; title: string; description?: string; children: ReactNode }) {
   return (
     <main className="min-h-screen text-[#1c1c19]">
@@ -87,9 +124,7 @@ export function PageShell({ eyebrow, title, description, children }: { eyebrow: 
               {description && <p className="mt-3 max-w-3xl text-base leading-7 text-[#56423d]">{description}</p>}
             </div>
             <div className="flex flex-wrap gap-2">
-              <Link className="btn-secondary" href="/">Trang chủ</Link>
-              <Link className="btn-secondary" href="/homestays">Tìm homestay</Link>
-              <Link className="btn-secondary" href="/bookings">Booking của tôi</Link>
+              <PageQuickLinks />
             </div>
           </div>
         </header>

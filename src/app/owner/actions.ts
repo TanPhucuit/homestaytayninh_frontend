@@ -9,6 +9,7 @@ import {
   createOwnerRoomRate,
   createOwnerService,
   createProxyBooking,
+  deleteOwnerHomestay,
   updateOwnerBookingStatus,
   updateOwnerHomestay,
   updateOwnerRoom,
@@ -49,7 +50,8 @@ export async function createHomestayAction(formData: FormData) {
         description: text(formData, "description"),
         priceFrom: Number(formData.get("priceFrom") ?? 500000),
         capacity: Number(formData.get("capacity") ?? 2),
-        imageUrl: text(formData, "imageUrl")
+        imageUrl: text(formData, "imageUrl"),
+        ownerId: text(formData, "ownerId") || undefined
       },
       "OWNER"
     );
@@ -122,6 +124,19 @@ export async function updateHomestayAction(formData: FormData) {
     ownerError("/owner/manage", error);
   }
   redirect(flashUrl("/owner/manage", "success", "Đã lưu homestay."));
+}
+
+export async function deleteHomestayAction(formData: FormData) {
+  try {
+    const homestayId = text(formData, "homestayId");
+    if (!homestayId) throw new Error("Thiếu homestay để xóa.");
+    await deleteOwnerHomestay(homestayId, "OWNER");
+    revalidatePath("/owner/manage");
+    revalidatePath("/homestays");
+  } catch (error) {
+    ownerError("/owner/manage", error);
+  }
+  redirect(flashUrl("/owner/manage", "success", "Đã xóa homestay khỏi danh sách bán."));
 }
 
 export async function updateRoomAction(formData: FormData) {

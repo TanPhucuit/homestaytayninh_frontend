@@ -1,7 +1,7 @@
 import { AccessDenied } from "@/components/access-denied";
 import { ActionButton } from "@/components/action-button";
 import { OwnerInventory, OwnerShell } from "@/components/owner-ui";
-import { getOwnerHomestays } from "@/lib/api";
+import { getOwnerHomestays, getUsers } from "@/lib/api";
 import { flashFromSearchParams, FlashSearchParams } from "@/lib/flash";
 import { canAccess, getCurrentUser } from "@/lib/rbac";
 import { createHomestayAction, createRoomAction, createServiceAction } from "../actions";
@@ -19,6 +19,7 @@ export default async function OwnerManagePage({ searchParams }: { searchParams: 
   }
 
   const homestays = await getOwnerHomestays(user.role === "ADMIN" ? "ADMIN" : "OWNER");
+  const ownerUsers = user.role === "ADMIN" ? (await getUsers("ADMIN")).filter((item) => item.role === "OWNER" && !item.banned) : [];
   const firstHomestay = homestays[0];
 
   return (
@@ -39,6 +40,12 @@ export default async function OwnerManagePage({ searchParams }: { searchParams: 
             <input className="field" name="priceFrom" type="number" min="0" placeholder="Giá từ" required />
             <input className="field" name="capacity" type="number" min="1" placeholder="Sức chứa" required />
             <input className="field" name="imageUrl" type="url" placeholder="URL hình ảnh chính" required />
+            {user.role === "ADMIN" && (
+              <select className="field" name="ownerId" required defaultValue={ownerUsers[0]?.id ?? ""}>
+                <option value="" disabled>Chọn chủ homestay</option>
+                {ownerUsers.map((owner) => <option key={owner.id} value={owner.id}>{owner.name} · {owner.email}</option>)}
+              </select>
+            )}
             <ActionButton pendingLabel="Đang tạo...">Tạo homestay</ActionButton>
           </div>
         </form>

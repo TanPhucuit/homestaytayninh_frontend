@@ -6,7 +6,7 @@ import { FlashMessage } from "./feedback-state";
 import { Booking, Homestay } from "@/lib/types";
 import { money } from "@/lib/api";
 import { FlashState } from "@/lib/flash";
-import { createImageAction, createRoomRateAction, updateHomestayAction, updateRoomAction, updateServiceAction } from "@/app/owner/actions";
+import { createImageAction, createRoomRateAction, deleteHomestayAction, updateHomestayAction, updateRoomAction, updateServiceAction } from "@/app/owner/actions";
 
 export function OwnerShell({ title, description, flash, children }: { title: string; description: string; flash?: FlashState | null; children: ReactNode }) {
   return (
@@ -104,6 +104,18 @@ export function OwnerInventory({ homestays }: { homestays: Homestay[] }) {
               <p className="mt-2 text-sm text-[#75675f]">{homestay.location} · {money(homestay.priceFrom)} · {homestay.capacity} khách</p>
             </div>
             <div className="h-28 w-full rounded-2xl bg-[#efe7dc] bg-cover bg-center md:w-44" style={{ backgroundImage: `url(${homestay.imageUrl})` }} aria-label={homestay.name} />
+          </div>
+          <div className="mt-4 flex flex-col gap-3 rounded-2xl border border-[#ffdad6] bg-[#fff8f7] p-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="font-bold text-[#93000a]">Xóa homestay</p>
+              <p className="mt-1 text-sm text-[#75675f]">Homestay sẽ bị ẩn khỏi danh sách bán và khách không thể đặt mới.</p>
+            </div>
+            <form action={deleteHomestayAction}>
+              <input type="hidden" name="homestayId" value={homestay.id} />
+              <ConfirmActionButton className="btn-secondary border-[#93000a]/35 text-[#93000a]" message="Xóa homestay này khỏi danh sách bán? Thao tác này sẽ ẩn homestay khỏi trang khách hàng và không cho đặt mới." pendingLabel="Đang xóa...">
+                Xóa homestay
+              </ConfirmActionButton>
+            </form>
           </div>
           <form action={updateHomestayAction} className="mt-5 grid gap-3 rounded-2xl bg-[#fdf9f4] p-4 md:grid-cols-2">
             <input type="hidden" name="homestayId" value={homestay.id} />
