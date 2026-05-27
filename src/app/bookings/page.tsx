@@ -32,6 +32,7 @@ export default async function BookingsPage({ searchParams }: { searchParams: Pro
   const activeGroup = isBookingGroup(params.statusGroup) ? params.statusGroup : defaultGroup;
   const counts = new Map<BookingGroup, number>(groups.map((group) => [group, bookings.filter((booking) => statusGroup(booking.status) === group).length]));
   const activeBookings = bookings.filter((booking) => statusGroup(booking.status) === activeGroup);
+  const firstAvailableGroup = groups.find((group) => group !== activeGroup && (counts.get(group) ?? 0) > 0);
 
   return (
     <main className="min-h-screen text-[#1c1c19]">
@@ -112,7 +113,17 @@ export default async function BookingsPage({ searchParams }: { searchParams: Pro
                   </article>
                 );
               }) : (
-                <div className="rounded-2xl border border-dashed border-[#dcc0ba] bg-white/70 p-8 text-[#75675f]">Chưa có đơn đặt trong nhóm này.</div>
+                <div className="rounded-2xl border border-dashed border-[#dcc0ba] bg-white/70 p-8 text-center text-[#75675f]">
+                  <p className="font-semibold">Chưa có đơn đặt trong nhóm này.</p>
+                  <div className="mt-5 flex flex-col justify-center gap-3 sm:flex-row">
+                    {firstAvailableGroup && (
+                      <Link className="btn-secondary" href={`/bookings?statusGroup=${encodeURIComponent(firstAvailableGroup)}`}>
+                        Xem nhóm {firstAvailableGroup}
+                      </Link>
+                    )}
+                    <Link className="btn-primary" href="/homestays">Đặt thêm chuyến đi</Link>
+                  </div>
+                </div>
               )}
             </div>
           </section>

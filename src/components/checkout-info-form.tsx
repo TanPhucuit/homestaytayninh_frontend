@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { Homestay, Room } from "@/lib/types";
+import { ActionButton } from "./action-button";
 
 type CheckoutInfoFormProps = {
   homestay: Homestay;
@@ -176,7 +177,9 @@ export function CheckoutInfoForm({ homestay, room, defaultCheckIn, defaultCheckO
           <div className="flex justify-between gap-4"><span className="text-[#75675f]">Dịch vụ</span><span>Chọn ở bước sau</span></div>
           <div className="flex justify-between gap-4"><span className="text-[#75675f]">Thuế/phí</span><span>Hiển thị ở bước xác nhận</span></div>
         </div>
-        <button className="btn-primary mt-6 w-full" type="submit">Tiếp tục chọn dịch vụ</button>
+        <ActionButton className="btn-primary mt-6 w-full" pendingLabel="Đang chuyển sang dịch vụ...">
+          Tiếp tục chọn dịch vụ
+        </ActionButton>
         <p className="mt-4 text-center text-xs text-[#75675f]">Thông tin đặt phòng được giữ xuyên suốt các bước.</p>
       </aside>
     </form>

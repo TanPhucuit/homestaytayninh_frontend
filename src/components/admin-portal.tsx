@@ -120,6 +120,9 @@ export function AdminPortal({ dashboard, users, currentUser, flash }: { dashboar
             <p className="text-sm text-[#466550]">Admin, Staff, Owner, Owner Staff, Customer</p>
           </div>
           <div className="mt-5 overflow-x-auto">
+            <div className="sticky left-0 mb-3 w-fit rounded-full bg-[#e8f0eb] px-4 py-2 text-xs font-bold text-[#466550] md:hidden">
+              Vuốt ngang để xem đầy đủ phân quyền và hành động
+            </div>
             <table className="w-full min-w-[860px] border-separate border-spacing-y-2 text-left text-sm">
               <thead className="text-[#466550]">
                 <tr>
@@ -146,13 +149,13 @@ export function AdminPortal({ dashboard, users, currentUser, flash }: { dashboar
                         <select className="rounded-lg border border-[#eadfd4] px-2 py-2" name="role" defaultValue={user.role}>
                           {roles.map((role) => <option key={role}>{role}</option>)}
                         </select>
-                        <ConfirmActionButton className="rounded-lg border border-[#466550] px-3 py-2 text-[#466550]" message="Xác nhận thay đổi vai trò tài khoản này?" pendingLabel="Đang lưu...">Lưu</ConfirmActionButton>
+                        <ConfirmActionButton className="rounded-lg border border-[#466550] px-3 py-2 text-[#466550]" message="Xác nhận thay đổi vai trò? Người dùng sẽ thấy menu và quyền truy cập mới trong lần tải trang tiếp theo." pendingLabel="Đang lưu...">Lưu</ConfirmActionButton>
                       </form>
                     </td>
                     <td className="rounded-r-xl px-3 py-3">
                       <form action={user.banned ? unbanUserAction : banUserAction}>
                         <input name="userId" type="hidden" value={user.id} />
-                        <ConfirmActionButton className="rounded-lg bg-[#9a4029] px-3 py-2 text-white" message={user.banned ? "Mở khóa tài khoản này?" : "Khóa tài khoản này?"} pendingLabel="Đang xử lý...">
+                        <ConfirmActionButton className="rounded-lg bg-[#9a4029] px-3 py-2 text-white" message={user.banned ? "Mở khóa tài khoản này để người dùng có thể đăng nhập và thao tác lại?" : "Khóa tài khoản này? Người dùng sẽ không thể tiếp tục thao tác trong hệ thống."} pendingLabel="Đang xử lý...">
                           {user.banned ? "Mở khóa" : "Khóa"}
                         </ConfirmActionButton>
                       </form>

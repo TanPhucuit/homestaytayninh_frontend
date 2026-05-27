@@ -24,11 +24,14 @@ test.describe("Homestay Tây Ninh production smoke", () => {
   test("customer search, detail and checkout steps are usable", async ({ page }) => {
     await page.goto(`${baseURL}/homestays`);
     await page.locator('input[name="guests"]').fill("2");
-    await page.getByRole("button", { name: "Áp dụng bộ lọc" }).click();
+    await page.getByRole("button", { name: /Áp dụng|Tìm kiếm/ }).first().click();
     await expect(page.getByRole("link", { name: "Xem chi tiết" }).first()).toBeVisible();
     await page.getByRole("link", { name: "Xem chi tiết" }).first().click();
-    await expect(page.getByRole("link", { name: "Tiếp tục đặt phòng" })).toBeVisible();
-    await page.getByRole("link", { name: "Tiếp tục đặt phòng" }).click();
+    await expect(page.getByRole("link", { name: /Chọn phòng|Tiếp tục đặt phòng/ }).first()).toBeVisible();
+    await page.getByRole("link", { name: /Chọn phòng|Tiếp tục đặt phòng/ }).first().click();
+    if (!page.url().includes("/checkout")) {
+      await page.locator('a[href^="/checkout"]').first().click();
+    }
     await expect(page.getByRole("heading", { name: "Hoàn tất đặt phòng" })).toBeVisible();
     await page.getByPlaceholder("Nguyễn Văn A").fill("Nguyễn Test");
     await page.getByPlaceholder("0901234567").fill("0901234567");

@@ -86,8 +86,18 @@ export default async function PaymentResultPage({ searchParams }: { searchParams
           </div>
         )}
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-          <Link className="btn-primary" href="/bookings">Về chuyến đi của tôi</Link>
-          {params.bookingId && <Link className="btn-secondary" href={`/bookings/${params.bookingId}`}>Xem chi tiết đơn</Link>}
+          {params.bookingId && status === "PENDING" && (
+            <Link className="btn-primary" href={`/payment/result?bookingId=${params.bookingId}&status=pending`}>
+              Kiểm tra lại trạng thái
+            </Link>
+          )}
+          {params.bookingId && (status === "FAILED" || status === "CANCELLED") && (
+            <Link className="btn-primary" href={`/bookings/${params.bookingId}`}>
+              Thử thanh toán lại
+            </Link>
+          )}
+          <Link className={params.bookingId && status !== "PAID" ? "btn-secondary" : "btn-primary"} href="/bookings">Về chuyến đi của tôi</Link>
+          {params.bookingId && status !== "FAILED" && status !== "CANCELLED" && <Link className="btn-secondary" href={`/bookings/${params.bookingId}`}>Xem chi tiết đơn</Link>}
           {!params.bookingId && <Link className="btn-secondary" href="/homestays">Tiếp tục khám phá</Link>}
         </div>
       </section>

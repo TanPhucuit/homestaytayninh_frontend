@@ -74,23 +74,6 @@ export default async function BookingDetailPage({ params, searchParams }: { para
             </section>
           )}
 
-          {canAddService && (
-            <form action={addServiceAction} className="card p-6">
-              <input type="hidden" name="bookingId" value={booking.id} />
-              <h2 className="font-heading text-2xl text-[#9a4029]">Thêm dịch vụ khi khách đang lưu trú</h2>
-              <p className="mt-2 text-sm text-[#75675f]">Nhân viên homestay ghi nhận dịch vụ phát sinh và cộng vào hóa đơn của đơn đặt.</p>
-              <div className="mt-4 grid gap-3 md:grid-cols-[1fr_120px_160px]">
-                <select className="field" name="serviceId" required>
-                  {homestay.services.map((service) => (
-                    <option key={service.id} value={service.id}>{service.name} · {money(service.unitPrice)}</option>
-                  ))}
-                </select>
-                <input className="field" name="quantity" type="number" min="1" defaultValue="1" />
-                <ActionButton pendingLabel="Đang thêm...">Thêm dịch vụ</ActionButton>
-              </div>
-            </form>
-          )}
-
           {user.role === "CUSTOMER" && booking.status === "IN_STAY" && (
             <section className="card p-6">
               <h2 className="font-heading text-2xl text-[#9a4029]">Cần thêm dịch vụ?</h2>
@@ -103,6 +86,22 @@ export default async function BookingDetailPage({ params, searchParams }: { para
 
         <aside className="space-y-6">
           <BookingTotals booking={booking} />
+          {canAddService && (
+            <form action={addServiceAction} className="card p-6">
+              <input type="hidden" name="bookingId" value={booking.id} />
+              <h2 className="font-heading text-2xl text-[#9a4029]">Thêm dịch vụ</h2>
+              <p className="mt-2 text-sm text-[#75675f]">Ghi nhận dịch vụ phát sinh khi khách đang lưu trú.</p>
+              <div className="mt-4 grid gap-3">
+                <select className="field" name="serviceId" required>
+                  {homestay.services.map((service) => (
+                    <option key={service.id} value={service.id}>{service.name} · {money(service.unitPrice)}</option>
+                  ))}
+                </select>
+                <input className="field" name="quantity" type="number" min="1" defaultValue="1" aria-label="Số lượng dịch vụ" />
+                <ActionButton className="btn-primary w-full" pendingLabel="Đang thêm...">Thêm vào hóa đơn</ActionButton>
+              </div>
+            </form>
+          )}
           <section className="card p-6">
             <h2 className="font-heading text-2xl text-[#9a4029]">Thanh toán</h2>
             <p className="mt-3 text-sm text-[#75675f]">Số tiền: {money(booking.payment?.amount ?? booking.grandTotal)}</p>

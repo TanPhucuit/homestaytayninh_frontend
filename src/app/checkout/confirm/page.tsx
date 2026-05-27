@@ -100,7 +100,7 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
                   Sau khi bấm thanh toán, bạn sẽ được chuyển sang trang thanh toán của ApiPay để hoàn tất giao dịch.
                 </div>
                 <label className="flex items-start gap-3 rounded-2xl bg-[#fdf9f4] p-4">
-                  <input className="mt-1 size-4 accent-[#9a4029]" type="checkbox" defaultChecked />
+                  <input className="mt-1 size-4 accent-[#9a4029]" name="termsAccepted" type="checkbox" required />
                   <span>Tôi đồng ý với chính sách hủy phòng, điều khoản sử dụng dịch vụ và xác nhận thông tin đặt phòng là chính xác.</span>
                 </label>
               </div>

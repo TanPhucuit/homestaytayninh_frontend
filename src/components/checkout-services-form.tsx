@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { ActionButton } from "./action-button";
 import { CheckoutPreview, Service } from "@/lib/types";
 
 type CheckoutServicesFormProps = {
@@ -110,7 +111,9 @@ export function CheckoutServicesForm({ preview, preservedEntries, backHref }: Ch
             <p className="mt-1 text-xs text-[#75675f]">Tổng tiền tự cập nhật khi chọn dịch vụ.</p>
           </div>
         </div>
-        <button className="btn-primary mt-6 w-full" type="submit">Tiếp tục xác nhận</button>
+        <ActionButton className="btn-primary mt-6 w-full" pendingLabel="Đang cập nhật tóm tắt...">
+          Tiếp tục xác nhận
+        </ActionButton>
         <Link className="btn-secondary mt-3 w-full" href={backHref}>Quay lại</Link>
       </aside>
     </form>

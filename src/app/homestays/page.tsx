@@ -68,11 +68,9 @@ export default async function HomestaysPage({ searchParams }: { searchParams: Pr
                   )) : <span className="rounded-full bg-[#f1ede8] px-3 py-1 text-xs font-bold text-[#75675f]">Chưa áp dụng bộ lọc</span>}
                 </div>
               </div>
-              <select className="field w-full md:w-56" defaultValue="recommended" aria-label="Sắp xếp">
-                <option value="recommended">Gợi ý phù hợp</option>
-                <option value="rating">Rating cao</option>
-                <option value="price">Giá tốt</option>
-              </select>
+              <span className="rounded-full bg-[#fdf9f4] px-4 py-2 text-sm font-bold text-[#466550]">
+                Sắp xếp: Gợi ý phù hợp
+              </span>
             </div>
 
             {visibleHomestays.length ? (

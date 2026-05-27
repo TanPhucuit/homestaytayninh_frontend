@@ -53,6 +53,11 @@ export function OwnerBookingOps({ bookings, homestays, action }: { bookings: Boo
     CONFIRMED: [{ label: "Check-in", status: "IN_STAY" }, { label: "Hủy", status: "CANCELLED" }],
     IN_STAY: [{ label: "Check-out", status: "COMPLETED" }]
   };
+  const confirmMessages: Partial<Record<Booking["status"], string>> = {
+    CONFIRMED: "Xác nhận booking này? Sau khi xác nhận, khách sẽ thấy đơn ở nhóm sắp tới.",
+    COMPLETED: "Xác nhận check-out và chuyển booking sang đã hoàn thành?",
+    CANCELLED: "Xác nhận hủy hoặc từ chối booking này?"
+  };
   const actionableBookings = bookings.filter((booking) => nextActions[booking.status]?.length);
 
   return (
@@ -70,8 +75,8 @@ export function OwnerBookingOps({ bookings, homestays, action }: { bookings: Boo
                 <form action={action} key={item.status}>
                   <input type="hidden" name="bookingId" value={booking.id} />
                   <input type="hidden" name="status" value={item.status} />
-                  {item.status === "CANCELLED" ? (
-                    <ConfirmActionButton className="btn-secondary" message="Xác nhận hủy hoặc từ chối booking này?" pendingLabel="Đang cập nhật...">{item.label}</ConfirmActionButton>
+                  {confirmMessages[item.status] ? (
+                    <ConfirmActionButton className={item.status === "CANCELLED" ? "btn-secondary" : "btn-primary"} message={confirmMessages[item.status] ?? ""} pendingLabel="Đang cập nhật...">{item.label}</ConfirmActionButton>
                   ) : (
                     <ActionButton className="btn-primary" pendingLabel="Đang cập nhật...">{item.label}</ActionButton>
                   )}

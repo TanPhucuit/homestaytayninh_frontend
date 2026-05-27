@@ -138,6 +138,9 @@ export default async function HomestayDetailPage({ params, searchParams }: { par
   const roomTotal = pricePerNight * nights;
   const taxTotal = Math.round(roomTotal * 0.1);
   const grandTotal = roomTotal + taxTotal;
+  const hasMultipleRooms = rooms.length > 1;
+  const primaryCtaHref = hasMultipleRooms || !mainRoom ? "#rooms" : checkoutHref(homestay.id, mainRoom.id, filters);
+  const primaryCtaLabel = hasMultipleRooms || !mainRoom ? "Chọn phòng" : "Đặt phòng";
 
   return (
     <main className="min-h-screen pb-24 text-[#1c1c19] lg:pb-0">
@@ -156,7 +159,7 @@ export default async function HomestayDetailPage({ params, searchParams }: { par
           </div>
           <div className="flex flex-wrap gap-2">
             <a className="btn-secondary" href={mapHref} rel="noreferrer" target="_blank">Xem bản đồ</a>
-            {mainRoom && <Link className="btn-primary" href={checkoutHref(homestay.id, mainRoom.id, filters)}>Đặt phòng</Link>}
+            <a className="btn-primary" href={primaryCtaHref}>{primaryCtaLabel}</a>
           </div>
         </div>
 
@@ -324,8 +327,10 @@ export default async function HomestayDetailPage({ params, searchParams }: { par
             <span className="font-heading text-2xl font-bold text-[#1c1c19]">Tổng tiền</span>
             <strong className="font-heading text-2xl text-[#9a4029]">{money(grandTotal)}</strong>
           </div>
-          {mainRoom && <Link className="btn-primary mt-6 w-full" href={checkoutHref(homestay.id, mainRoom.id, filters)}>Tiếp tục đặt phòng</Link>}
-          <p className="mt-4 text-center text-xs text-[#75675f]">Bạn vẫn chưa bị trừ tiền</p>
+          <a className="btn-primary mt-6 w-full" href={primaryCtaHref}>{hasMultipleRooms ? "Chọn phòng để đặt" : "Tiếp tục đặt phòng"}</a>
+          <p className="mt-4 text-center text-xs text-[#75675f]">
+            {hasMultipleRooms ? "Chọn đúng phòng trước khi sang checkout." : "Bạn vẫn chưa bị trừ tiền"}
+          </p>
         </aside>
       </section>
 
@@ -333,10 +338,10 @@ export default async function HomestayDetailPage({ params, searchParams }: { par
         <div className="fixed inset-x-0 bottom-0 z-30 border-t border-[#dcc0ba] bg-[#fdf9f4]/95 p-3 shadow-[0_-12px_40px_rgba(123,41,20,0.12)] backdrop-blur lg:hidden">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-3">
             <div>
-              <p className="text-xs font-bold text-[#75675f]">{nights} đêm · gồm thuế/phí nếu có</p>
+              <p className="text-xs font-bold text-[#75675f]">{hasMultipleRooms ? "Chọn phòng phù hợp" : `${nights} đêm · gồm thuế/phí nếu có`}</p>
               <p className="font-bold text-[#466550]">{money(grandTotal)}</p>
             </div>
-            <Link className="btn-primary px-5 py-3" href={checkoutHref(homestay.id, mainRoom.id, filters)}>Tiếp tục đặt phòng</Link>
+            <a className="btn-primary px-5 py-3" href={primaryCtaHref}>{hasMultipleRooms ? "Chọn phòng" : "Tiếp tục đặt phòng"}</a>
           </div>
         </div>
       )}

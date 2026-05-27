@@ -17,7 +17,7 @@ export default async function HomePage() {
     <main className="min-h-screen text-[#1c1c19]">
       <AppTopBar />
 
-      <section className="relative flex min-h-[720px] items-center overflow-hidden md:min-h-[800px]">
+      <section className="relative flex min-h-[640px] items-center overflow-hidden md:min-h-[720px]">
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${heroImage})` }} />
         <div className="absolute inset-0 bg-gradient-to-b from-[#1c1c19]/28 via-[#1c1c19]/34 to-[#1c1c19]/76" />
         <div className="relative mx-auto grid w-full max-w-7xl gap-10 px-4 pb-28 pt-16 text-white md:px-8 lg:grid-cols-[1fr_420px] lg:items-end">

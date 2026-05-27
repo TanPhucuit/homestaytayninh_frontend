@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useMemo, useState, useTransition } from "react";
 import DatePicker from "react-datepicker";
 import { useRouter } from "next/navigation";
 import {
@@ -51,6 +51,7 @@ export function SearchBar({ initialFilters, variant = "home" }: SearchBarProps) 
   const [amenities, setAmenities] = useState<string[]>(initialFilters?.amenities ?? []);
   const [price, setPrice] = useState(Number(initialFilters?.price ?? PRICE_MAX));
   const [filtersOpen, setFiltersOpen] = useState(variant !== "home");
+  const [isPending, startTransition] = useTransition();
 
   const priceLabel = useMemo(() => money(price), [price]);
   const isSidebar = variant === "sidebar";
@@ -76,7 +77,9 @@ export function SearchBar({ initialFilters, variant = "home" }: SearchBarProps) 
     params.set("price", String(price));
 
     const query = params.toString();
-    router.push(query ? `/homestays?${query}` : "/homestays");
+    startTransition(() => {
+      router.push(query ? `/homestays?${query}` : "/homestays");
+    });
   }
 
   const filterControls = (
@@ -138,6 +141,13 @@ export function SearchBar({ initialFilters, variant = "home" }: SearchBarProps) 
           <span>{money(PRICE_MAX)}</span>
         </div>
       </div>
+      {variant === "home" && filtersOpen && (
+        <div className="md:col-span-3">
+          <button className="btn-primary w-full md:w-auto" disabled={isPending} type="submit">
+            {isPending ? "Đang áp dụng..." : "Áp dụng bộ lọc"}
+          </button>
+        </div>
+      )}
     </div>
   );
 
@@ -177,6 +187,7 @@ export function SearchBar({ initialFilters, variant = "home" }: SearchBarProps) 
 
         <button
           className="btn-secondary self-end"
+          aria-expanded={filtersOpen}
           onClick={() => setFiltersOpen((open) => !open)}
           type="button"
         >
@@ -184,8 +195,8 @@ export function SearchBar({ initialFilters, variant = "home" }: SearchBarProps) 
           <span className="ml-2 rounded-full bg-[#e8f0eb] px-2 py-0.5 text-xs text-[#466550]">{types.length + amenities.length}</span>
         </button>
 
-        <button className="btn-primary self-end" type="submit">
-          {isSidebar || isMobile ? "Áp dụng" : "Tìm kiếm"}
+        <button className="btn-primary self-end" disabled={isPending} type="submit">
+          {isPending ? "Đang tìm..." : isSidebar || isMobile ? "Áp dụng" : "Tìm kiếm"}
         </button>
       </div>
 

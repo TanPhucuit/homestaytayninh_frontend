@@ -263,7 +263,11 @@ export function ServicesDisplay({ includedServices, addOnServices }: { includedS
                 <span>SL: {service.quantity}</span>
                 <span>{money(service.unitPrice)}</span>
                 <span className="font-bold">{money(service.total)}</span>
-                <span className="col-span-2 text-xs text-[#56423d] md:col-span-4">Trạng thái: {service.status === "SERVED" ? "Đã phục vụ" : "Đang chuẩn bị"}</span>
+                <span className="col-span-2 md:col-span-4">
+                  <span className={`badge ${service.status === "SERVED" ? "badge-green" : "bg-[#fff3d6] text-[#7a4a12]"}`}>
+                    {service.status === "SERVED" ? "Đã phục vụ" : "Đang chuẩn bị"}
+                  </span>
+                </span>
               </div>
             )) : <p className="p-4 text-sm text-[#56423d]">Chưa đặt dịch vụ bổ sung.</p>}
           </div>

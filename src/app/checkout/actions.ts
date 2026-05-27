@@ -55,6 +55,9 @@ export async function createCheckoutAction(formData: FormData) {
   if (!isValidEmail(guestEmail)) {
     redirect(flashUrl(checkoutNextPath(formData), "error", "Email chưa đúng định dạng."));
   }
+  if (formData.get("termsAccepted") !== "on") {
+    redirect(flashUrl(checkoutNextPath(formData), "error", "Vui lòng đồng ý với điều khoản trước khi thanh toán."));
+  }
 
   try {
     const booking = await createBooking(
