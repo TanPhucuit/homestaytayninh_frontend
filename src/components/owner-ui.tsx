@@ -133,6 +133,7 @@ export function OwnerInventory({ homestays }: { homestays: Homestay[] }) {
                       <input type="hidden" name="roomId" value={room.id} />
                       <input className="field" name="name" defaultValue={room.name} required />
                       <input className="field" name="roomType" defaultValue={room.roomType} required />
+                      <input className="field" name="imageUrl" type="url" defaultValue={room.imageUrl ?? ""} placeholder="URL ảnh phòng" />
                       <input className="field" name="pricePerNight" type="number" min="0" defaultValue={room.pricePerNight} required />
                       <input className="field" name="capacity" type="number" min="1" defaultValue={room.capacity} required />
                       <input className="field" name="totalUnits" type="number" min="1" defaultValue={room.totalUnits} required />

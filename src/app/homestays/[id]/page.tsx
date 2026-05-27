@@ -225,7 +225,7 @@ export default async function HomestayDetailPage({ params, searchParams }: { par
             <h2 className="mt-2 font-heading text-3xl text-[#1c1c19]">Chọn phòng của bạn</h2>
             <div className="mt-6 space-y-5">
               {rooms.map((room, index) => {
-                const thumbnail = gallery[(index + 1) % gallery.length]?.url ?? homestay.imageUrl;
+                const thumbnail = room.imageUrl ?? gallery[(index + 1) % gallery.length]?.url ?? homestay.imageUrl;
                 return (
                   <article className="group grid gap-5 rounded-2xl border border-[#dcc0ba] bg-white p-4 shadow-[0_14px_45px_rgba(123,41,20,0.06)] transition hover:border-[#9a4029] md:grid-cols-[220px_1fr]" key={room.id}>
                     <div className="image-shell aspect-[4/3] overflow-hidden rounded-xl bg-cover bg-center" style={{ backgroundImage: `url(${thumbnail})` }} />

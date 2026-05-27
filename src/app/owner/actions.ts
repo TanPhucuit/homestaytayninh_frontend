@@ -69,6 +69,7 @@ export async function createRoomAction(formData: FormData) {
       {
         name: text(formData, "name"),
         roomType: text(formData, "roomType") || "Phòng",
+        imageUrl: text(formData, "imageUrl"),
         pricePerNight: Number(formData.get("pricePerNight") ?? 500000),
         capacity: Number(formData.get("capacity") ?? 2),
         totalUnits: Number(formData.get("totalUnits") ?? 1)
@@ -131,6 +132,7 @@ export async function updateRoomAction(formData: FormData) {
     await updateOwnerRoom(homestayId, roomId, {
       name: text(formData, "name"),
       roomType: text(formData, "roomType") || "Phòng",
+      imageUrl: text(formData, "imageUrl"),
       pricePerNight: Number(formData.get("pricePerNight") ?? 0),
       capacity: Number(formData.get("capacity") ?? 1),
       totalUnits: Number(formData.get("totalUnits") ?? 1),

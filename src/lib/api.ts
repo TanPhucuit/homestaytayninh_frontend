@@ -159,7 +159,7 @@ export async function updateOwnerHomestay(homestayId: string, input: Partial<Hom
   return apiMutation<Homestay>(endpoints.owner.homestay(homestayId), "PATCH", input, role);
 }
 
-export async function createOwnerRoom(homestayId: string, input: { name: string; roomType: string; pricePerNight: number; capacity: number; totalUnits: number }, role: UserRole = "OWNER") {
+export async function createOwnerRoom(homestayId: string, input: { name: string; roomType: string; imageUrl?: string; pricePerNight: number; capacity: number; totalUnits: number }, role: UserRole = "OWNER") {
   return apiMutation(endpoints.owner.rooms(homestayId), "POST", input, role);
 }
 

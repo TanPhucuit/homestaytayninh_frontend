@@ -22,6 +22,7 @@ export async function createArticleAction(formData: FormData) {
     await createArticle({
       title,
       slug,
+      imageUrl: text(formData, "imageUrl"),
       excerpt: text(formData, "excerpt"),
       content: text(formData, "content"),
       status: text(formData, "status") === "PUBLISHED" ? "PUBLISHED" : "DRAFT"
@@ -40,6 +41,7 @@ export async function updateArticleAction(formData: FormData) {
     await updateArticle(articleId, {
       title: text(formData, "title"),
       slug: text(formData, "slug"),
+      imageUrl: text(formData, "imageUrl"),
       excerpt: text(formData, "excerpt"),
       content: text(formData, "content"),
       status: text(formData, "status") === "PUBLISHED" ? "PUBLISHED" : "DRAFT"

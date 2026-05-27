@@ -16,13 +16,20 @@ export default async function ArticlesPage() {
         <h1 className="mt-2 font-heading text-4xl text-[#9a4029] md:text-5xl">Bài viết du lịch đã xuất bản</h1>
         <div className="mt-8 grid gap-5 md:grid-cols-2">
           {articles.length ? articles.map((article) => (
-            <Link className="card p-6" href={`/articles/${article.slug}`} key={article.id}>
-              <span className="badge badge-green">Đã xuất bản</span>
-              <h2 className="mt-4 font-heading text-3xl text-[#7b2914]">{article.title}</h2>
-              <p className="mt-3 line-clamp-3 text-sm leading-6 text-[#56423d]">{article.excerpt}</p>
+            <Link className="card overflow-hidden p-0" href={`/articles/${article.slug}`} key={article.id}>
+              {article.imageUrl && (
+                <div className="image-shell aspect-[16/9]">
+                  <img className="h-full w-full object-cover" src={article.imageUrl} alt={article.title} />
+                </div>
+              )}
+              <div className="p-6">
+                <span className="badge badge-green">Đã xuất bản</span>
+                <h2 className="mt-4 font-heading text-3xl text-[#7b2914]">{article.title}</h2>
+                <p className="mt-3 line-clamp-3 text-sm leading-6 text-[#56423d]">{article.excerpt}</p>
+              </div>
             </Link>
           )) : (
-          <EmptyState title="Chưa có bài viết" description="Đội ngũ nội dung sẽ xuất bản cẩm nang du lịch tại đây." />
+            <EmptyState title="Chưa có bài viết" description="Đội ngũ nội dung sẽ xuất bản cẩm nang du lịch tại đây." />
           )}
         </div>
       </section>

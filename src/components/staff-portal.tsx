@@ -64,6 +64,7 @@ export function StaffCmsPortal({ articles, flash }: { articles: Article[]; flash
           <div className="mt-5 grid gap-3">
             <input className="field" name="title" placeholder="Tiêu đề" required />
             <input className="field" name="slug" placeholder="du-lich-nui-ba-den" required />
+            <input className="field" name="imageUrl" type="url" placeholder="URL ảnh bài viết" />
             <textarea className="field min-h-20" name="excerpt" placeholder="Tóm tắt ngắn" required />
             <textarea className="field min-h-36" name="content" placeholder="Nội dung bài viết" required />
             <select className="field" name="status" defaultValue="DRAFT">
@@ -101,6 +102,7 @@ export function StaffCmsPortal({ articles, flash }: { articles: Article[]; flash
                   <input name="articleId" type="hidden" value={article.id} />
                   <input className="field" name="title" defaultValue={article.title} required />
                   <input className="field" name="slug" defaultValue={article.slug} required />
+                  <input className="field" name="imageUrl" type="url" defaultValue={article.imageUrl ?? ""} placeholder="URL ảnh bài viết" />
                   <textarea className="field min-h-20" name="excerpt" defaultValue={article.excerpt} required />
                   <textarea className="field min-h-28" name="content" defaultValue={article.content} required />
                   <select className="field" name="status" defaultValue={article.status}>

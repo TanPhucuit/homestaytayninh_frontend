@@ -13,10 +13,7 @@ export default async function OwnerManagePage({ searchParams }: { searchParams: 
   const flash = flashFromSearchParams(await searchParams);
   const allowed = ["OWNER", "ADMIN"] as const;
 
-  if (user.authorizationError) {
-    return <AccessDenied description={user.authorizationError} />;
-  }
-
+  if (user.authorizationError) return <AccessDenied description={user.authorizationError} />;
   if (!canAccess(user.role, [...allowed])) {
     return <AccessDenied description="Trang quản lý homestay chỉ dành cho Owner hoặc Admin." />;
   }
@@ -55,6 +52,7 @@ export default async function OwnerManagePage({ searchParams }: { searchParams: 
             </select>
             <input className="field" name="name" placeholder="Tên phòng" required />
             <input className="field" name="roomType" placeholder="Loại phòng" required />
+            <input className="field" name="imageUrl" type="url" placeholder="URL ảnh phòng" />
             <input className="field" name="pricePerNight" type="number" min="0" placeholder="Giá/đêm" required />
             <input className="field" name="capacity" type="number" min="1" placeholder="Sức chứa" required />
             <input className="field" name="totalUnits" type="number" min="1" placeholder="Số lượng phòng/căn" required />
