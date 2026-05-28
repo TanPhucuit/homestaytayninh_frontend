@@ -19,6 +19,7 @@ export interface HomestayFilters {
 export interface CheckoutDraft {
   homestayId?: string;
   roomId?: string;
+  roomIds?: string[];
   guestName?: string;
   guestPhone?: string;
   guestEmail?: string;
@@ -26,7 +27,7 @@ export interface CheckoutDraft {
   checkIn?: string;
   checkOut?: string;
   notes?: string;
-  serviceItems?: Array<{ serviceId: string; quantity: number }>;
+  serviceItems?: Array<{ roomId?: string; serviceId: string; quantity: number }>;
 }
 
 function queryString(filters?: HomestayFilters) {
@@ -122,13 +123,15 @@ export async function setBookingServiceStatus(bookingId: string, serviceOrderId:
 export async function createBooking(
   input: {
     homestayId: string;
-    roomId: string;
+    roomId?: string;
+    roomIds?: string[];
+    roomItems?: Array<{ roomId: string }>;
     guestName: string;
     guestPhone: string;
     guestCount: number;
     checkIn: string;
     checkOut: string;
-    serviceItems?: Array<{ serviceId: string; quantity: number }>;
+    serviceItems?: Array<{ roomId?: string; serviceId: string; quantity: number }>;
   },
   role: UserRole = "CUSTOMER"
 ): Promise<Booking> {
@@ -201,7 +204,7 @@ export async function createProxyBooking(
     guestCount: number;
     checkIn: string;
     checkOut: string;
-    serviceItems?: Array<{ serviceId: string; quantity: number }>;
+    serviceItems?: Array<{ roomId?: string; serviceId: string; quantity: number }>;
   },
   role: UserRole = "OWNER_STAFF"
 ): Promise<Booking> {

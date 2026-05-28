@@ -77,6 +77,9 @@ export default async function BookingsPage({ searchParams }: { searchParams: Pro
                 const imageUrl = homestay?.images?.[0]?.url ?? homestay?.imageUrl;
                 const isPaid = booking.payment?.status === "PAID";
                 const canCheckPayment = canViewPaymentStatus(booking);
+                const roomSummary = booking.rooms?.length
+                  ? `${booking.rooms.length} phòng: ${booking.rooms.map((room) => room.name).join(", ")}`
+                  : `Phòng ${booking.roomId}`;
                 return (
                   <article className="overflow-hidden rounded-2xl border border-[#eadfd4] bg-white shadow-[0_24px_70px_rgba(123,41,20,0.1)] md:grid md:grid-cols-[320px_1fr]" key={booking.id}>
                     <div className="image-shell min-h-52 md:min-h-72">
@@ -95,6 +98,7 @@ export default async function BookingsPage({ searchParams }: { searchParams: Pro
                       </div>
                       <h2 className="mt-4 font-heading text-3xl text-[#1c1c19]">{homestay?.name ?? booking.homestayId}</h2>
                       <p className="mt-2 text-sm text-[#75675f]">{booking.checkIn} - {booking.checkOut} · {booking.guestCount} khách</p>
+                      <p className="mt-1 line-clamp-2 text-sm font-semibold text-[#466550]">{roomSummary}</p>
                       <div className="mt-6 grid gap-4 md:grid-cols-2">
                         <div className="rounded-2xl bg-[#fdf9f4] p-4">
                           <h3 className="font-heading text-xl text-[#9a4029]">Thông tin khách</h3>

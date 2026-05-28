@@ -24,14 +24,14 @@ function selectedRoomIds(params: CheckoutServiceParams) {
   return [];
 }
 
-function selectedServiceKeys(params: CheckoutServiceParams) {
+function selectedServiceQuantities(params: CheckoutServiceParams) {
   return Object.entries(params)
     .filter(([key, value]) => key.startsWith("service:") && Number(value) > 0)
-    .map(([key]) => {
+    .map(([key, value]) => {
       const [, roomId, serviceId] = key.split(":");
-      return serviceId ? `${roomId}:${serviceId}` : "";
+      return serviceId ? { key: `${roomId}:${serviceId}`, quantity: Number(value) } : null;
     })
-    .filter(Boolean);
+    .filter((item): item is { key: string; quantity: number } => Boolean(item));
 }
 
 function dateFromIso(value?: string) {
@@ -120,7 +120,7 @@ export default async function CheckoutServicesPage({ searchParams }: { searchPar
           homestayId={homestay.id}
           rooms={rooms}
           services={homestay.services.filter((service) => service.active !== false && !service.included)}
-          initialSelectedServices={selectedServiceKeys(params)}
+          initialSelectedServices={selectedServiceQuantities(params)}
           checkIn={params.checkIn ?? ""}
           checkOut={params.checkOut ?? ""}
           guests={guests}

@@ -221,6 +221,10 @@ export function HomestayCard({ homestay, href }: { homestay: Homestay; href?: st
 }
 
 export function BookingCard({ booking, homestay }: { booking: Booking; homestay?: Homestay }) {
+  const roomSummary = booking.rooms?.length
+    ? `${booking.rooms.length} phòng: ${booking.rooms.map((room) => room.name).join(", ")}`
+    : booking.roomId;
+
   return (
     <article className="rounded-2xl bg-white p-5 shadow-[0_18px_55px_rgba(123,41,20,0.07)]">
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
@@ -234,6 +238,7 @@ export function BookingCard({ booking, homestay }: { booking: Booking; homestay?
           <p className="mt-1 text-sm text-[#56423d]">
             {booking.checkIn} → {booking.checkOut} · {booking.guestCount} khách · {booking.guestName}
           </p>
+          <p className="mt-1 text-sm text-[#75675f]">{roomSummary}</p>
         </div>
         <div className="text-left md:text-right">
           <p className="text-xs font-semibold text-[#89726c]">Tổng hóa đơn</p>
@@ -291,14 +296,37 @@ export function ServicesDisplay({ includedServices, addOnServices }: { includedS
         </div>
         <div>
           <h3 className="text-lg font-bold text-[#466550]">Dịch vụ đặt thêm</h3>
-          <div className="mt-3 overflow-hidden rounded-xl border border-[#dcc0ba]">
+          <div className="mt-3 grid gap-3 md:hidden">
             {addOnServices.length ? addOnServices.map((service) => (
-              <div className="grid grid-cols-2 gap-2 border-b border-[#dcc0ba] bg-white px-4 py-3 text-sm last:border-b-0 md:grid-cols-[1fr_70px_120px_120px]" key={service.id}>
-                <span className="font-semibold">{service.name}</span>
+              <article className="rounded-xl border border-[#dcc0ba] bg-white p-4 text-sm" key={service.id}>
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="font-bold text-[#1c1c19]">{service.name}</p>
+                    {service.roomName && <p className="mt-1 text-xs font-semibold text-[#75675f]">{service.roomName}</p>}
+                  </div>
+                  <span className={`badge ${service.status === "SERVED" ? "badge-green" : "bg-[#fff3d6] text-[#7a4a12]"}`}>
+                    {service.status === "SERVED" ? "Đã phục vụ" : "Đang chuẩn bị"}
+                  </span>
+                </div>
+                <div className="mt-3 grid grid-cols-3 gap-2 rounded-xl bg-[#fdf9f4] px-3 py-2 text-xs">
+                  <span>SL <strong>{service.quantity}</strong></span>
+                  <span>Đơn giá <strong>{money(service.unitPrice)}</strong></span>
+                  <span>Thành tiền <strong>{money(service.total)}</strong></span>
+                </div>
+              </article>
+            )) : <p className="rounded-xl border border-[#dcc0ba] bg-white p-4 text-sm text-[#56423d]">Chưa đặt dịch vụ bổ sung.</p>}
+          </div>
+          <div className="mt-3 hidden overflow-hidden rounded-xl border border-[#dcc0ba] md:block">
+            {addOnServices.length ? addOnServices.map((service) => (
+              <div className="grid gap-2 border-b border-[#dcc0ba] bg-white px-4 py-3 text-sm last:border-b-0 md:grid-cols-[1fr_110px_120px_120px_130px]" key={service.id}>
+                <span className="font-semibold">
+                  {service.name}
+                  {service.roomName && <span className="mt-1 block text-xs font-medium text-[#75675f]">{service.roomName}</span>}
+                </span>
                 <span>SL: {service.quantity}</span>
                 <span>{money(service.unitPrice)}</span>
                 <span className="font-bold">{money(service.total)}</span>
-                <span className="col-span-2 md:col-span-4">
+                <span>
                   <span className={`badge ${service.status === "SERVED" ? "badge-green" : "bg-[#fff3d6] text-[#7a4a12]"}`}>
                     {service.status === "SERVED" ? "Đã phục vụ" : "Đang chuẩn bị"}
                   </span>

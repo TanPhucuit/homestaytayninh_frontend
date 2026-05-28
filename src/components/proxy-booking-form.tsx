@@ -19,6 +19,11 @@ export function ProxyBookingForm({ action, defaultCheckIn, defaultCheckOut, home
   const rooms = selectedHomestay?.rooms.filter((room) => room.active) ?? [];
   const services = selectedHomestay ? [...selectedHomestay.includedServices, ...selectedHomestay.services].filter((service) => service.active) : [];
   const hasRooms = rooms.length > 0;
+  const [serviceQuantities, setServiceQuantities] = useState<Record<string, number>>({});
+
+  function setServiceQuantity(serviceId: string, quantity: number) {
+    setServiceQuantities((current) => ({ ...current, [serviceId]: Number.isFinite(quantity) && quantity > 0 ? Math.floor(quantity) : 0 }));
+  }
 
   return (
     <form action={action} className="grid gap-6 lg:grid-cols-[1fr_380px]">
@@ -50,11 +55,39 @@ export function ProxyBookingForm({ action, defaultCheckIn, defaultCheckOut, home
         <h2 className="mt-2 font-heading text-2xl text-[#9a4029]">Dịch vụ gọi kèm</h2>
         <p className="mt-2 text-sm leading-6 text-[#75675f]">Danh sách phòng và dịch vụ được lọc theo homestay đang chọn để tránh đặt nhầm.</p>
         <div className="mt-4 grid gap-3">
-          <select className="field" name="serviceId" defaultValue="">
-            <option value="">Không chọn dịch vụ</option>
-            {services.map((service) => <option key={service.id} value={service.id}>{service.name} · {money(service.unitPrice)}</option>)}
-          </select>
-          <input className="field" name="serviceQuantity" type="number" min="0" defaultValue="0" />
+          {services.length ? services.map((service) => {
+            const quantity = serviceQuantities[service.id] ?? 0;
+            const selected = quantity > 0;
+            return (
+              <article className={`rounded-2xl border bg-white p-3 text-sm ${selected ? "border-[#9a4029]" : "border-[#eadfd4]"}`} key={service.id}>
+                <label className="flex items-start gap-3">
+                  <input
+                    checked={selected}
+                    className="mt-1 size-4 accent-[#9a4029]"
+                    onChange={(event) => setServiceQuantity(service.id, event.target.checked ? Math.max(1, quantity) : 0)}
+                    type="checkbox"
+                  />
+                  <span className="min-w-0 flex-1">
+                    <span className="block font-bold text-[#1c1c19]">{service.name}</span>
+                    <span className="mt-1 block text-xs text-[#75675f]">{money(service.unitPrice)} / lượt</span>
+                  </span>
+                </label>
+                <div className="mt-3 flex items-center justify-between gap-3 border-t border-[#e8e1d5] pt-3">
+                  <span className="text-xs font-bold uppercase tracking-[0.12em] text-[#466550]">Số lượng</span>
+                  <input
+                    className="field h-11 w-24 px-3 py-2"
+                    min="0"
+                    name={`service:${service.id}`}
+                    onChange={(event) => setServiceQuantity(service.id, Number(event.target.value))}
+                    type="number"
+                    value={quantity}
+                  />
+                </div>
+              </article>
+            );
+          }) : (
+            <p className="rounded-2xl bg-[#fdf9f4] p-4 text-sm text-[#75675f]">Homestay này chưa có dịch vụ đang bán.</p>
+          )}
           <ActionButton pendingLabel="Đang tạo..." disabled={!hasRooms}>Tạo booking hộ</ActionButton>
           {!hasRooms && <p className="text-sm font-semibold text-[#93000a]">Homestay này chưa có phòng đang bán để đặt.</p>}
         </div>

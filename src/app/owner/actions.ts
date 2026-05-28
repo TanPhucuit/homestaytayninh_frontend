@@ -217,9 +217,11 @@ export async function createProxyBookingAction(formData: FormData) {
   try {
     const homestayId = text(formData, "homestayId");
     const roomId = text(formData, "roomId");
-    const serviceId = text(formData, "serviceId");
-    const serviceQuantity = Number(formData.get("serviceQuantity") ?? 0);
     const customerId = text(formData, "customerId");
+    const serviceItems = Array.from(formData.entries())
+      .filter(([key, value]) => key.startsWith("service:") && Number(value) > 0)
+      .map(([key, value]) => ({ roomId, serviceId: key.replace("service:", ""), quantity: Number(value) }))
+      .filter((item) => item.serviceId && Number.isInteger(item.quantity) && item.quantity > 0);
     if (!homestayId || !roomId) throw new Error("Thiếu homestay hoặc phòng để tạo booking hộ.");
     const booking = await createProxyBooking(
       {
@@ -231,7 +233,7 @@ export async function createProxyBookingAction(formData: FormData) {
         guestCount: Number(formData.get("guestCount") ?? 1),
         checkIn: text(formData, "checkIn"),
         checkOut: text(formData, "checkOut"),
-        serviceItems: serviceId && serviceQuantity > 0 ? [{ serviceId, quantity: serviceQuantity }] : []
+        serviceItems
       },
       "OWNER_STAFF"
     );

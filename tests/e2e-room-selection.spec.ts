@@ -102,6 +102,9 @@ test.describe("multi-select room summary", () => {
       await serviceCards.first().getByRole("button", { name: "Thêm" }).click();
       expect(await summaryTotal(page, "services-service-total")).toBeGreaterThan(initialServiceTotal);
       await expect(page.getByTestId("selected-service-row")).toHaveCount(1);
+      const firstQuantity = serviceCards.first().getByLabel(/Số lượng/i);
+      await firstQuantity.fill("2");
+      await expect(page.getByTestId("selected-service-row").first()).toContainText("SL 2");
       await serviceCards.first().getByRole("button", { name: "Bỏ chọn" }).click();
       await expect(page.getByTestId("services-service-total")).toContainText("0");
     }
@@ -131,8 +134,8 @@ test.describe("multi-select room summary", () => {
 
     await page.getByRole("button", { name: "Tiếp tục xác nhận" }).click();
     await expect(page).toHaveURL(/\/checkout\/confirm/);
-    await expect(page.getByTestId("multi-room-blocker")).toContainText("Hiện hệ thống chỉ hỗ trợ đặt một phòng mỗi lần");
-    await expect(page.getByRole("button", { name: /Chọn một phòng để thanh toán/i })).toHaveCount(0);
+    await expect(page.getByTestId("multi-room-blocker")).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /Thanh toán qua ApiPay/i })).toBeVisible();
 
     await page.getByTestId("back-to-room-selection").click();
     await expect(page).toHaveURL(/\/homestays\/.+#rooms/);

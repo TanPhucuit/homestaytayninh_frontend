@@ -132,7 +132,6 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
   const preservedEntries = Object.entries(params).filter(([key, value]) => value && !editableKeys.has(key));
   const backParams = new URLSearchParams();
   preservedEntries.forEach(([key, value]) => backParams.set(key, value ?? ""));
-  const canCreateBooking = rooms.length === 1;
   const detailBackHref = detailRoomsHref(homestay.id, params, roomIds);
   const servicesBackHref = `/checkout/services?${backParams.toString()}`;
 
@@ -153,14 +152,9 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
 
         <form action={createCheckoutAction} className="grid gap-6 lg:grid-cols-[1fr_390px]">
           {preservedEntries.map(([key, value]) => <input key={key} type="hidden" name={key} value={value} />)}
-          {rooms.length === 1 && <input type="hidden" name="roomId" value={rooms[0].id} />}
+          <input type="hidden" name="roomId" value={rooms[0].id} />
           <div className="space-y-6">
             <FlashMessage flash={flash} />
-            {!canCreateBooking && (
-              <div className="rounded-2xl border border-[#ffdad6] bg-[#fff8f7] p-4 text-sm font-semibold text-[#93000a]" data-testid="multi-room-blocker">
-                Hiện hệ thống chỉ hỗ trợ đặt một phòng mỗi lần. Vui lòng quay lại chọn phòng và chỉ giữ lại một phòng để tiếp tục.
-              </div>
-            )}
             <section className="card p-6 md:p-8">
               <p className="eyebrow">Xác nhận</p>
               <h2 className="mt-2 font-heading text-3xl text-[#7b2914]">Bảng tóm tắt đặt phòng</h2>
@@ -241,7 +235,7 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
                   Sau khi bấm thanh toán, bạn sẽ được chuyển sang trang thanh toán của ApiPay để hoàn tất giao dịch.
                 </div>
                 <label className="flex items-start gap-3 rounded-2xl bg-[#fdf9f4] p-4">
-                  <input className="mt-1 size-4 accent-[#9a4029]" name="termsAccepted" type="checkbox" required disabled={!canCreateBooking} />
+                  <input className="mt-1 size-4 accent-[#9a4029]" name="termsAccepted" type="checkbox" required />
                   <span>Tôi đồng ý với chính sách hủy phòng, điều khoản sử dụng dịch vụ và xác nhận thông tin đặt phòng là chính xác.</span>
                 </label>
               </div>
@@ -262,16 +256,11 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
                 <p className="mt-1 text-xs text-[#75675f]">Đã bao gồm thuế/phí nếu có</p>
               </div>
             </div>
-            {canCreateBooking ? (
-              <>
-                <ActionButton className="btn-primary mt-6 w-full" pendingLabel="Đang tạo thanh toán...">
-                  Thanh toán qua ApiPay
-                </ActionButton>
-                <Link className="btn-secondary mt-3 w-full" href={servicesBackHref}>Quay lại dịch vụ</Link>
-              </>
-            ) : (
-              <Link className="btn-primary mt-6 w-full" data-testid="back-to-room-selection" href={detailBackHref}>Quay lại chọn phòng</Link>
-            )}
+            <ActionButton className="btn-primary mt-6 w-full" pendingLabel="Đang tạo thanh toán...">
+              Thanh toán qua ApiPay
+            </ActionButton>
+            <Link className="btn-secondary mt-3 w-full" href={servicesBackHref}>Quay lại dịch vụ</Link>
+            <Link className="btn-secondary mt-3 w-full" data-testid="back-to-room-selection" href={detailBackHref}>Quay lại chọn phòng</Link>
           </aside>
         </form>
       </div>

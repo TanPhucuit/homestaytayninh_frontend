@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AccessDenied } from "@/components/access-denied";
 import { PaymentBadge } from "@/components/customer-ui";
+import { PaymentStatusPoller } from "@/components/payment-status-poller";
 import { getPaymentStatus, money } from "@/lib/api";
 import { getCurrentUser } from "@/lib/rbac";
 import { PaymentStatus } from "@/lib/types";
@@ -61,6 +62,7 @@ export default async function PaymentResultPage({ searchParams }: { searchParams
   const payment = params.bookingId ? await getPaymentStatus(params.bookingId, user?.role ?? "CUSTOMER") : null;
   const status = paymentError ? "FAILED" : (payment?.status ?? normalizePaymentStatus(params.status));
   const view = copyFor(status);
+  const shouldPoll = Boolean(params.bookingId && status === "PENDING" && !paymentError);
 
   return (
     <main className="flex min-h-screen items-center justify-center px-4 py-10 text-[#1c1c19]">
@@ -71,11 +73,17 @@ export default async function PaymentResultPage({ searchParams }: { searchParams
         <p className="eyebrow mt-8">Kết quả thanh toán</p>
         <h1 className="mt-3 font-heading text-4xl text-[#9a4029] md:text-5xl">{view.title}</h1>
         <p className="mx-auto mt-4 max-w-lg text-sm leading-6 text-[#75675f]">{view.description}</p>
+        {status === "PENDING" && (
+          <p className="mx-auto mt-3 max-w-lg text-sm font-semibold leading-6 text-[#7a4a12]">
+            Trạng thái có thể mất vài phút để cập nhật. Không tạo lại booking trong lúc giao dịch đang xử lý.
+          </p>
+        )}
         {paymentError && (
           <div className="mx-auto mt-5 max-w-md rounded-2xl border border-[#ffdad6] bg-[#fff8f7] p-5 text-sm font-semibold text-[#93000a]">
-            Không hoàn tất thanh toán: {paymentError}
+            Đơn đã được tạo, chỉ phần thanh toán chưa hoàn tất. Không cần đặt lại phòng. Lỗi thanh toán: {paymentError}
           </div>
         )}
+        <PaymentStatusPoller enabled={shouldPoll} />
         <div className="mt-5 flex justify-center">
           <PaymentBadge status={status} />
         </div>
@@ -107,7 +115,7 @@ export default async function PaymentResultPage({ searchParams }: { searchParams
           )}
           {params.bookingId && (status === "FAILED" || status === "CANCELLED") && (
             <Link className="btn-primary" href={`/bookings/${params.bookingId}`}>
-              Thử thanh toán lại
+              Về chi tiết đơn để thử thanh toán lại
             </Link>
           )}
           <Link className={params.bookingId && status !== "PAID" ? "btn-secondary" : "btn-primary"} href="/bookings">Về chuyến đi của tôi</Link>

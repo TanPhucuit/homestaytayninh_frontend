@@ -8,7 +8,7 @@ type MultiRoomServicesFormProps = {
   homestayId: string;
   rooms: Room[];
   services: Service[];
-  initialSelectedServices?: string[];
+  initialSelectedServices?: Array<{ key: string; quantity: number }>;
   checkIn: string;
   checkOut: string;
   guests: string;
@@ -34,12 +34,12 @@ function selectionKey(roomId: string, serviceId: string) {
   return `${roomId}:${serviceId}`;
 }
 
-function initialSelectedState(keys: string[] | undefined, rooms: Room[], services: Service[]) {
+function initialSelectedState(entries: Array<{ key: string; quantity: number }> | undefined, rooms: Room[], services: Service[]) {
   const roomIds = new Set(rooms.map((room) => room.id));
   const serviceIds = new Set(services.map((service) => service.id));
-  return (keys ?? []).reduce<Record<string, boolean>>((state, key) => {
+  return (entries ?? []).reduce<Record<string, number>>((state, { key, quantity }) => {
     const [roomId, serviceId] = key.split(":");
-    if (roomIds.has(roomId) && serviceIds.has(serviceId)) state[key] = true;
+    if (roomIds.has(roomId) && serviceIds.has(serviceId) && Number.isInteger(quantity) && quantity > 0) state[key] = quantity;
     return state;
   }, {});
 }
@@ -50,7 +50,7 @@ function formatDate(value?: string) {
 }
 
 export function MultiRoomServicesForm({ homestayId, rooms, services, initialSelectedServices, checkIn, checkOut, guests, backHref }: MultiRoomServicesFormProps) {
-  const [selected, setSelected] = useState<Record<string, boolean>>(() => initialSelectedState(initialSelectedServices, rooms, services));
+  const [quantities, setQuantities] = useState<Record<string, number>>(() => initialSelectedState(initialSelectedServices, rooms, services));
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const nights = nightsBetween(checkIn, checkOut);
@@ -58,10 +58,11 @@ export function MultiRoomServicesForm({ homestayId, rooms, services, initialSele
   const selectedServices = useMemo(() => {
     return rooms.flatMap((room) =>
       services
-        .filter((service) => selected[selectionKey(room.id, service.id)])
-        .map((service) => ({ room, service, total: service.unitPrice }))
+        .map((service) => ({ room, service, quantity: quantities[selectionKey(room.id, service.id)] ?? 0 }))
+        .filter((item) => item.quantity > 0)
+        .map(({ room, service, quantity }) => ({ room, service, quantity, total: service.unitPrice * quantity }))
     );
-  }, [rooms, selected, services]);
+  }, [rooms, quantities, services]);
   const serviceTotal = selectedServices.reduce((sum, item) => sum + item.total, 0);
   const taxTotal = Math.round((roomTotal + serviceTotal) * 0.1);
   const grandTotal = roomTotal + serviceTotal + taxTotal;
@@ -72,15 +73,20 @@ export function MultiRoomServicesForm({ homestayId, rooms, services, initialSele
 
   function toggleService(roomId: string, serviceId: string) {
     const key = selectionKey(roomId, serviceId);
-    setSelected((current) => ({ ...current, [key]: !current[key] }));
+    setQuantities((current) => ({ ...current, [key]: current[key] > 0 ? 0 : 1 }));
+  }
+
+  function setServiceQuantity(roomId: string, serviceId: string, quantity: number) {
+    const key = selectionKey(roomId, serviceId);
+    setQuantities((current) => ({ ...current, [key]: Number.isFinite(quantity) && quantity > 0 ? Math.floor(quantity) : 0 }));
   }
 
   function applyServiceToAll(serviceId: string) {
-    setSelected((current) => {
+    setQuantities((current) => {
       const next = { ...current };
-      const allSelected = rooms.every((room) => next[selectionKey(room.id, serviceId)]);
+      const allSelected = rooms.every((room) => next[selectionKey(room.id, serviceId)] > 0);
       rooms.forEach((room) => {
-        next[selectionKey(room.id, serviceId)] = !allSelected;
+        next[selectionKey(room.id, serviceId)] = allSelected ? 0 : Math.max(1, next[selectionKey(room.id, serviceId)] ?? 0);
       });
       return next;
     });
@@ -95,8 +101,8 @@ export function MultiRoomServicesForm({ homestayId, rooms, services, initialSele
       checkOut,
       guests
     });
-    selectedServices.forEach(({ room, service }) => {
-      params.set(`service:${room.id}:${service.id}`, "1");
+    selectedServices.forEach(({ room, service, quantity }) => {
+      params.set(`service:${room.id}:${service.id}`, String(quantity));
     });
     window.location.href = `/checkout/confirm?${params.toString()}`;
   }
@@ -108,8 +114,8 @@ export function MultiRoomServicesForm({ homestayId, rooms, services, initialSele
       <input type="hidden" name="checkIn" value={checkIn} />
       <input type="hidden" name="checkOut" value={checkOut} />
       <input type="hidden" name="guests" value={guests} />
-      {selectedServices.map(({ room, service }) => (
-        <input key={`${room.id}-${service.id}`} type="hidden" name={`service:${room.id}:${service.id}`} value="1" />
+      {selectedServices.map(({ room, service, quantity }) => (
+        <input key={`${room.id}-${service.id}`} type="hidden" name={`service:${room.id}:${service.id}`} value={quantity} />
       ))}
 
       <div className="space-y-6">
@@ -139,7 +145,8 @@ export function MultiRoomServicesForm({ homestayId, rooms, services, initialSele
                 <div className="mt-4 grid gap-3 md:grid-cols-2">
                   {services.length ? services.map((service) => {
                     const key = selectionKey(room.id, service.id);
-                    const isSelected = Boolean(selected[key]);
+                    const quantity = quantities[key] ?? 0;
+                    const isSelected = quantity > 0;
                     return (
                       <article className={`rounded-2xl border bg-white p-4 text-sm shadow-[0_10px_30px_rgba(154,64,41,0.05)] ${isSelected ? "border-[#9a4029] bg-[#fff8f5]" : "border-[#eadfd4]"}`} data-testid={`service-card-${room.id}-${service.id}`} key={service.id}>
                         <div className="flex items-start justify-between gap-3">
@@ -157,12 +164,24 @@ export function MultiRoomServicesForm({ homestayId, rooms, services, initialSele
                             type="checkbox"
                           />
                         </div>
-                        <div className="mt-4 flex flex-col gap-2 border-t border-[#e8e1d5] pt-3 sm:flex-row">
+                        <div className="mt-4 grid gap-2 border-t border-[#e8e1d5] pt-3 sm:grid-cols-[auto_1fr]">
                           <button className={isSelected ? "btn-secondary px-4 py-2 text-[#9a4029]" : "btn-primary px-4 py-2"} disabled={!isReady} onClick={() => toggleService(room.id, service.id)} type="button">
                             {isSelected ? "Bỏ chọn" : "Thêm"}
                           </button>
+                          <label className="flex items-center justify-between gap-3 rounded-xl bg-[#fdf9f4] px-3 py-2 text-sm font-semibold text-[#75675f]">
+                            Số lượng
+                            <input
+                              aria-label={`Số lượng ${service.name} cho ${room.name}`}
+                              className="field h-11 w-24 px-3 py-2"
+                              disabled={!isReady}
+                              min="0"
+                              onChange={(event) => setServiceQuantity(room.id, service.id, Number(event.target.value))}
+                              type="number"
+                              value={quantity}
+                            />
+                          </label>
                           {rooms.length > 1 && (
-                            <button className="btn-secondary px-4 py-2" disabled={!isReady} onClick={() => applyServiceToAll(service.id)} type="button">
+                            <button className="btn-secondary px-4 py-2 sm:col-span-2" disabled={!isReady} onClick={() => applyServiceToAll(service.id)} type="button">
                               Áp dụng cho tất cả phòng
                             </button>
                           )}
@@ -190,10 +209,10 @@ export function MultiRoomServicesForm({ homestayId, rooms, services, initialSele
             <div className="flex justify-between gap-4"><span>Dịch vụ bổ sung</span><strong data-testid="services-service-total">{money(serviceTotal)}</strong></div>
             {selectedServices.length ? (
               <div className="mt-3 space-y-2">
-                {selectedServices.map(({ room, service, total }) => (
+                {selectedServices.map(({ room, service, quantity, total }) => (
                   <div className="rounded-xl bg-[#fdf9f4] px-3 py-2 text-xs" data-testid="selected-service-row" key={`${room.id}-${service.id}`}>
                     <div className="flex justify-between gap-3">
-                      <span>{room.name} · {service.name}</span>
+                      <span>{room.name} · {service.name} · SL {quantity} · {money(service.unitPrice)} / lượt</span>
                       <strong>{money(total)}</strong>
                     </div>
                   </div>

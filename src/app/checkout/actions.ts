@@ -17,9 +17,7 @@ function serviceItemsFromForm(formData: FormData) {
       const roomId = maybeServiceId ? maybeRoomId : roomIds[0];
       return { roomId, serviceId, quantity: Number(value) };
     })
-    .filter((item) => !item.roomId || roomIds.length <= 1 || item.roomId === roomIds[0])
-    .map(({ serviceId, quantity }) => ({ serviceId, quantity }))
-    .filter((item) => Number.isInteger(item.quantity) && item.quantity > 0);
+    .filter((item) => item.serviceId && Number.isInteger(item.quantity) && item.quantity > 0);
 }
 
 function selectedRoomIdsFromForm(formData: FormData) {
@@ -88,9 +86,6 @@ export async function createCheckoutAction(formData: FormData) {
   if (roomIds.length === 0) {
     redirect(flashUrl(checkoutNextPath(formData), "error", "Vui lòng chọn một phòng để tiếp tục thanh toán."));
   }
-  if (roomIds.length > 1) {
-    redirect(flashUrl(checkoutNextPath(formData), "error", "Hiện hệ thống chỉ hỗ trợ đặt một phòng mỗi lần. Vui lòng chọn một phòng để tiếp tục."));
-  }
   if (guestName.length < 2) {
     redirect(flashUrl(checkoutNextPath(formData), "error", "Vui lòng nhập họ tên khách đặt phòng."));
   }
@@ -115,6 +110,8 @@ export async function createCheckoutAction(formData: FormData) {
       {
         homestayId,
         roomId: roomIds[0],
+        roomIds,
+        roomItems: roomIds.map((roomId) => ({ roomId })),
         guestName,
         guestPhone,
         guestCount,

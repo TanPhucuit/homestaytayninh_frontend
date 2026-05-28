@@ -169,7 +169,7 @@ export default async function HomestayDetailPage({ params, searchParams }: { par
               </p>
             </div>
             <a className="mt-5 inline-flex font-bold text-[#9a4029] underline decoration-[#9a4029]/40 underline-offset-4 hover:decoration-[#9a4029]" href="#rooms">
-              Đọc thêm
+              Xem phòng
             </a>
           </section>
 

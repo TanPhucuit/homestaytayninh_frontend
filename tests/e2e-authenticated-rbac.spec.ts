@@ -155,15 +155,19 @@ test.describe("authenticated RBAC with real Redis sessions", () => {
     await page.goto(`${appUrl}/owner/proxy-booking`);
     const homestaySelect = page.locator('select[name="homestayId"]');
     const roomSelect = page.locator('select[name="roomId"]');
-    const serviceSelect = page.locator('select[name="serviceId"]');
+    const serviceQuantityInputs = page.locator('input[name^="service:"]');
     await expect(homestaySelect).toBeVisible();
     await expect(roomSelect).toBeVisible();
-    await expect(serviceSelect).toBeVisible();
+    await expect(page.getByRole("button", { name: /Tạo booking hộ/i })).toBeVisible();
     const options = await homestaySelect.locator("option").count();
     if (options > 1) {
       const beforeRoom = await roomSelect.inputValue();
       await homestaySelect.selectOption({ index: 1 });
       await expect(roomSelect).not.toHaveValue(beforeRoom);
+    }
+    if (await serviceQuantityInputs.count()) {
+      await serviceQuantityInputs.first().fill("2");
+      await expect(serviceQuantityInputs.first()).toHaveValue("2");
     }
 
     await context.close();

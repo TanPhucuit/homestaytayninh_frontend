@@ -49,6 +49,7 @@ export interface Booking {
   customerId: string;
   homestayId: string;
   roomId: string;
+  rooms?: Array<Pick<Room, "id" | "name" | "roomType" | "pricePerNight" | "capacity">>;
   guestName: string;
   guestPhone: string;
   guestCount: number;
@@ -59,7 +60,7 @@ export interface Booking {
   serviceTotal: number;
   taxTotal: number;
   grandTotal: number;
-  services: Array<{ id: string; name: string; quantity: number; unitPrice: number; total: number; status: string }>;
+  services: Array<{ id: string; roomId?: string; roomName?: string; name: string; quantity: number; unitPrice: number; total: number; status: string }>;
   includedServices?: Service[];
   payment?: { id: string; provider?: string; status: PaymentStatus; amount: number; checkoutUrl?: string; qrUrl?: string };
 }

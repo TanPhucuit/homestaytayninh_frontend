@@ -32,6 +32,9 @@ export default async function BookingDetailPage({ params, searchParams }: { para
   const canRetryPayment = canCreateOrRetryPayment(booking);
   const canCheckPayment = canViewPaymentStatus(booking);
   const paymentNotice = paymentActionUnavailableReason(booking);
+  const bookedRooms = booking.rooms?.length
+    ? booking.rooms
+    : homestay.rooms.filter((room) => room.id === booking.roomId);
 
   return (
     <PageShell eyebrow="Chi tiết đơn đặt" title={`Đơn ${booking.id}`} description={`${homestay.name} · ${booking.checkIn} → ${booking.checkOut}`}>
@@ -50,6 +53,9 @@ export default async function BookingDetailPage({ params, searchParams }: { para
                 <h2 className="mt-4 font-heading text-3xl text-[#9a4029]">{homestay.name}</h2>
                 <p className="mt-2 text-sm leading-6 text-[#75675f]">
                   Khách: {booking.guestName} · SĐT: {booking.guestPhone} · {booking.guestCount} khách
+                </p>
+                <p className="mt-1 text-sm font-semibold text-[#466550]">
+                  {bookedRooms.length ? bookedRooms.map((room) => room.name).join(", ") : `Phòng ${booking.roomId}`}
                 </p>
               </div>
               <Link className="btn-secondary" href={`/homestays/${homestay.id}`}>Xem homestay</Link>
@@ -78,8 +84,14 @@ export default async function BookingDetailPage({ params, searchParams }: { para
             <section className="card p-6">
               <h2 className="font-heading text-2xl text-[#9a4029]">Cần thêm dịch vụ?</h2>
               <p className="mt-2 text-sm leading-6 text-[#75675f]">
-                Vui lòng liên hệ nhân viên homestay để thêm dịch vụ trong thời gian lưu trú. Nhân viên sẽ ghi nhận vào đơn để tránh chọn nhầm dịch vụ hoặc sai chi phí.
+                Dịch vụ phát sinh sẽ do nhân viên homestay ghi nhận vào hóa đơn của đơn đang lưu trú để tránh chọn nhầm dịch vụ hoặc sai chi phí.
               </p>
+              <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+                <button className="btn-secondary cursor-not-allowed opacity-70" disabled type="button">
+                  Liên hệ trực tiếp nhân viên tại quầy
+                </button>
+                <Link className="btn-secondary" href={`/homestays/${homestay.id}`}>Xem dịch vụ của homestay</Link>
+              </div>
             </section>
           )}
         </div>
