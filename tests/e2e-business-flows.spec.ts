@@ -32,26 +32,29 @@ test.describe("Homestay Tây Ninh business flows on production", () => {
 
     await page.getByRole("link", { name: /Đặt phòng ngay/i }).first().click();
     await expect(page).toHaveURL(/\/homestays/);
-    await page.locator('input[name="guests"]').fill("2");
-    await page.locator('input[name="maxPrice"]').fill("2000000");
-    await page.getByRole("button", { name: /Áp dụng bộ lọc/i }).click();
+    await page.locator('aside input[name="guests"]').fill("2");
+    await page.locator("aside").getByRole("button", { name: /^Áp dụng$/i }).click();
     await expect(page).toHaveURL(/guests=2/);
-    await expect(page.getByRole("link", { name: /Xem chi tiết/i }).first()).toBeVisible();
+    await expect(page.getByRole("link", { name: /Chi tiết|Xem chi tiết/i }).first()).toBeVisible();
 
-    await page.getByRole("link", { name: /Xem chi tiết/i }).first().click();
+    await page.getByRole("link", { name: /Chi tiết|Xem chi tiết/i }).first().click();
     await expect(page).toHaveURL(/\/homestays\//);
-    await expect(page).toHaveURL(/guests=2/);
-    await page.getByRole("link", { name: /Chọn phòng|Tiếp tục đặt phòng/i }).first().click();
-    await expect(page).toHaveURL(/\/checkout/);
-    await expect(page).toHaveURL(/guestCount=2/);
-
-    await page.locator('input[name="guestName"]').fill("Nguyen Test");
-    await page.locator('input[name="guestPhone"]').fill("0901234567");
-    await page.getByRole("button", { name: /Tiếp tục chọn dịch vụ/i }).click();
+    await expect(page).not.toHaveURL(/guests=2/);
+    await page.getByRole("link", { name: /Chọn phòng/i }).first().click();
+    await page.getByRole("button", { name: "Chọn phòng" }).first().click();
+    await page.getByTestId("summary-check-in").fill("2026-06-12");
+    await page.getByTestId("summary-check-out").fill("2026-06-14");
+    await page.getByTestId("summary-guests").fill("1");
+    await page.getByTestId("continue-checkout").click();
     await expect(page).toHaveURL(/\/checkout\/services/);
-    await page.locator('input[name^="service:"]').first().fill("1");
+
+    const addService = page.getByRole("button", { name: "Thêm" }).first();
+    if (await addService.count()) await addService.click();
     await page.getByRole("button", { name: /Tiếp tục xác nhận/i }).click();
-    await page.getByRole("button", { name: /Xác nhận đặt phòng/i }).click();
+    await page.getByPlaceholder("Nguyễn Văn A").fill("Nguyen Test");
+    await page.getByPlaceholder("0901234567").fill("0901234567");
+    await page.getByLabel(/Tôi đồng ý/i).check();
+    await page.getByRole("button", { name: /Thanh toán qua ApiPay/i }).click();
     await page.waitForLoadState("networkidle");
 
     await expect(page).toHaveURL(/\/login\?error=auth_required/);
@@ -76,7 +79,7 @@ test.describe("Homestay Tây Ninh business flows on production", () => {
     await page.goto(`${baseURL}/bookings`);
     await expect(page.getByRole("heading", { name: /Không có quyền truy cập/i })).toBeVisible();
     await page.goto(`${baseURL}/payment/result?status=pending`);
-    await expect(page.getByText(/Kết quả thanh toán/i)).toBeVisible();
+    await expect(page.getByText("Kết quả thanh toán", { exact: true })).toBeVisible();
     await expectNoRuntimeFailure(page, failures);
   });
 

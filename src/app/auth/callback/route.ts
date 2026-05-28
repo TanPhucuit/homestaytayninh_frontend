@@ -12,6 +12,10 @@ type BackendLoginResponse = {
 
 export async function GET(request: NextRequest) {
   const origin = request.nextUrl.origin;
+  const oauthError = request.nextUrl.searchParams.get("error");
+  if (oauthError) {
+    return redirectWithClearedOAuthCookies(request, oauthError === "access_denied" ? "/login?error=google_access_denied" : "/login?error=oauth");
+  }
   const code = request.nextUrl.searchParams.get("code");
   const state = request.nextUrl.searchParams.get("state");
   const expectedState = request.cookies.get(OAUTH_STATE_COOKIE_NAME)?.value;

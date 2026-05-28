@@ -38,7 +38,7 @@ export default async function HomestaysPage({ searchParams }: { searchParams: Pr
               Tìm thấy {filteredHomestays.length} homestay tại Tây Ninh
             </h1>
             <p className="mt-3 max-w-2xl text-[#56423d]">
-              Lọc theo ngày, số khách, loại hình, mức giá và tiện ích. Bộ lọc được giữ khi xem chi tiết, đặt phòng hoặc chuyển trang.
+              Lọc danh sách theo số khách, loại hình, mức giá và tiện ích. Ngày lưu trú sẽ được chọn riêng sau khi bạn chọn phòng.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">

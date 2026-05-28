@@ -79,16 +79,19 @@ test.describe("authenticated RBAC with real Redis sessions", () => {
     const page = await context.newPage();
 
     await page.goto(`${appUrl}/homestays/hs-ba-den?guests=2`);
-    await page.getByRole("link", { name: /Chọn phòng|Tiếp tục đặt phòng/i }).first().click();
-    await expect(page).toHaveURL(/roomId=/);
-    await expect(page).toHaveURL(/guestCount=2/);
-    await page.getByPlaceholder("Nguyễn Văn A").fill("Khách E2E");
-    await page.getByPlaceholder("0901234567").fill("0901234567");
-    await page.getByRole("button", { name: /Tiếp tục chọn dịch vụ/i }).click();
+    await expect(page).not.toHaveURL(/guests=2/);
+    await page.getByRole("button", { name: "Chọn phòng" }).first().click();
+    await page.getByTestId("summary-check-in").fill("2026-06-12");
+    await page.getByTestId("summary-check-out").fill("2026-06-14");
+    await page.getByTestId("summary-guests").fill("1");
+    await page.getByTestId("continue-checkout").click();
     await expect(page).toHaveURL(/\/checkout\/services/);
-    await page.locator('input[name^="service:"]').first().fill("1");
+    const addService = page.getByRole("button", { name: "Thêm" }).first();
+    if (await addService.count()) await addService.click();
     await page.getByRole("button", { name: /Tiếp tục xác nhận/i }).click();
     await expect(page).toHaveURL(/\/checkout\/confirm/);
+    await page.getByPlaceholder("Nguyễn Văn A").fill("Khách E2E");
+    await page.getByPlaceholder("0901234567").fill("0901234567");
     await expect(page.getByText(/Khách E2E/)).toBeVisible();
 
     await context.close();
@@ -103,7 +106,7 @@ test.describe("authenticated RBAC with real Redis sessions", () => {
       await expect(page.getByRole("link", { name: new RegExp(tab) })).toBeVisible();
     }
 
-    const firstDetail = page.getByRole("link", { name: /Xem chi tiết/i }).first();
+    const firstDetail = page.getByRole("link", { name: /Chi tiết|Xem chi tiết/i }).first();
     if (await firstDetail.count()) {
       await firstDetail.click();
       await expect(page.getByText(/Dịch vụ trong booking|Tóm tắt đơn hàng|Thanh toán/i).first()).toBeVisible();

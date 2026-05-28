@@ -54,8 +54,6 @@ function positiveInteger(value: SearchParamValue, fallback = 1) {
 
 export function normalizeHomestaySearchParams(params: HomestaySearchParams): NormalizedHomestaySearch {
   return {
-    checkIn: first(params.checkIn),
-    checkOut: first(params.checkOut),
     guests: positiveNumber(params.guests),
     types: all(params.type),
     amenities: [...all(params.amenities), ...all(params.amenity)],
@@ -66,8 +64,6 @@ export function normalizeHomestaySearchParams(params: HomestaySearchParams): Nor
 
 export function buildHomestaySearchParams(filters: NormalizedHomestaySearch, page?: number) {
   const params = new URLSearchParams();
-  if (filters.checkIn) params.set("checkIn", filters.checkIn);
-  if (filters.checkOut) params.set("checkOut", filters.checkOut);
   if (filters.guests) params.set("guests", filters.guests);
   filters.types.forEach((type) => params.append("type", type));
   filters.amenities.forEach((amenity) => params.append("amenities", amenity));
@@ -82,8 +78,8 @@ export function homestaySearchHref(filters: NormalizedHomestaySearch, page?: num
 }
 
 export function detailHrefWithSearch(id: string, filters: NormalizedHomestaySearch) {
-  const query = buildHomestaySearchParams(filters).toString();
-  return query ? `/homestays/${id}?${query}` : `/homestays/${id}`;
+  void filters;
+  return `/homestays/${id}`;
 }
 
 export function apiFiltersFromSearch(filters: NormalizedHomestaySearch) {
@@ -139,7 +135,6 @@ export function filterHomestays(homestays: Homestay[], filters: NormalizedHomest
 
 export function getAppliedFilterLabels(filters: NormalizedHomestaySearch) {
   const labels: Array<{ key: string; label: string }> = [];
-  if (filters.checkIn && filters.checkOut) labels.push({ key: "dates", label: `${filters.checkIn} - ${filters.checkOut}` });
   if (filters.guests) labels.push({ key: "guests", label: `${filters.guests} khách` });
   filters.types.forEach((type) => labels.push({ key: `type-${type}`, label: type }));
   filters.amenities.forEach((amenity) => labels.push({ key: `amenity-${amenity}`, label: amenity }));

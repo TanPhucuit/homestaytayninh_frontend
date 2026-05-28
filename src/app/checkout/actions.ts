@@ -5,6 +5,7 @@ import { createBooking, initiatePayment } from "@/lib/api";
 import { actionErrorMessage } from "@/lib/action-errors";
 import { ApiClientError } from "@/lib/api-client";
 import { flashUrl } from "@/lib/flash";
+import type { Booking } from "@/lib/types";
 
 function serviceItemsFromForm(formData: FormData) {
   const roomIds = selectedRoomIdsFromForm(formData);
@@ -51,14 +52,34 @@ function isValidEmail(value: string) {
   return !value || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
+function dateFromIso(value?: string) {
+  if (!value) return null;
+  const date = new Date(`${value}T00:00:00`);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function hasValidDateRange(checkIn: string, checkOut: string) {
+  const start = dateFromIso(checkIn);
+  const end = dateFromIso(checkOut);
+  return Boolean(start && end && end > start);
+}
+
+function paymentDestination(bookingId: string, payment: NonNullable<Booking["payment"]>) {
+  const resultUrl = `/payment/result?bookingId=${encodeURIComponent(bookingId)}&status=pending`;
+  return payment.qrUrl ? resultUrl : payment.checkoutUrl || resultUrl;
+}
+
 export async function createCheckoutAction(formData: FormData) {
   const homestayId = String(formData.get("homestayId") ?? "");
   const roomIds = selectedRoomIdsFromForm(formData);
   const guestName = String(formData.get("guestName") ?? "").trim();
   const guestPhone = String(formData.get("guestPhone") ?? "").trim();
   const guestEmail = String(formData.get("guestEmail") ?? "").trim();
+  const guestCount = Number(formData.get("guestCount") ?? formData.get("guests") ?? 0);
+  const checkIn = String(formData.get("checkIn") ?? "");
+  const checkOut = String(formData.get("checkOut") ?? "");
   let bookingId: string | undefined;
-  let checkoutUrl: string | undefined;
+  let paymentUrl: string | undefined;
   let authRequired = false;
   let roleDenied = false;
   let createError: unknown;
@@ -79,6 +100,12 @@ export async function createCheckoutAction(formData: FormData) {
   if (!isValidEmail(guestEmail)) {
     redirect(flashUrl(checkoutNextPath(formData), "error", "Email chưa đúng định dạng."));
   }
+  if (!hasValidDateRange(checkIn, checkOut)) {
+    redirect(flashUrl(checkoutNextPath(formData), "error", "Ngày trả phòng phải sau ngày nhận phòng."));
+  }
+  if (!Number.isInteger(guestCount) || guestCount < 1) {
+    redirect(flashUrl(checkoutNextPath(formData), "error", "Vui lòng nhập số khách hợp lệ."));
+  }
   if (formData.get("termsAccepted") !== "on") {
     redirect(flashUrl(checkoutNextPath(formData), "error", "Vui lòng đồng ý với điều khoản trước khi thanh toán."));
   }
@@ -90,16 +117,16 @@ export async function createCheckoutAction(formData: FormData) {
         roomId: roomIds[0],
         guestName,
         guestPhone,
-        guestCount: Math.max(1, Number(formData.get("guestCount") ?? formData.get("guests") ?? 1)),
-        checkIn: String(formData.get("checkIn") ?? ""),
-        checkOut: String(formData.get("checkOut") ?? ""),
+        guestCount,
+        checkIn,
+        checkOut,
         serviceItems: serviceItemsFromForm(formData)
       },
       "CUSTOMER"
     );
     bookingId = booking.id;
     const payment = await initiatePayment(booking.id, "CUSTOMER");
-    checkoutUrl = payment.checkoutUrl;
+    paymentUrl = paymentDestination(booking.id, payment);
   } catch (error) {
     if (error instanceof ApiClientError && error.status === 401) {
       authRequired = true;
@@ -127,8 +154,8 @@ export async function createCheckoutAction(formData: FormData) {
   if (paymentError) {
     redirect(`/payment/result?bookingId=${bookingId}&status=failed&paymentError=${encodeURIComponent(actionErrorMessage(paymentError))}`);
   }
-  if (checkoutUrl) {
-    redirect(checkoutUrl);
+  if (paymentUrl) {
+    redirect(paymentUrl);
   }
 
   redirect(`/payment/result?bookingId=${bookingId}&status=pending`);

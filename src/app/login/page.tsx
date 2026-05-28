@@ -5,6 +5,7 @@ function errorMessage(error?: string) {
   if (error === "google_env") return "Đăng nhập Google chưa sẵn sàng. Vui lòng thử cách khác.";
   if (error === "auth_required") return "Bạn cần đăng nhập trước khi thực hiện thao tác này.";
   if (error === "oauth") return "Không tạo được phiên đăng nhập Google. Vui lòng thử lại.";
+  if (error === "google_access_denied") return "Google chưa cho phép tài khoản này đăng nhập vào ứng dụng. Nếu ứng dụng đang ở chế độ thử nghiệm, hãy thêm email này vào danh sách test users hoặc chuyển OAuth consent screen sang production.";
   if (error === "callback") return "Phiên đăng nhập Google không hợp lệ hoặc chưa được tạo.";
   if (error === "google_verify") return "Google đã xác thực thành công, nhưng hệ thống chưa xác minh được tài khoản.";
   if (error === "role_lookup") return "Hệ thống chưa xác minh được quyền truy cập. Vui lòng đăng nhập lại hoặc liên hệ quản trị viên.";

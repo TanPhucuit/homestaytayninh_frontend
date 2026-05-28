@@ -23,10 +23,14 @@ test.describe("Homestay Tây Ninh production smoke", () => {
 
   test("customer search, detail and checkout steps are usable", async ({ page }) => {
     await page.goto(`${baseURL}/homestays?checkIn=2026-06-12&checkOut=2026-06-14&guests=2`);
-    await expect(page.getByRole("link", { name: "Xem chi tiết" }).first()).toBeVisible();
-    await page.getByRole("link", { name: "Xem chi tiết" }).first().click();
+    await expect(page.getByRole("link", { name: /Chi tiết|Xem chi tiết/ }).first()).toBeVisible();
+    await page.getByRole("link", { name: /Chi tiết|Xem chi tiết/ }).first().click();
+    await expect(page).not.toHaveURL(/checkIn=2026-06-12/);
     await expect(page.getByTestId("continue-checkout")).toBeDisabled();
     await page.getByRole("button", { name: "Chọn phòng" }).first().click();
+    await page.getByTestId("summary-check-in").fill("2026-06-12");
+    await page.getByTestId("summary-check-out").fill("2026-06-14");
+    await page.getByTestId("summary-guests").fill("1");
     await page.getByTestId("continue-checkout").click();
     await expect(page).toHaveURL(/\/checkout\/services/);
     await page.getByRole("button", { name: "Tiếp tục xác nhận" }).click();
@@ -39,7 +43,7 @@ test.describe("Homestay Tây Ninh production smoke", () => {
     await page.goto(`${baseURL}/bookings`);
     await expect(page.getByRole("heading", { name: "Không có quyền truy cập" })).toBeVisible();
     await page.goto(`${baseURL}/payment/result?status=pending`);
-    await expect(page.getByText("Kết quả thanh toán")).toBeVisible();
+    await expect(page.getByText("Kết quả thanh toán", { exact: true })).toBeVisible();
   });
 
   test("owner, staff and admin portals render controlled states", async ({ page }) => {

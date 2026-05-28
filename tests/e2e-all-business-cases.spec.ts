@@ -59,12 +59,17 @@ test.describe("All unauthenticated business cases on production", () => {
     await page.goto(`${baseURL}/homestays`);
     await expect(page.getByRole("heading", { name: /Tìm thấy/i })).toBeVisible();
 
-    await page.locator('input[name="guests"]').fill("2");
-    await page.locator('select[name="type"]').selectOption("Phòng");
-    await page.locator('input[name="maxPrice"]').fill("2000000");
-    await page.getByRole("button", { name: /Áp dụng bộ lọc/i }).click();
+    await page.locator('aside input[name="guests"]').fill("2");
+    await page.locator("aside").getByLabel("Phòng").check();
+    await page.locator('aside input[name="price"]').evaluate((element) => {
+      const input = element as HTMLInputElement;
+      input.value = "2000000";
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+    await page.locator("aside").getByRole("button", { name: /^Áp dụng$/i }).click();
     await expect(page).toHaveURL(/type=/);
-    await expect(page.getByRole("link", { name: /Xem chi tiết/i }).first()).toBeVisible();
+    await expect(page.getByRole("link", { name: /Chi tiết|Xem chi tiết/i }).first()).toBeVisible();
     await assertNoBrokenUi(page, failures);
 
     await page.goto(`${baseURL}/homestays?guests=99&maxPrice=1`);
@@ -84,14 +89,13 @@ test.describe("All unauthenticated business cases on production", () => {
 
     for (const id of ["hs-ba-den", "hs-trang-bang"]) {
       await page.goto(`${baseURL}/homestays/${id}?guests=2`);
-      await expect(page.getByRole("link", { name: /Tiếp tục đặt phòng/i })).toBeVisible();
+      await expect(page).not.toHaveURL(/guests=2/);
+      await expect(page.getByRole("link", { name: /Chọn phòng/i })).toBeVisible();
       await expect(page.getByText(/Chọn phòng của bạn/i)).toBeVisible();
       await expect(page.getByText(/Dịch vụ có thể đặt thêm/i)).toBeVisible();
       await expect(page.getByText(/Đánh giá/i)).toBeVisible();
       await expect(page.getByRole("link", { name: /Mở Google Maps/i })).toBeVisible();
-      await page.getByRole("link", { name: /Chọn phòng|Tiếp tục đặt phòng/i }).first().click();
-      await expect(page).toHaveURL(new RegExp(`/checkout\\?homestayId=${id}`));
-      await expect(page).toHaveURL(/guestCount=2/);
+      await expect(page.getByTestId("continue-checkout")).toBeDisabled();
       await assertNoBrokenUi(page, failures);
     }
   });
@@ -99,25 +103,29 @@ test.describe("All unauthenticated business cases on production", () => {
   test("checkout validates required fields and redirects unauthenticated valid submit", async ({ page }) => {
     const failures = watchFailures(page);
 
-    await page.goto(`${baseURL}/checkout?homestayId=hs-ba-den&guests=2`);
-    await page.locator('button[type="submit"]').click();
-    await expect(page).toHaveURL(/\/checkout/);
+    await page.goto(`${baseURL}/homestays/hs-ba-den?checkIn=2026-06-09&checkOut=2026-06-11&guests=2`);
+    await expect(page).not.toHaveURL(/checkIn=2026-06-09/);
+    await page.getByRole("button", { name: "Chọn phòng" }).first().click();
+    await page.getByTestId("summary-check-in").fill("2026-06-09");
+    await page.getByTestId("summary-check-out").fill("2026-06-11");
+    await page.getByTestId("summary-guests").fill("1");
+    await page.getByTestId("continue-checkout").click();
+    await expect(page).toHaveURL(/\/checkout\/services/);
+    await page.getByRole("button", { name: /Tiếp tục xác nhận/i }).click();
+    await expect(page).toHaveURL(/\/checkout\/confirm/);
+
+    await page.getByRole("button", { name: /Thanh toán qua ApiPay/i }).click();
     await expect(page.locator('input[name="guestName"]')).toBeFocused();
 
     await page.locator('input[name="guestName"]').fill("A");
     await page.locator('input[name="guestPhone"]').fill("abc");
-    await page.locator('button[type="submit"]').click();
-    await expect(page).toHaveURL(/\/checkout/);
+    await page.getByRole("button", { name: /Thanh toán qua ApiPay/i }).click();
+    await expect(page).toHaveURL(/\/checkout\/confirm/);
 
     await page.locator('input[name="guestName"]').fill("Nguyen Test");
     await page.locator('input[name="guestPhone"]').fill("0901234567");
-    await page.locator('input[name="guestCount"]').fill("2");
-    await page.getByRole("button", { name: /Tiếp tục chọn dịch vụ/i }).click();
-    await expect(page).toHaveURL(/\/checkout\/services/);
-    await page.locator('input[name^="service:"]').first().fill("1");
-    await page.getByRole("button", { name: /Tiếp tục xác nhận/i }).click();
-    await expect(page).toHaveURL(/\/checkout\/confirm/);
-    await page.getByRole("button", { name: /Xác nhận đặt phòng/i }).click();
+    await page.getByLabel(/Tôi đồng ý/i).check();
+    await page.getByRole("button", { name: /Thanh toán qua ApiPay/i }).click();
     await page.waitForLoadState("networkidle");
     await expect(page).toHaveURL(/\/login\?error=auth_required/);
     await expect(page.getByText(/Bạn cần đăng nhập/i)).toBeVisible();
@@ -130,7 +138,7 @@ test.describe("All unauthenticated business cases on production", () => {
     await page.goto(`${baseURL}/bookings`);
     await expect(page.getByRole("heading", { name: /Không có quyền truy cập/i })).toBeVisible();
     await page.goto(`${baseURL}/payment/result?status=pending`);
-    await expect(page.getByText(/Kết quả thanh toán/i)).toBeVisible();
+    await expect(page.getByText("Kết quả thanh toán", { exact: true })).toBeVisible();
     await assertNoBrokenUi(page, failures);
   });
 
@@ -146,7 +154,7 @@ test.describe("All unauthenticated business cases on production", () => {
 
     for (const item of cases) {
       await page.goto(`${baseURL}/payment/result?${item.query}`);
-      await expect(page.getByText(/Kết quả thanh toán/i)).toBeVisible();
+      await expect(page.getByText("Kết quả thanh toán", { exact: true })).toBeVisible();
       await expect(page.getByText(item.text).first()).toBeVisible();
       await assertNoBrokenUi(page, failures);
     }
@@ -159,7 +167,7 @@ test.describe("All unauthenticated business cases on production", () => {
     await expect(page.getByRole("heading", { name: /Không có quyền truy cập/i })).toBeVisible();
 
     await page.goto(`${baseURL}/payment/result?status=paid&demo=1`);
-    await expect(page.getByText(/Kết quả thanh toán/i)).toBeVisible();
+    await expect(page.getByText("Kết quả thanh toán", { exact: true })).toBeVisible();
     await expect(page.getByText(/Thanh toán demo thành công|Đã thanh toán/i).first()).toBeVisible();
 
     await page.goto(`${baseURL}/payment/result?status=pending&demo=1`);
@@ -167,18 +175,24 @@ test.describe("All unauthenticated business cases on production", () => {
     await assertNoBrokenUi(page, failures);
   });
 
-  test("search filters are preserved through detail and checkout", async ({ page }) => {
+  test("search filters do not prefill booking dates or guests", async ({ page }) => {
     const failures = watchFailures(page);
 
     await page.goto(`${baseURL}/homestays?guests=2&checkIn=2026-06-09&checkOut=2026-06-11`);
-    await page.getByRole("link", { name: /Xem chi tiết/i }).first().click();
-    await expect(page).toHaveURL(/guests=2/);
-    await expect(page).toHaveURL(/checkIn=2026-06-09/);
-    await page.locator('main a[href^="/checkout?"]').first().click();
-    await expect(page).toHaveURL(/\/checkout/);
-    await expect(page).toHaveURL(/guestCount=2/);
-    await expect(page).toHaveURL(/checkIn=2026-06-09/);
-    await expect(page).toHaveURL(/checkOut=2026-06-11/);
+    await page.getByRole("link", { name: /Chi tiết|Xem chi tiết/i }).first().click();
+    await expect(page).not.toHaveURL(/guests=2/);
+    await expect(page).not.toHaveURL(/checkIn=2026-06-09/);
+    await expect(page.getByTestId("summary-check-in-display")).toHaveText("Chưa chọn");
+    await expect(page.getByTestId("summary-guests-display")).toHaveText("Chưa nhập");
+
+    await page.getByRole("button", { name: "Chọn phòng" }).first().click();
+    await page.getByTestId("summary-check-in").fill("2026-07-01");
+    await page.getByTestId("summary-check-out").fill("2026-07-03");
+    await page.getByTestId("summary-guests").fill("1");
+    await page.getByTestId("continue-checkout").click();
+    await expect(page).toHaveURL(/\/checkout\/services/);
+    await expect(page).toHaveURL(/checkIn=2026-07-01/);
+    await expect(page).not.toHaveURL(/checkIn=2026-06-09/);
     await assertNoBrokenUi(page, failures);
   });
 
@@ -200,10 +214,10 @@ test.describe("All unauthenticated business cases on production", () => {
     await expect(page.getByRole("link", { name: /Đặt phòng ngay/i }).first()).toBeVisible();
     await page.getByRole("link", { name: /Đặt phòng ngay/i }).first().click();
     await page.locator('input[name="guests"]').fill("2");
-    await page.getByRole("button", { name: /Áp dụng bộ lọc/i }).click();
-    await expect(page.getByRole("link", { name: /Xem chi tiết/i }).first()).toBeVisible();
-    await page.getByRole("link", { name: /Xem chi tiết/i }).first().click();
-    await expect(page.getByRole("link", { name: /Tiếp tục đặt phòng/i })).toBeVisible();
+    await page.getByRole("button", { name: /^Áp dụng$/i }).first().click();
+    await expect(page.getByRole("link", { name: /Chi tiết|Xem chi tiết/i }).first()).toBeVisible();
+    await page.getByRole("link", { name: /Chi tiết|Xem chi tiết/i }).first().click();
+    await expect(page.getByRole("link", { name: /Chọn phòng/i })).toBeVisible();
     await assertNoBrokenUi(page, failures);
   });
 });

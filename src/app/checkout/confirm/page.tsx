@@ -27,7 +27,7 @@ type CheckoutConfirmParams = {
 
 function selectedRoomIds(params: CheckoutConfirmParams) {
   if (params.roomIds) return params.roomIds.split(",").map((item) => item.trim()).filter(Boolean);
-  return params.roomId ? [params.roomId] : [];
+  return [];
 }
 
 function dateFromIso(value?: string) {
@@ -48,14 +48,22 @@ function formatDate(value?: string) {
   return date ? new Intl.DateTimeFormat("vi-VN").format(date) : "Chưa chọn";
 }
 
+function positiveGuestCount(value?: string) {
+  const number = Number(value);
+  return Number.isInteger(number) && number > 0 ? String(number) : undefined;
+}
+
 function detailRoomsHref(homestayId?: string, params?: CheckoutConfirmParams, roomIds: string[] = []) {
   if (!homestayId) return "/homestays";
   const query = new URLSearchParams();
   const selectedRooms = roomIds.length ? roomIds : selectedRoomIds(params ?? {});
   if (selectedRooms.length) query.set("roomIds", selectedRooms.join(","));
-  if (params?.checkIn) query.set("checkIn", params.checkIn);
-  if (params?.checkOut) query.set("checkOut", params.checkOut);
-  if (params?.guests ?? params?.guestCount) query.set("guests", params.guests ?? params.guestCount ?? "2");
+  if (nightsBetween(params?.checkIn, params?.checkOut) > 0) {
+    query.set("checkIn", params?.checkIn ?? "");
+    query.set("checkOut", params?.checkOut ?? "");
+  }
+  const guests = positiveGuestCount(params?.guests ?? params?.guestCount);
+  if (guests) query.set("guests", guests);
   return `/homestays/${homestayId}${query.toString() ? `?${query.toString()}` : ""}#rooms`;
 }
 
@@ -102,7 +110,13 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
   }
 
   const nights = nightsBetween(params.checkIn, params.checkOut);
-  const guestCount = params.guests ?? params.guestCount ?? "2";
+  if (nights <= 0) {
+    return <Notice homestayId={homestay.id} params={params} message="Vui lòng chọn ngày nhận và ngày trả hợp lệ sau khi chọn phòng." />;
+  }
+  const guestCount = positiveGuestCount(params.guests ?? params.guestCount);
+  if (!guestCount) {
+    return <Notice homestayId={homestay.id} params={params} message="Vui lòng nhập số khách hợp lệ sau khi chọn phòng." />;
+  }
   const selections = serviceSelections(params, roomIds);
   const selectedServices = selections.map((selection) => {
     const room = rooms.find((item) => item.id === selection.roomId);

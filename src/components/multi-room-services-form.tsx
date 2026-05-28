@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
-import { ActionButton } from "./action-button";
+import { useEffect, useMemo, useState } from "react";
 import type { Room, Service } from "@/lib/types";
 
 type MultiRoomServicesFormProps = {
@@ -52,6 +51,8 @@ function formatDate(value?: string) {
 
 export function MultiRoomServicesForm({ homestayId, rooms, services, initialSelectedServices, checkIn, checkOut, guests, backHref }: MultiRoomServicesFormProps) {
   const [selected, setSelected] = useState<Record<string, boolean>>(() => initialSelectedState(initialSelectedServices, rooms, services));
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isReady, setIsReady] = useState(false);
   const nights = nightsBetween(checkIn, checkOut);
   const roomTotal = rooms.reduce((sum, room) => sum + room.pricePerNight * nights, 0);
   const selectedServices = useMemo(() => {
@@ -64,6 +65,10 @@ export function MultiRoomServicesForm({ homestayId, rooms, services, initialSele
   const serviceTotal = selectedServices.reduce((sum, item) => sum + item.total, 0);
   const taxTotal = Math.round((roomTotal + serviceTotal) * 0.1);
   const grandTotal = roomTotal + serviceTotal + taxTotal;
+
+  useEffect(() => {
+    setIsReady(true);
+  }, []);
 
   function toggleService(roomId: string, serviceId: string) {
     const key = selectionKey(roomId, serviceId);
@@ -79,6 +84,21 @@ export function MultiRoomServicesForm({ homestayId, rooms, services, initialSele
       });
       return next;
     });
+  }
+
+  function goToConfirm() {
+    setIsSubmitting(true);
+    const params = new URLSearchParams({
+      homestayId,
+      roomIds: rooms.map((room) => room.id).join(","),
+      checkIn,
+      checkOut,
+      guests
+    });
+    selectedServices.forEach(({ room, service }) => {
+      params.set(`service:${room.id}:${service.id}`, "1");
+    });
+    window.location.href = `/checkout/confirm?${params.toString()}`;
   }
 
   return (
@@ -132,16 +152,17 @@ export function MultiRoomServicesForm({ homestayId, rooms, services, initialSele
                             aria-label={`${isSelected ? "Bỏ chọn" : "Chọn"} ${service.name} cho ${room.name}`}
                             checked={isSelected}
                             className="mt-1 size-5 accent-[#9a4029]"
+                            disabled={!isReady}
                             onChange={() => toggleService(room.id, service.id)}
                             type="checkbox"
                           />
                         </div>
                         <div className="mt-4 flex flex-col gap-2 border-t border-[#e8e1d5] pt-3 sm:flex-row">
-                          <button className={isSelected ? "btn-secondary px-4 py-2 text-[#9a4029]" : "btn-primary px-4 py-2"} onClick={() => toggleService(room.id, service.id)} type="button">
+                          <button className={isSelected ? "btn-secondary px-4 py-2 text-[#9a4029]" : "btn-primary px-4 py-2"} disabled={!isReady} onClick={() => toggleService(room.id, service.id)} type="button">
                             {isSelected ? "Bỏ chọn" : "Thêm"}
                           </button>
                           {rooms.length > 1 && (
-                            <button className="btn-secondary px-4 py-2" onClick={() => applyServiceToAll(service.id)} type="button">
+                            <button className="btn-secondary px-4 py-2" disabled={!isReady} onClick={() => applyServiceToAll(service.id)} type="button">
                               Áp dụng cho tất cả phòng
                             </button>
                           )}
@@ -188,9 +209,9 @@ export function MultiRoomServicesForm({ homestayId, rooms, services, initialSele
             <p className="mt-1 text-xs text-[#75675f]">Tổng tiền tự cập nhật khi chọn hoặc bỏ chọn dịch vụ.</p>
           </div>
         </div>
-        <ActionButton className="btn-primary mt-6 w-full" pendingLabel="Đang chuyển sang xác nhận...">
-          Tiếp tục xác nhận
-        </ActionButton>
+        <button className="btn-primary mt-6 w-full disabled:cursor-not-allowed disabled:opacity-55" disabled={!isReady || isSubmitting} onClick={goToConfirm} type="button">
+          {isSubmitting ? "Đang chuyển sang xác nhận..." : "Tiếp tục xác nhận"}
+        </button>
         <Link className="btn-secondary mt-3 w-full" href={backHref}>Quay lại chọn phòng</Link>
       </aside>
     </form>

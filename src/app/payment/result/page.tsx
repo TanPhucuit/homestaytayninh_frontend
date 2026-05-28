@@ -85,9 +85,23 @@ export default async function PaymentResultPage({ searchParams }: { searchParams
             <div className="mt-2 flex justify-between gap-4"><span>Số tiền</span><strong>{money(payment.amount)}</strong></div>
           </div>
         )}
+        {payment?.qrUrl && status !== "PAID" && (
+          <div className="mx-auto mt-6 max-w-sm rounded-2xl border border-[#eadfd4] bg-white p-5">
+            <p className="font-heading text-2xl text-[#9a4029]">Quét mã để thanh toán</p>
+            {/* QR URL is returned dynamically by the payment provider, so next/image cannot safely whitelist it. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="mx-auto mt-4 h-64 w-64 rounded-xl bg-white object-contain" src={payment.qrUrl} alt="Mã QR thanh toán" />
+            <p className="mt-3 text-xs leading-5 text-[#75675f]">Sau khi chuyển khoản, trạng thái có thể cần vài phút để cập nhật.</p>
+          </div>
+        )}
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+          {payment?.checkoutUrl && status !== "PAID" && (
+            <a className="btn-primary" href={payment.checkoutUrl} rel="noreferrer" target="_blank">
+              Mở trang thanh toán
+            </a>
+          )}
           {params.bookingId && status === "PENDING" && (
-            <Link className="btn-primary" href={`/payment/result?bookingId=${params.bookingId}&status=pending`}>
+            <Link className={payment?.checkoutUrl ? "btn-secondary" : "btn-primary"} href={`/payment/result?bookingId=${params.bookingId}&status=pending`}>
               Kiểm tra lại trạng thái
             </Link>
           )}

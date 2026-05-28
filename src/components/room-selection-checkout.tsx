@@ -44,43 +44,62 @@ function formatDate(value?: string) {
 }
 
 export function RoomSelectionCheckout({ homestayId, rooms, initialRoomIds, initialCheckIn, initialCheckOut, initialGuests }: RoomSelectionCheckoutProps) {
-  const [selectedRoomIds, setSelectedRoomIds] = useState<string[]>(() => validInitialRoomIds(initialRoomIds, rooms));
-  const [checkIn, setCheckIn] = useState(initialCheckIn ?? "");
-  const [checkOut, setCheckOut] = useState(initialCheckOut ?? "");
-  const [guests, setGuests] = useState(initialGuests || "2");
+  const sanitizedInitialRoomIds = validInitialRoomIds(initialRoomIds, rooms);
+  const hasInitialSelection = sanitizedInitialRoomIds.length > 0;
+  const [selectedRoomIds, setSelectedRoomIds] = useState<string[]>(() => sanitizedInitialRoomIds);
+  const [checkIn, setCheckIn] = useState(hasInitialSelection ? (initialCheckIn ?? "") : "");
+  const [checkOut, setCheckOut] = useState(hasInitialSelection ? (initialCheckOut ?? "") : "");
+  const [guests, setGuests] = useState(hasInitialSelection ? (initialGuests || "") : "");
   const [message, setMessage] = useState("");
+  const [isReady, setIsReady] = useState(false);
 
   const selectedRooms = useMemo(() => rooms.filter((room) => selectedRoomIds.includes(room.id)), [rooms, selectedRoomIds]);
   const numberOfNights = nightsBetween(checkIn, checkOut);
   const datesValid = numberOfNights > 0;
+  const guestCount = Number(guests);
+  const guestsValid = Number.isInteger(guestCount) && guestCount > 0;
+  const selectedCapacity = selectedRooms.reduce((sum, room) => sum + room.capacity, 0);
+  const guestsFitCapacity = !guestsValid || selectedRooms.length === 0 || guestCount <= selectedCapacity;
   const roomTotal = datesValid ? selectedRooms.reduce((sum, room) => sum + room.pricePerNight * numberOfNights, 0) : 0;
   const taxTotal = Math.round(roomTotal * 0.1);
   const grandTotal = roomTotal + taxTotal;
-  const canClickContinue = selectedRooms.length > 0 && datesValid;
+  const canClickContinue = isReady && selectedRooms.length > 0 && datesValid && guestsValid && guestsFitCapacity;
   const buttonLabel = selectedRooms.length === 0
     ? "Chọn phòng để tiếp tục"
     : !datesValid
         ? "Chọn ngày hợp lệ để tiếp tục"
-        : "Tiếp tục thanh toán";
+        : !guestsValid
+            ? "Nhập số khách để tiếp tục"
+            : !guestsFitCapacity
+                ? "Số khách vượt sức chứa"
+                : "Tiếp tục thanh toán";
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
+    setIsReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isReady) return;
+    const params = new URLSearchParams();
     if (selectedRoomIds.length) {
       params.set("roomIds", selectedRoomIds.join(","));
-    } else {
-      params.delete("roomIds");
+      if (checkIn) params.set("checkIn", checkIn);
+      if (checkOut) params.set("checkOut", checkOut);
+      if (guests) params.set("guests", guests);
     }
-    if (checkIn) params.set("checkIn", checkIn);
-    if (checkOut) params.set("checkOut", checkOut);
-    if (guests) params.set("guests", guests);
-    params.delete("guestCount");
     const nextUrl = `${window.location.pathname}${params.toString() ? `?${params.toString()}` : ""}${window.location.hash}`;
     window.history.replaceState(null, "", nextUrl);
-  }, [checkIn, checkOut, guests, selectedRoomIds]);
+  }, [checkIn, checkOut, guests, isReady, selectedRoomIds]);
 
   function toggleRoom(roomId: string) {
     setMessage("");
-    setSelectedRoomIds((current) => current.includes(roomId) ? current.filter((id) => id !== roomId) : [...current, roomId]);
+    const nextRoomIds = selectedRoomIds.includes(roomId) ? selectedRoomIds.filter((id) => id !== roomId) : [...selectedRoomIds, roomId];
+    if (nextRoomIds.length === 0) {
+      setCheckIn("");
+      setCheckOut("");
+      setGuests("");
+    }
+    setSelectedRoomIds(nextRoomIds);
   }
 
   function continueToCheckout() {
@@ -90,6 +109,14 @@ export function RoomSelectionCheckout({ homestayId, rooms, initialRoomIds, initi
     }
     if (!datesValid) {
       setMessage("Ngày trả phòng phải sau ngày nhận phòng.");
+      return;
+    }
+    if (!guestsValid) {
+      setMessage("Vui lòng nhập số khách hợp lệ.");
+      return;
+    }
+    if (!guestsFitCapacity) {
+      setMessage("Số khách vượt quá sức chứa của phòng đã chọn.");
       return;
     }
     const params = new URLSearchParams({
@@ -141,8 +168,9 @@ export function RoomSelectionCheckout({ homestayId, rooms, initialRoomIds, initi
                       <p className="font-heading text-2xl font-bold text-[#9a4029]">{money(room.pricePerNight)}</p>
                     </div>
                     <button
-                      className={selected ? "btn-secondary border-[#9a4029]/40 text-[#9a4029]" : "btn-primary"}
+                      className={`${selected ? "btn-secondary border-[#9a4029]/40 text-[#9a4029]" : "btn-primary"} disabled:cursor-not-allowed disabled:opacity-55`}
                       data-testid={`toggle-room-${room.id}`}
+                      disabled={!isReady}
                       onClick={() => toggleRoom(room.id)}
                       type="button"
                     >
@@ -161,15 +189,40 @@ export function RoomSelectionCheckout({ homestayId, rooms, initialRoomIds, initi
         <div className="mt-5 grid gap-3">
           <label className="grid gap-2 text-xs font-black uppercase tracking-[0.12em] text-[#89726c]">
             Nhận phòng
-            <input className="field" data-testid="summary-check-in" onChange={(event) => setCheckIn(event.target.value)} type="date" value={checkIn} />
+            <input
+              className="field disabled:cursor-not-allowed disabled:bg-[#f1ede8] disabled:text-[#9f918a]"
+              data-testid="summary-check-in"
+              disabled={!isReady || selectedRooms.length === 0}
+              onChange={(event) => setCheckIn(event.target.value)}
+              type="date"
+              value={checkIn}
+            />
           </label>
           <label className="grid gap-2 text-xs font-black uppercase tracking-[0.12em] text-[#89726c]">
             Trả phòng
-            <input className="field" data-testid="summary-check-out" onChange={(event) => setCheckOut(event.target.value)} type="date" value={checkOut} />
+            <input
+              className="field disabled:cursor-not-allowed disabled:bg-[#f1ede8] disabled:text-[#9f918a]"
+              data-testid="summary-check-out"
+              disabled={!isReady || selectedRooms.length === 0}
+              min={checkIn || undefined}
+              onChange={(event) => setCheckOut(event.target.value)}
+              type="date"
+              value={checkOut}
+            />
           </label>
           <label className="grid gap-2 text-xs font-black uppercase tracking-[0.12em] text-[#89726c]">
             Số khách
-            <input className="field" data-testid="summary-guests" min="1" onChange={(event) => setGuests(event.target.value)} type="number" value={guests} />
+            <input
+              className="field disabled:cursor-not-allowed disabled:bg-[#f1ede8] disabled:text-[#9f918a]"
+              data-testid="summary-guests"
+              disabled={!isReady || selectedRooms.length === 0}
+              max={selectedCapacity || undefined}
+              min="1"
+              onChange={(event) => setGuests(event.target.value)}
+              placeholder="Nhập số khách"
+              type="number"
+              value={guests}
+            />
           </label>
         </div>
 
@@ -177,6 +230,7 @@ export function RoomSelectionCheckout({ homestayId, rooms, initialRoomIds, initi
           {selectedRooms.length === 0 ? (
             <div className="rounded-2xl bg-[#fdf9f4] p-4 text-sm font-semibold text-[#75675f]" data-testid="selected-empty">
               Chưa chọn phòng
+              <p className="mt-1 text-xs font-medium">Chọn phòng trước, sau đó nhập ngày lưu trú và số khách.</p>
             </div>
           ) : (
             <div className="space-y-3" data-testid="selected-room-list">
@@ -205,7 +259,7 @@ export function RoomSelectionCheckout({ homestayId, rooms, initialRoomIds, initi
         <div className="mt-5 space-y-3 border-t border-[#e8e1d5] pt-5 text-sm text-[#56423d]">
           <div className="flex justify-between gap-4"><span>Nhận phòng</span><strong data-testid="summary-check-in-display">{formatDate(checkIn)}</strong></div>
           <div className="flex justify-between gap-4"><span>Trả phòng</span><strong data-testid="summary-check-out-display">{formatDate(checkOut)}</strong></div>
-          <div className="flex justify-between gap-4"><span>Số khách</span><strong data-testid="summary-guests-display">{guests || "0"}</strong></div>
+          <div className="flex justify-between gap-4"><span>Số khách</span><strong data-testid="summary-guests-display">{guests || "Chưa nhập"}</strong></div>
           <div className="flex justify-between gap-4"><span>Số đêm</span><strong data-testid="summary-nights">{numberOfNights}</strong></div>
           <div className="flex justify-between gap-4"><span>Tổng tiền phòng</span><strong data-testid="summary-room-total">{money(roomTotal)}</strong></div>
           <div className="flex justify-between gap-4"><span>Thuế/phụ phí 10%</span><strong data-testid="summary-tax-total">{money(taxTotal)}</strong></div>
@@ -224,7 +278,7 @@ export function RoomSelectionCheckout({ homestayId, rooms, initialRoomIds, initi
         >
           {buttonLabel}
         </button>
-        <p className="mt-4 text-center text-xs text-[#75675f]">Tổng tiền cập nhật khi chọn phòng hoặc đổi ngày.</p>
+        <p className="mt-4 text-center text-xs text-[#75675f]">Tổng tiền cập nhật khi chọn phòng, đổi ngày hoặc điều chỉnh số khách.</p>
       </aside>
     </section>
   );

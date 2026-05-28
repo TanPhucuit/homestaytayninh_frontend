@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { redirect } from "next/navigation";
 import { AppTopBar } from "@/components/customer-ui";
 import { HomestayGallery } from "@/components/homestay-gallery";
 import { RoomSelectionCheckout } from "@/components/room-selection-checkout";
@@ -94,13 +95,19 @@ function DetailIcon({ name }: { name: string }) {
 export default async function HomestayDetailPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<DetailSearchParams> }) {
   const { id } = await params;
   const filters = await searchParams;
+  const selectedRoomIds = (filters.roomIds ?? "").split(",").map((roomId) => roomId.trim()).filter(Boolean);
+  if (selectedRoomIds.length === 0 && (filters.checkIn || filters.checkOut || filters.guests || filters.guestCount)) {
+    redirect(`/homestays/${id}`);
+  }
   const homestay = await getHomestay(id);
   const activeRooms = homestay.rooms.filter((room) => room.active);
   const rooms = activeRooms.length ? activeRooms : homestay.rooms;
   const gallery = buildGalleryImages(homestay);
   const mapHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(homestay.location)}`;
-  const guestCount = filters.guestCount ?? filters.guests ?? "2";
-  const selectedRoomIds = (filters.roomIds ?? "").split(",").map((roomId) => roomId.trim()).filter(Boolean);
+  const hasBookingSelection = selectedRoomIds.length > 0;
+  const initialGuestCount = hasBookingSelection ? (filters.guestCount ?? filters.guests ?? "") : "";
+  const initialCheckIn = hasBookingSelection ? filters.checkIn : undefined;
+  const initialCheckOut = hasBookingSelection ? filters.checkOut : undefined;
   const selectableRooms = rooms.map((room, index) => ({
     id: room.id,
     name: room.name,
@@ -197,9 +204,9 @@ export default async function HomestayDetailPage({ params, searchParams }: { par
             homestayId={homestay.id}
             rooms={selectableRooms}
             initialRoomIds={selectedRoomIds}
-            initialCheckIn={filters.checkIn}
-            initialCheckOut={filters.checkOut}
-            initialGuests={guestCount}
+            initialCheckIn={initialCheckIn}
+            initialCheckOut={initialCheckOut}
+            initialGuests={initialGuestCount}
           />
 
           <section className="border-b border-[#e8e1d5] pb-10">

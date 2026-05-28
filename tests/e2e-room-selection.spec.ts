@@ -7,9 +7,11 @@ function parseVnd(text: string) {
 }
 
 async function openFirstDetail(page: Page) {
-  await page.goto(`${baseURL}/homestays?checkIn=2026-06-12&checkOut=2026-06-14&guests=3`);
-  await page.getByRole("link", { name: /Chi tiết|Xem chi tiết/i }).first().click();
+  await page.goto(`${baseURL}/homestays/hs-trang-bang-family?checkIn=2026-06-12&checkOut=2026-06-14&guests=3`);
   await expect(page.getByTestId("continue-checkout")).toBeVisible();
+  await expect(page).not.toHaveURL(/checkIn=2026-06-12/);
+  await expect(page.getByTestId("summary-check-in-display")).toHaveText("Chưa chọn");
+  await expect(page.getByTestId("summary-guests-display")).toHaveText("Chưa nhập");
 }
 
 async function summaryTotal(page: Page, testId: string) {
@@ -20,11 +22,20 @@ async function selectRoom(roomCards: Locator, index: number) {
   await roomCards.nth(index).getByRole("button", { name: "Chọn phòng" }).click();
 }
 
+async function fillStay(page: Page, guests = "1", checkIn = "2026-06-12", checkOut = "2026-06-14") {
+  await page.getByTestId("summary-check-in").fill(checkIn);
+  await page.getByTestId("summary-check-out").fill(checkOut);
+  await page.getByTestId("summary-guests").fill(guests);
+}
+
 test.describe("multi-select room summary", () => {
   test("không chọn phòng thì không được tiếp tục", async ({ page }) => {
     await openFirstDetail(page);
     await expect(page.getByTestId("selected-empty")).toBeVisible();
     await expect(page.getByTestId("summary-grand-total")).toContainText("0");
+    await expect(page.getByTestId("summary-check-in")).toBeDisabled();
+    await expect(page.getByTestId("summary-check-out")).toBeDisabled();
+    await expect(page.getByTestId("summary-guests")).toBeDisabled();
     await expect(page.getByTestId("continue-checkout")).toBeDisabled();
   });
 
@@ -32,6 +43,7 @@ test.describe("multi-select room summary", () => {
     await openFirstDetail(page);
     const roomCards = page.locator('[data-testid^="room-card-"]');
     await selectRoom(roomCards, 0);
+    await fillStay(page);
 
     await expect(page.getByTestId("selected-room-row")).toHaveCount(1);
     await expect(page.getByTestId("summary-nights")).toHaveText("2");
@@ -42,7 +54,7 @@ test.describe("multi-select room summary", () => {
     await expect(page).toHaveURL(/roomIds=/);
     await expect(page).toHaveURL(/checkIn=2026-06-12/);
     await expect(page).toHaveURL(/checkOut=2026-06-14/);
-    await expect(page).toHaveURL(/guests=3/);
+    await expect(page).toHaveURL(/guests=1/);
   });
 
   test("chọn 2 phòng, bỏ chọn 1 phòng và đổi ngày cập nhật tổng tiền", async ({ page }) => {
@@ -51,6 +63,7 @@ test.describe("multi-select room summary", () => {
     test.skip(await roomCards.count() < 2, "Homestay hiện tại chỉ có một phòng để kiểm tra.");
 
     await selectRoom(roomCards, 0);
+    await fillStay(page);
     const oneRoomTotal = await summaryTotal(page, "summary-room-total");
     await selectRoom(roomCards, 1);
     await expect(page.getByTestId("selected-room-row")).toHaveCount(2);
@@ -76,6 +89,7 @@ test.describe("multi-select room summary", () => {
     await openFirstDetail(page);
     const roomCards = page.locator('[data-testid^="room-card-"]');
     await selectRoom(roomCards, 0);
+    await fillStay(page);
     if (await roomCards.count() > 1) {
       await selectRoom(roomCards, 1);
     }
@@ -104,6 +118,7 @@ test.describe("multi-select room summary", () => {
     test.skip(await roomCards.count() < 2, "Homestay hiện tại chỉ có một phòng để kiểm tra luồng nhiều phòng.");
 
     await selectRoom(roomCards, 0);
+    await fillStay(page);
     await selectRoom(roomCards, 1);
     await expect(page.getByTestId("selected-room-row")).toHaveCount(2);
     await expect(page.getByTestId("summary-check-in-display")).toHaveText("12/6/2026");

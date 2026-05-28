@@ -7,9 +7,15 @@ import { actionErrorMessage } from "@/lib/action-errors";
 import { ApiClientError } from "@/lib/api-client";
 import { canCreateOrRetryPayment, paymentActionUnavailableReason } from "@/lib/booking-rules";
 import { flashUrl } from "@/lib/flash";
+import type { Booking } from "@/lib/types";
 
 function redirectToLogin(bookingId: string): never {
   redirect(`/login?error=auth_required&next=${encodeURIComponent(`/bookings/${bookingId}`)}`);
+}
+
+function paymentDestination(bookingId: string, payment: NonNullable<Booking["payment"]>) {
+  const resultUrl = `/payment/result?bookingId=${encodeURIComponent(bookingId)}&status=pending`;
+  return payment.qrUrl ? resultUrl : payment.checkoutUrl || resultUrl;
 }
 
 export async function addServiceAction(formData: FormData) {
@@ -56,7 +62,7 @@ export async function cancelBookingAction(formData: FormData) {
 
 export async function retryPaymentAction(formData: FormData) {
   const bookingId = String(formData.get("bookingId") ?? "");
-  let checkoutUrl: string | undefined;
+  let paymentUrl: string | undefined;
   let booking: Awaited<ReturnType<typeof getBooking>> | undefined;
   let paymentError: unknown;
   if (!bookingId) redirect(flashUrl("/bookings", "error", "Thiếu booking để thử lại thanh toán."));
@@ -74,7 +80,7 @@ export async function retryPaymentAction(formData: FormData) {
   }
   try {
     const payment = await initiatePayment(bookingId, "CUSTOMER");
-    checkoutUrl = payment.checkoutUrl;
+    paymentUrl = paymentDestination(bookingId, payment);
   } catch (error) {
     if (error instanceof ApiClientError && error.status === 401) redirectToLogin(bookingId);
     paymentError = error;
@@ -82,8 +88,8 @@ export async function retryPaymentAction(formData: FormData) {
   if (paymentError) {
     redirect(`/payment/result?bookingId=${bookingId}&status=failed&paymentError=${encodeURIComponent(actionErrorMessage(paymentError))}`);
   }
-  if (checkoutUrl) {
-    redirect(checkoutUrl);
+  if (paymentUrl) {
+    redirect(paymentUrl);
   }
   redirect(`/payment/result?bookingId=${bookingId}&status=pending`);
 }

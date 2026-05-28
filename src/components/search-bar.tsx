@@ -1,7 +1,6 @@
 "use client";
 
 import { FormEvent, useMemo, useState, useTransition } from "react";
-import DatePicker from "react-datepicker";
 import { useRouter } from "next/navigation";
 import {
   AMENITY_OPTIONS,
@@ -19,21 +18,6 @@ interface SearchBarProps {
   variant?: SearchBarVariant;
 }
 
-function parseISODate(value?: string) {
-  if (!value) return null;
-  const [year, month, day] = value.split("-").map(Number);
-  if (!year || !month || !day) return null;
-  return new Date(year, month - 1, day);
-}
-
-function formatISODate(value: Date | null) {
-  if (!value) return undefined;
-  const year = value.getFullYear();
-  const month = String(value.getMonth() + 1).padStart(2, "0");
-  const day = String(value.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
 function money(value: number) {
   return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND", maximumFractionDigits: 0 }).format(value);
 }
@@ -44,8 +28,6 @@ function toggleValue(value: string, selected: string[], setSelected: (next: stri
 
 export function SearchBar({ initialFilters, variant = "home" }: SearchBarProps) {
   const router = useRouter();
-  const [startDate, setStartDate] = useState<Date | null>(() => parseISODate(initialFilters?.checkIn));
-  const [endDate, setEndDate] = useState<Date | null>(() => parseISODate(initialFilters?.checkOut));
   const [guests, setGuests] = useState(initialFilters?.guests ?? "2");
   const [types, setTypes] = useState<string[]>(initialFilters?.types ?? []);
   const [amenities, setAmenities] = useState<string[]>(initialFilters?.amenities ?? []);
@@ -65,12 +47,8 @@ export function SearchBar({ initialFilters, variant = "home" }: SearchBarProps) 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const params = new URLSearchParams();
-    const checkIn = formatISODate(startDate);
-    const checkOut = formatISODate(endDate);
     const normalizedGuests = Number(guests);
 
-    if (checkIn) params.set("checkIn", checkIn);
-    if (checkOut) params.set("checkOut", checkOut);
     if (Number.isFinite(normalizedGuests) && normalizedGuests > 0) params.set("guests", String(normalizedGuests));
     types.forEach((type) => params.append("type", type));
     amenities.forEach((amenity) => params.append("amenities", amenity));
@@ -126,6 +104,7 @@ export function SearchBar({ initialFilters, variant = "home" }: SearchBarProps) 
           className="price-slider"
           max={PRICE_MAX}
           min={PRICE_MIN}
+          name="price"
           onChange={(event) => {
             setPrice(Number(event.currentTarget.value));
           }}
@@ -153,31 +132,13 @@ export function SearchBar({ initialFilters, variant = "home" }: SearchBarProps) 
 
   return (
     <form className={panelClass} onSubmit={submit}>
-      <div className={isSidebar || isMobile ? "grid gap-4" : "grid gap-3 lg:grid-cols-[1.35fr_0.72fr_auto_auto]"}>
-        <label className="grid gap-2 text-xs font-black uppercase tracking-[0.14em] text-[#89726c]">
-          Ngày nhận - trả
-          <DatePicker
-            className="field w-full"
-            dateFormat="dd/MM/yyyy"
-            endDate={endDate}
-            minDate={new Date()}
-            onChange={(dates) => {
-              const [start, end] = dates as [Date | null, Date | null];
-              setStartDate(start);
-              setEndDate(end);
-            }}
-            placeholderText="dd/mm/yyyy - dd/mm/yyyy"
-            selected={startDate}
-            selectsRange
-            startDate={startDate}
-          />
-        </label>
-
+      <div className={isSidebar || isMobile ? "grid gap-4" : "grid gap-3 lg:grid-cols-[1fr_auto_auto]"}>
         <label className="grid gap-2 text-xs font-black uppercase tracking-[0.14em] text-[#89726c]">
           Số khách
           <input
             className="field w-full"
             min="1"
+            name="guests"
             onChange={(event) => setGuests(event.target.value)}
             placeholder="2"
             type="number"
