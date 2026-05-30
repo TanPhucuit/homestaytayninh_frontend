@@ -214,7 +214,8 @@ export async function createServiceAction(formData: FormData) {
   } catch (error) {
     ownerError("/owner/manage", error);
   }
-  redirect(flashUrl("/owner/manage", "success", "Đã thêm dịch vụ."));
+  // Kept for older rendered forms that may still post to this server action.
+  // The current UI uses createServiceInlineAction for local feedback.
 }
 
 export async function createServiceInlineAction(_state: OwnerFormState, formData: FormData): Promise<OwnerFormState> {
