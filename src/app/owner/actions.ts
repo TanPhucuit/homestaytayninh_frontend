@@ -18,6 +18,12 @@ import { actionErrorMessage } from "@/lib/action-errors";
 import { flashUrl } from "@/lib/flash";
 import { BookingStatus } from "@/lib/types";
 
+export type OwnerFormState = {
+  type?: "success" | "error";
+  message?: string;
+  nonce?: number;
+};
+
 function ownerError(path: string, error: unknown): never {
   redirect(flashUrl(path, "error", actionErrorMessage(error)));
 }
@@ -142,6 +148,30 @@ export async function createRoomAction(formData: FormData) {
     ownerError("/owner/manage", error);
   }
   redirect(flashUrl("/owner/manage", "success", "Đã thêm phòng."));
+}
+
+export async function createRoomInlineAction(_state: OwnerFormState, formData: FormData): Promise<OwnerFormState> {
+  try {
+    const homestayId = text(formData, "homestayId");
+    if (!homestayId) throw new Error("Thiếu homestay để tạo phòng.");
+    await createOwnerRoom(
+      homestayId,
+      {
+        name: requiredText(formData, "name", "tên phòng/căn"),
+        roomType: text(formData, "roomType") || "Phòng",
+        imageUrl: optionalUrl(formData, "imageUrl", "URL ảnh phòng"),
+        pricePerNight: nonNegativeNumber(formData, "pricePerNight", "Giá cố định/đêm"),
+        capacity: positiveInteger(formData, "capacity", "Sức chứa mỗi phòng/căn"),
+        totalUnits: positiveInteger(formData, "totalUnits", "Số lượng phòng/căn cùng loại")
+      },
+      "OWNER"
+    );
+    revalidatePath("/owner/manage");
+    revalidatePath("/homestays");
+    return { type: "success", message: "Đã thêm phòng.", nonce: Date.now() };
+  } catch (error) {
+    return { type: "error", message: actionErrorMessage(error), nonce: Date.now() };
+  }
 }
 
 export async function createServiceAction(formData: FormData) {
