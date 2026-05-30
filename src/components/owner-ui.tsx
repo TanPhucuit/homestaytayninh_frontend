@@ -126,6 +126,48 @@ export function OwnerBookingOps({ bookings, homestays, action }: { bookings: Boo
   );
 }
 
+export function OwnerBookingHistory({ bookings, homestays }: { bookings: Booking[]; homestays: Homestay[] }) {
+  const homestayById = new Map(homestays.map((homestay) => [homestay.id, homestay]));
+
+  return (
+    <section className="grid gap-3">
+      {bookings.length ? bookings.map((booking) => {
+        const homestay = homestayById.get(booking.homestayId);
+        const roomSummary = booking.rooms?.length
+          ? booking.rooms.map((room) => room.name).join(", ")
+          : booking.roomId;
+
+        return (
+          <article className="rounded-2xl border border-[#eadfd4] bg-white p-4 shadow-[0_12px_35px_rgba(123,41,20,0.05)]" key={booking.id}>
+            <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <StatusBadge status={booking.status} />
+                  <span className="rounded-full bg-[#f1ede8] px-3 py-1 text-xs font-bold text-[#56423d]">{booking.id}</span>
+                </div>
+                <h3 className="mt-3 font-heading text-2xl text-[#9a4029]">{homestay?.name ?? booking.homestayId}</h3>
+                <p className="mt-1 text-sm leading-6 text-[#75675f]">
+                  {booking.guestName} · {booking.guestPhone} · {booking.checkIn} → {booking.checkOut}
+                </p>
+                <p className="mt-1 text-sm font-semibold text-[#466550]">{roomSummary}</p>
+              </div>
+              <div className="flex flex-col gap-2 text-left lg:items-end lg:text-right">
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#89726c]">Tổng hóa đơn</p>
+                <p className="font-heading text-2xl font-bold text-[#466550]">{money(booking.grandTotal)}</p>
+                <a className="btn-secondary w-full justify-center lg:w-auto" href={`/bookings/${booking.id}`}>Xem chi tiết</a>
+              </div>
+            </div>
+          </article>
+        );
+      }) : (
+        <div className="rounded-2xl border border-dashed border-[#dcc0ba] bg-white/70 p-8 text-[#75675f]">
+          Chưa có booking đã hoàn thành hoặc đã hủy theo bộ lọc hiện tại.
+        </div>
+      )}
+    </section>
+  );
+}
+
 function inventoryTotals(homestay: Homestay) {
   const activeRooms = homestay.rooms.filter((room) => room.active !== false);
   if (!activeRooms.length) {

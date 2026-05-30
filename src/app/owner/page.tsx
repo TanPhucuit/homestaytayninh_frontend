@@ -1,5 +1,5 @@
 import { AccessDenied } from "@/components/access-denied";
-import { BookingListPreview, OwnerBookingFilters, OwnerBookingOps, OwnerShell, OwnerStats } from "@/components/owner-ui";
+import { BookingListPreview, OwnerBookingFilters, OwnerBookingHistory, OwnerBookingOps, OwnerShell, OwnerStats } from "@/components/owner-ui";
 import { getOwnerBookings, getOwnerHomestays } from "@/lib/api";
 import { flashFromSearchParams, FlashSearchParams } from "@/lib/flash";
 import { canAccess, getCurrentUser } from "@/lib/rbac";
@@ -57,6 +57,7 @@ export default async function OwnerPage({ searchParams }: { searchParams: Promis
   const homestays = await getOwnerHomestays(user.role);
   const filteredBookings = filterBookings(bookings, params);
   const sortedBookings = [...filteredBookings].sort((a, b) => opsPriority[a.status] - opsPriority[b.status]);
+  const historyBookings = sortedBookings.filter((booking) => booking.status === "COMPLETED" || booking.status === "CANCELLED");
   const canManageInventory = user.role === "OWNER";
   const canOperateBooking = user.role === "OWNER_STAFF";
 
@@ -71,7 +72,19 @@ export default async function OwnerPage({ searchParams }: { searchParams: Promis
         <h2 className="mb-4 font-heading text-3xl text-[#9a4029]">Booking cần xử lý</h2>
         <OwnerBookingFilters keyword={params.q} status={params.status} checkInFrom={params.checkInFrom} checkInTo={params.checkInTo} />
         {canOperateBooking ? (
-          <OwnerBookingOps bookings={sortedBookings} homestays={homestays} action={updateOwnerBookingStatusAction} />
+          <>
+            <OwnerBookingOps bookings={sortedBookings} homestays={homestays} action={updateOwnerBookingStatusAction} />
+            <section className="mt-8">
+              <div className="mb-4 flex flex-col justify-between gap-2 md:flex-row md:items-end">
+                <div>
+                  <h2 className="font-heading text-3xl text-[#9a4029]">Lịch sử booking</h2>
+                  <p className="mt-1 text-sm text-[#75675f]">Các đơn đã hoàn thành hoặc đã hủy theo bộ lọc hiện tại.</p>
+                </div>
+                <span className="badge bg-[#e8f0eb] text-[#466550]">{historyBookings.length} đơn</span>
+              </div>
+              <OwnerBookingHistory bookings={historyBookings} homestays={homestays} />
+            </section>
+          </>
         ) : (
           <BookingListPreview bookings={sortedBookings} homestays={homestays} />
         )}
