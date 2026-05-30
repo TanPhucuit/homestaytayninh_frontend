@@ -17,17 +17,18 @@ import {
 } from "@/lib/api";
 import { actionErrorMessage } from "@/lib/action-errors";
 import { flashUrl } from "@/lib/flash";
+import { mutationError, mutationSuccess, type MutationState } from "@/lib/mutation-state";
 import { getCurrentUser } from "@/lib/rbac";
 import { BookingStatus } from "@/lib/types";
 
-export type OwnerFormState = {
-  type?: "success" | "error";
-  message?: string;
-  nonce?: number;
-};
+export type OwnerFormState = MutationState;
 
 function ownerError(path: string, error: unknown): never {
   redirect(flashUrl(path, "error", actionErrorMessage(error)));
+}
+
+function ownerActionError(error: unknown): OwnerFormState {
+  return mutationError(actionErrorMessage(error));
 }
 
 async function requireOwner() {
@@ -64,6 +65,12 @@ function nonNegativeNumber(formData: FormData, key: string, label: string) {
   return value;
 }
 
+function positiveNumber(formData: FormData, key: string, label: string) {
+  const value = numberValue(formData, key, label);
+  if (value <= 0) throw new Error(`${label} phải lớn hơn 0.`);
+  return value;
+}
+
 function positiveInteger(formData: FormData, key: string, label: string) {
   const value = numberValue(formData, key, label);
   if (!Number.isInteger(value) || value < 1) throw new Error(`${label} phải là số nguyên lớn hơn 0.`);
@@ -79,9 +86,10 @@ function nonNegativeInteger(formData: FormData, key: string, label: string) {
 function requiredUrl(formData: FormData, key: string, label: string) {
   const value = requiredText(formData, key, label);
   try {
-    new URL(value);
+    const url = new URL(value);
+    if (url.protocol !== "http:" && url.protocol !== "https:") throw new Error();
   } catch {
-    throw new Error(`${label} phải là URL hợp lệ.`);
+    throw new Error(`${label} phải là URL http/https hợp lệ.`);
   }
   return value;
 }
@@ -90,9 +98,10 @@ function optionalUrl(formData: FormData, key: string, label: string) {
   const value = text(formData, key);
   if (!value) return undefined;
   try {
-    new URL(value);
+    const url = new URL(value);
+    if (url.protocol !== "http:" && url.protocol !== "https:") throw new Error();
   } catch {
-    throw new Error(`${label} phải là URL hợp lệ.`);
+    throw new Error(`${label} phải là URL http/https hợp lệ.`);
   }
   return value;
 }
@@ -135,7 +144,27 @@ export async function updateOwnerBookingStatusAction(formData: FormData) {
   redirect(flashUrl("/owner", "success", "Đã cập nhật trạng thái booking."));
 }
 
+export async function updateOwnerBookingStatusInlineAction(_state: OwnerFormState, formData: FormData): Promise<OwnerFormState> {
+  try {
+    await requireOwnerStaff();
+    const bookingId = text(formData, "bookingId");
+    const status = text(formData, "status") as BookingStatus;
+    if (!bookingId || !status) throw new Error("Thiếu booking hoặc trạng thái cần cập nhật.");
+    await updateOwnerBookingStatus(bookingId, status, "OWNER_STAFF");
+    revalidatePath("/owner");
+    return mutationSuccess("Đã cập nhật trạng thái booking.");
+  } catch (error) {
+    return ownerActionError(error);
+  }
+}
+
 export async function createHomestayAction(formData: FormData) {
+  const result = await createHomestayInlineAction({}, formData);
+  if (result.type === "error") ownerError("/owner/manage", new Error(result.message));
+  redirect(flashUrl("/owner/manage", "success", "Đã tạo homestay."));
+}
+
+export async function createHomestayInlineAction(_state: OwnerFormState, formData: FormData): Promise<OwnerFormState> {
   try {
     await requireOwner();
     await createOwnerHomestay(
@@ -153,35 +182,15 @@ export async function createHomestayAction(formData: FormData) {
     );
     revalidatePath("/owner/manage");
     revalidatePath("/homestays");
+    return mutationSuccess("Đã tạo homestay.");
   } catch (error) {
-    ownerError("/owner/manage", error);
+    return ownerActionError(error);
   }
-  redirect(flashUrl("/owner/manage", "success", "Đã tạo homestay."));
 }
 
 export async function createRoomAction(formData: FormData) {
-  try {
-    await requireOwner();
-    const homestayId = text(formData, "homestayId");
-    if (!homestayId) throw new Error("Thiếu homestay để tạo phòng.");
-    await createOwnerRoom(
-      homestayId,
-      {
-        name: requiredText(formData, "name", "tên phòng/căn"),
-        roomType: text(formData, "roomType") || "Phòng",
-        imageUrl: optionalUrl(formData, "imageUrl", "URL ảnh phòng"),
-        pricePerNight: nonNegativeNumber(formData, "pricePerNight", "Giá cố định/đêm"),
-        capacity: positiveInteger(formData, "capacity", "Sức chứa mỗi phòng/căn"),
-        totalUnits: positiveInteger(formData, "totalUnits", "Số lượng phòng/căn cùng loại")
-      },
-      "OWNER"
-    );
-    await syncHomestayRoomTotals(homestayId);
-    revalidatePath("/owner/manage");
-    revalidatePath("/homestays");
-  } catch (error) {
-    ownerError("/owner/manage", error);
-  }
+  const result = await createRoomInlineAction({}, formData);
+  if (result.type === "error") ownerError("/owner/manage", new Error(result.message));
   redirect(flashUrl("/owner/manage", "success", "Đã thêm phòng."));
 }
 
@@ -196,7 +205,7 @@ export async function createRoomInlineAction(_state: OwnerFormState, formData: F
         name: requiredText(formData, "name", "tên phòng/căn"),
         roomType: text(formData, "roomType") || "Phòng",
         imageUrl: optionalUrl(formData, "imageUrl", "URL ảnh phòng"),
-        pricePerNight: nonNegativeNumber(formData, "pricePerNight", "Giá cố định/đêm"),
+        pricePerNight: positiveNumber(formData, "pricePerNight", "Giá cố định/đêm"),
         capacity: positiveInteger(formData, "capacity", "Sức chứa mỗi phòng/căn"),
         totalUnits: positiveInteger(formData, "totalUnits", "Số lượng phòng/căn cùng loại")
       },
@@ -205,35 +214,15 @@ export async function createRoomInlineAction(_state: OwnerFormState, formData: F
     await syncHomestayRoomTotals(homestayId);
     revalidatePath("/owner/manage");
     revalidatePath("/homestays");
-    return { type: "success", message: "Đã thêm phòng và tự đồng bộ giá/sức chứa.", nonce: Date.now() };
+    return mutationSuccess("Đã thêm phòng và tự đồng bộ giá/sức chứa.");
   } catch (error) {
-    return { type: "error", message: actionErrorMessage(error), nonce: Date.now() };
+    return ownerActionError(error);
   }
 }
 
 export async function createServiceAction(formData: FormData) {
-  try {
-    await requireOwner();
-    const homestayId = text(formData, "homestayId");
-    if (!homestayId) throw new Error("Thiếu homestay để tạo dịch vụ.");
-    const included = formData.get("included") === "on";
-    await createOwnerService(
-      homestayId,
-      {
-        name: requiredText(formData, "name", "tên dịch vụ"),
-        description: text(formData, "description"),
-        unitPrice: included ? 0 : nonNegativeNumber(formData, "unitPrice", "Đơn giá"),
-        included
-      },
-      "OWNER"
-    );
-    revalidatePath("/owner/manage");
-    revalidatePath("/homestays");
-  } catch (error) {
-    ownerError("/owner/manage", error);
-  }
-  // Kept for older rendered forms that may still post to this server action.
-  // The current UI uses createServiceInlineAction for local feedback.
+  const result = await createServiceInlineAction({}, formData);
+  if (result.type === "error") ownerError("/owner/manage", new Error(result.message));
 }
 
 export async function createServiceInlineAction(_state: OwnerFormState, formData: FormData): Promise<OwnerFormState> {
@@ -254,17 +243,19 @@ export async function createServiceInlineAction(_state: OwnerFormState, formData
     );
     revalidatePath("/owner/manage");
     revalidatePath("/homestays");
-    return {
-      type: "success",
-      message: included ? "Đã thêm dịch vụ đã bao gồm." : "Đã thêm dịch vụ bổ sung.",
-      nonce: Date.now()
-    };
+    return mutationSuccess(included ? "Đã thêm dịch vụ đã bao gồm." : "Đã thêm dịch vụ bổ sung.");
   } catch (error) {
-    return { type: "error", message: actionErrorMessage(error), nonce: Date.now() };
+    return ownerActionError(error);
   }
 }
 
 export async function updateHomestayAction(formData: FormData) {
+  const result = await updateHomestayInlineAction({}, formData);
+  if (result.type === "error") ownerError("/owner/manage", new Error(result.message));
+  redirect(flashUrl("/owner/manage", "success", "Đã lưu homestay."));
+}
+
+export async function updateHomestayInlineAction(_state: OwnerFormState, formData: FormData): Promise<OwnerFormState> {
   try {
     await requireOwner();
     const homestayId = text(formData, "homestayId");
@@ -280,10 +271,10 @@ export async function updateHomestayAction(formData: FormData) {
     }, "OWNER");
     revalidatePath("/owner/manage");
     revalidatePath("/homestays");
+    return mutationSuccess("Đã lưu homestay.");
   } catch (error) {
-    ownerError("/owner/manage", error);
+    return ownerActionError(error);
   }
-  redirect(flashUrl("/owner/manage", "success", "Đã lưu homestay."));
 }
 
 export async function deleteHomestayAction(formData: FormData) {
@@ -298,6 +289,12 @@ export async function deleteHomestayAction(formData: FormData) {
 }
 
 export async function updateRoomAction(formData: FormData) {
+  const result = await updateRoomInlineAction({}, formData);
+  if (result.type === "error") ownerError("/owner/manage", new Error(result.message));
+  redirect(flashUrl("/owner/manage", "success", "Đã lưu phòng."));
+}
+
+export async function updateRoomInlineAction(_state: OwnerFormState, formData: FormData): Promise<OwnerFormState> {
   try {
     await requireOwner();
     const homestayId = text(formData, "homestayId");
@@ -307,7 +304,7 @@ export async function updateRoomAction(formData: FormData) {
       name: requiredText(formData, "name", "tên phòng/căn"),
       roomType: text(formData, "roomType") || "Phòng",
       imageUrl: optionalUrl(formData, "imageUrl", "URL ảnh phòng"),
-      pricePerNight: nonNegativeNumber(formData, "pricePerNight", "Giá cố định/đêm"),
+      pricePerNight: positiveNumber(formData, "pricePerNight", "Giá cố định/đêm"),
       capacity: positiveInteger(formData, "capacity", "Sức chứa mỗi phòng/căn"),
       totalUnits: positiveInteger(formData, "totalUnits", "Số lượng phòng/căn cùng loại"),
       active: formData.get("active") === "on"
@@ -315,13 +312,19 @@ export async function updateRoomAction(formData: FormData) {
     await syncHomestayRoomTotals(homestayId);
     revalidatePath("/owner/manage");
     revalidatePath("/homestays");
+    return mutationSuccess("Đã lưu phòng và tự đồng bộ giá/sức chứa.");
   } catch (error) {
-    ownerError("/owner/manage", error);
+    return ownerActionError(error);
   }
-  redirect(flashUrl("/owner/manage", "success", "Đã lưu phòng."));
 }
 
 export async function createRoomRateAction(formData: FormData) {
+  const result = await createRoomRateInlineAction({}, formData);
+  if (result.type === "error") ownerError("/owner/manage", new Error(result.message));
+  redirect(flashUrl("/owner/manage", "success", "Đã thêm giá theo ngày."));
+}
+
+export async function createRoomRateInlineAction(_state: OwnerFormState, formData: FormData): Promise<OwnerFormState> {
   try {
     await requireOwner();
     const homestayId = text(formData, "homestayId");
@@ -335,16 +338,22 @@ export async function createRoomRateAction(formData: FormData) {
     await createOwnerRoomRate(homestayId, roomId, {
       startDate,
       endDate,
-      pricePerNight: nonNegativeNumber(formData, "pricePerNight", "Giá theo ngày")
+      pricePerNight: positiveNumber(formData, "pricePerNight", "Giá theo ngày")
     }, "OWNER");
     revalidatePath("/owner/manage");
+    return mutationSuccess("Đã thêm giá theo ngày.");
   } catch (error) {
-    ownerError("/owner/manage", error);
+    return ownerActionError(error);
   }
-  redirect(flashUrl("/owner/manage", "success", "Đã thêm giá theo ngày."));
 }
 
 export async function updateServiceAction(formData: FormData) {
+  const result = await updateServiceInlineAction({}, formData);
+  if (result.type === "error") ownerError("/owner/manage", new Error(result.message));
+  redirect(flashUrl("/owner/manage", "success", "Đã lưu dịch vụ."));
+}
+
+export async function updateServiceInlineAction(_state: OwnerFormState, formData: FormData): Promise<OwnerFormState> {
   try {
     await requireOwner();
     const homestayId = text(formData, "homestayId");
@@ -358,13 +367,19 @@ export async function updateServiceAction(formData: FormData) {
       active: formData.get("active") === "on"
     }, "OWNER");
     revalidatePath("/owner/manage");
+    return mutationSuccess("Đã lưu dịch vụ.");
   } catch (error) {
-    ownerError("/owner/manage", error);
+    return ownerActionError(error);
   }
-  redirect(flashUrl("/owner/manage", "success", "Đã lưu dịch vụ."));
 }
 
 export async function createImageAction(formData: FormData) {
+  const result = await createImageInlineAction({}, formData);
+  if (result.type === "error") ownerError("/owner/manage", new Error(result.message));
+  redirect(flashUrl("/owner/manage", "success", "Đã thêm hình ảnh."));
+}
+
+export async function createImageInlineAction(_state: OwnerFormState, formData: FormData): Promise<OwnerFormState> {
   try {
     await requireOwner();
     const homestayId = text(formData, "homestayId");
@@ -376,10 +391,10 @@ export async function createImageAction(formData: FormData) {
     }, "OWNER");
     revalidatePath("/owner/manage");
     revalidatePath("/homestays");
+    return mutationSuccess("Đã thêm hình ảnh.");
   } catch (error) {
-    ownerError("/owner/manage", error);
+    return ownerActionError(error);
   }
-  redirect(flashUrl("/owner/manage", "success", "Đã thêm hình ảnh."));
 }
 
 export async function createProxyBookingAction(formData: FormData) {

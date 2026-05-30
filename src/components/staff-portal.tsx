@@ -4,16 +4,17 @@ import { ActionButton } from "./action-button";
 import { AppTopBar } from "./customer-ui";
 import { ConfirmActionButton } from "./confirm-action-button";
 import { EmptyState, FlashMessage } from "./feedback-state";
+import { MutationForm } from "./mutation-form";
 import { FlashState } from "@/lib/flash";
 import {
-  createArticleAction,
-  deleteArticleAction,
-  publishArticleAction,
-  resolveReportAction,
-  banModeratedUserAction,
-  unbanModeratedUserAction,
-  unpublishArticleAction,
-  updateArticleAction
+  banModeratedUserInlineAction,
+  createArticleInlineAction,
+  deleteArticleInlineAction,
+  publishArticleInlineAction,
+  resolveReportInlineAction,
+  unbanModeratedUserInlineAction,
+  unpublishArticleInlineAction,
+  updateArticleInlineAction
 } from "@/app/staff/actions";
 
 function StaffShell({ title, description, flash, children }: { title: string; description: string; flash?: FlashState | null; children: React.ReactNode }) {
@@ -58,12 +59,12 @@ export function StaffCmsPortal({ articles, flash }: { articles: Article[]; flash
       flash={flash}
     >
       <section className="grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
-        <form action={createArticleAction} className="card p-6">
+        <MutationForm action={createArticleInlineAction} className="card p-6" resetOnSuccess>
           <p className="eyebrow">Tạo bài viết</p>
           <h2 className="mt-2 font-heading text-3xl text-[#9a4029]">Bài viết mới</h2>
           <div className="mt-5 grid gap-3">
             <input className="field" name="title" placeholder="Tiêu đề" required />
-            <input className="field" name="slug" placeholder="du-lich-nui-ba-den" required />
+            <input className="field" name="slug" pattern="[a-z0-9]+(-[a-z0-9]+)*" placeholder="du-lich-nui-ba-den" required />
             <input className="field" name="imageUrl" type="url" placeholder="URL ảnh bài viết" />
             <textarea className="field min-h-20" name="excerpt" placeholder="Tóm tắt ngắn" required />
             <textarea className="field min-h-36" name="content" placeholder="Nội dung bài viết" required />
@@ -73,7 +74,7 @@ export function StaffCmsPortal({ articles, flash }: { articles: Article[]; flash
             </select>
             <ActionButton pendingLabel="Đang tạo...">Tạo bài viết</ActionButton>
           </div>
-        </form>
+        </MutationForm>
 
         <div className="space-y-4">
           {articles.length === 0 ? (
@@ -88,20 +89,20 @@ export function StaffCmsPortal({ articles, flash }: { articles: Article[]; flash
                     <p className="mt-1 text-sm text-[#75675f]">/{article.slug}</p>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    <form action={article.status === "PUBLISHED" ? unpublishArticleAction : publishArticleAction}>
+                    <MutationForm action={article.status === "PUBLISHED" ? unpublishArticleInlineAction : publishArticleInlineAction}>
                       <input name="articleId" type="hidden" value={article.id} />
                     <ActionButton className="btn-secondary" pendingLabel="Đang cập nhật...">{article.status === "PUBLISHED" ? "Ẩn bài" : "Xuất bản"}</ActionButton>
-                    </form>
-                    <form action={deleteArticleAction}>
+                    </MutationForm>
+                    <MutationForm action={deleteArticleInlineAction}>
                       <input name="articleId" type="hidden" value={article.id} />
                       <ConfirmActionButton className="btn-secondary" message="Ẩn/xóa bài viết này khỏi CMS? Không thao tác với dữ liệu homestay hoặc booking." pendingLabel="Đang xử lý...">Xóa</ConfirmActionButton>
-                    </form>
+                    </MutationForm>
                   </div>
                 </div>
-                <form action={updateArticleAction} className="mt-5 grid gap-3">
+                <MutationForm action={updateArticleInlineAction} className="mt-5 grid gap-3">
                   <input name="articleId" type="hidden" value={article.id} />
                   <input className="field" name="title" defaultValue={article.title} required />
-                  <input className="field" name="slug" defaultValue={article.slug} required />
+                  <input className="field" name="slug" pattern="[a-z0-9]+(-[a-z0-9]+)*" defaultValue={article.slug} required />
                   <input className="field" name="imageUrl" type="url" defaultValue={article.imageUrl ?? ""} placeholder="URL ảnh bài viết" />
                   <textarea className="field min-h-20" name="excerpt" defaultValue={article.excerpt} required />
                   <textarea className="field min-h-28" name="content" defaultValue={article.content} required />
@@ -110,7 +111,7 @@ export function StaffCmsPortal({ articles, flash }: { articles: Article[]; flash
                     <option value="PUBLISHED">Đã xuất bản</option>
                   </select>
                   <ActionButton className="btn-primary justify-self-start" pendingLabel="Đang lưu...">Lưu chỉnh sửa</ActionButton>
-                </form>
+                </MutationForm>
               </article>
             ))
           )}
@@ -145,10 +146,10 @@ export function StaffModerationPortal({ reports, users, currentRole, flash }: { 
                   <p className="mt-2 text-base text-[#2f2926]">{report.reason}</p>
                 </div>
                 {report.status === "OPEN" && (
-                  <form action={resolveReportAction}>
+                  <MutationForm action={resolveReportInlineAction}>
                     <input name="reportId" type="hidden" value={report.id} />
                     <ConfirmActionButton message="Đánh dấu report này là đã xử lý?" pendingLabel="Đang xử lý...">Đánh dấu đã xử lý</ConfirmActionButton>
-                  </form>
+                  </MutationForm>
                 )}
               </div>
             </article>
@@ -167,12 +168,12 @@ export function StaffModerationPortal({ reports, users, currentRole, flash }: { 
                 <p className="font-semibold text-[#2f2926]">{user.name}</p>
                 <p className="mt-1 text-sm text-[#75675f]">{user.email} · {user.role}</p>
               </div>
-              <form action={user.banned ? unbanModeratedUserAction : banModeratedUserAction}>
+              <MutationForm action={user.banned ? unbanModeratedUserInlineAction : banModeratedUserInlineAction}>
                 <input name="userId" type="hidden" value={user.id} />
                 <ConfirmActionButton className={user.banned ? "btn-secondary" : "btn-primary"} message={user.banned ? "Mở khóa tài khoản này?" : "Khóa tài khoản này?"} pendingLabel="Đang xử lý...">
                   {user.banned ? "Mở khóa" : "Khóa tài khoản"}
                 </ConfirmActionButton>
-              </form>
+              </MutationForm>
             </article>
           ))}
         </div>

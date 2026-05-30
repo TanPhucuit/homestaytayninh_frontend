@@ -3,7 +3,6 @@ import { BookingListPreview, OwnerBookingFilters, OwnerBookingHistory, OwnerBook
 import { getOwnerBookings, getOwnerHomestays } from "@/lib/api";
 import { flashFromSearchParams, FlashSearchParams } from "@/lib/flash";
 import { canAccess, getCurrentUser } from "@/lib/rbac";
-import { updateOwnerBookingStatusAction } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -73,7 +72,7 @@ export default async function OwnerPage({ searchParams }: { searchParams: Promis
         <OwnerBookingFilters keyword={params.q} status={params.status} checkInFrom={params.checkInFrom} checkInTo={params.checkInTo} />
         {canOperateBooking ? (
           <>
-            <OwnerBookingOps bookings={sortedBookings} homestays={homestays} action={updateOwnerBookingStatusAction} />
+            <OwnerBookingOps bookings={sortedBookings} homestays={homestays} />
             <section className="mt-8">
               <div className="mb-4 flex flex-col justify-between gap-2 md:flex-row md:items-end">
                 <div>

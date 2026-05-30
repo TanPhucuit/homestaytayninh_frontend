@@ -3,10 +3,18 @@ import { ActionButton } from "./action-button";
 import { BookingCard, PageShell, StatusBadge } from "./customer-ui";
 import { ConfirmActionButton } from "./confirm-action-button";
 import { FlashMessage } from "./feedback-state";
+import { MutationForm } from "./mutation-form";
 import { Booking, Homestay } from "@/lib/types";
 import { money } from "@/lib/api";
 import { FlashState } from "@/lib/flash";
-import { createImageAction, updateHomestayAction, updateRoomAction, updateServiceAction } from "@/app/owner/actions";
+import {
+  createImageInlineAction,
+  createRoomRateInlineAction,
+  updateHomestayInlineAction,
+  updateOwnerBookingStatusInlineAction,
+  updateRoomInlineAction,
+  updateServiceInlineAction
+} from "@/app/owner/actions";
 import { OwnerRoomCreateForm } from "./owner-room-create-form";
 import { OwnerAddOnServiceCreateForm, OwnerIncludedServiceCreateForm } from "./owner-service-create-forms";
 
@@ -80,7 +88,7 @@ export function OwnerBookingFilters({
   );
 }
 
-export function OwnerBookingOps({ bookings, homestays, action }: { bookings: Booking[]; homestays: Homestay[]; action: (formData: FormData) => Promise<void> }) {
+export function OwnerBookingOps({ bookings, homestays }: { bookings: Booking[]; homestays: Homestay[] }) {
   const homestayById = new Map(homestays.map((homestay) => [homestay.id, homestay]));
   const nextActions: Partial<Record<Booking["status"], Array<{ label: string; status: Booking["status"] }>>> = {
     PENDING: [{ label: "Xác nhận", status: "CONFIRMED" }, { label: "Từ chối", status: "CANCELLED" }],
@@ -106,7 +114,7 @@ export function OwnerBookingOps({ bookings, homestays, action }: { bookings: Boo
             </div>
             <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap">
               {(nextActions[booking.status] ?? []).map((item) => (
-                <form action={action} key={item.status}>
+                <MutationForm action={updateOwnerBookingStatusInlineAction} key={item.status}>
                   <input type="hidden" name="bookingId" value={booking.id} />
                   <input type="hidden" name="status" value={item.status} />
                   {confirmMessages[item.status] ? (
@@ -114,7 +122,7 @@ export function OwnerBookingOps({ bookings, homestays, action }: { bookings: Boo
                   ) : (
                     <ActionButton className="btn-primary" pendingLabel="Đang cập nhật...">{item.label}</ActionButton>
                   )}
-                </form>
+                </MutationForm>
               ))}
             </div>
           </div>
@@ -229,7 +237,7 @@ export function OwnerInventory({ homestays }: { homestays: Homestay[] }) {
 
             <details className="mt-5 rounded-2xl border border-[#eadfd4] bg-[#fdf9f4] p-4">
               <summary className="cursor-pointer font-bold text-[#466550]">Thông tin homestay</summary>
-              <form action={updateHomestayAction} className="mt-4 grid gap-4 md:grid-cols-2">
+              <MutationForm action={updateHomestayInlineAction} className="mt-4 grid gap-4 md:grid-cols-2">
                 <input type="hidden" name="homestayId" value={homestay.id} />
                 <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
                   Tên homestay
@@ -281,12 +289,12 @@ export function OwnerInventory({ homestays }: { homestays: Homestay[] }) {
                   <textarea className="field min-h-24" name="description" defaultValue={homestay.description} required />
                 </label>
                 <ActionButton className="btn-primary w-full md:col-span-2" pendingLabel="Đang lưu...">Lưu homestay</ActionButton>
-              </form>
+              </MutationForm>
             </details>
 
             <details className="mt-4 rounded-2xl border border-[#eadfd4] bg-white p-4">
               <summary className="cursor-pointer font-bold text-[#466550]">Ảnh</summary>
-              <form action={createImageAction} className="mt-4 grid gap-3 md:grid-cols-[1fr_1fr_120px_auto]">
+              <MutationForm action={createImageInlineAction} className="mt-4 grid gap-3 md:grid-cols-[1fr_1fr_120px_auto]" resetOnSuccess>
                 <input type="hidden" name="homestayId" value={homestay.id} />
                 <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
                   URL hình ảnh mới
@@ -301,7 +309,7 @@ export function OwnerInventory({ homestays }: { homestays: Homestay[] }) {
                   <input className="field" name="position" type="number" min="0" defaultValue="1" />
                 </label>
                 <ActionButton className="btn-secondary w-full self-end" pendingLabel="Đang thêm...">Thêm ảnh</ActionButton>
-              </form>
+              </MutationForm>
             </details>
 
             <div className="mt-5 grid gap-4 xl:grid-cols-2">
@@ -313,7 +321,7 @@ export function OwnerInventory({ homestays }: { homestays: Homestay[] }) {
                   <h3 className="font-bold text-[#1c1c19]">Phòng hiện có</h3>
                   {homestay.rooms.length ? homestay.rooms.map((room) => (
                     <div className="rounded-xl bg-[#fdf9f4] p-4 text-sm" key={room.id}>
-                      <form action={updateRoomAction} className="grid gap-4 md:grid-cols-2">
+                      <MutationForm action={updateRoomInlineAction} className="grid gap-4 md:grid-cols-2">
                         <input type="hidden" name="homestayId" value={homestay.id} />
                         <input type="hidden" name="roomId" value={room.id} />
                         <label className="grid gap-2 font-semibold text-[#3f3530]">
@@ -330,7 +338,7 @@ export function OwnerInventory({ homestays }: { homestays: Homestay[] }) {
                         </label>
                         <label className="grid gap-2 font-semibold text-[#3f3530]">
                           Giá cố định/đêm
-                          <input className="field" name="pricePerNight" type="number" min="0" defaultValue={room.pricePerNight} required />
+                          <input className="field" name="pricePerNight" type="number" min="1" step="1000" defaultValue={room.pricePerNight} required />
                         </label>
                         <label className="grid gap-2 font-semibold text-[#3f3530]">
                           Sức chứa mỗi phòng/căn
@@ -344,7 +352,24 @@ export function OwnerInventory({ homestays }: { homestays: Homestay[] }) {
                           <input name="active" type="checkbox" defaultChecked={room.active} /> {room.active ? "Đang bán" : "Đang ngừng bán"}
                         </label>
                         <ConfirmActionButton className="btn-secondary w-full md:col-span-2" message={room.active ? "Nếu bỏ chọn Đang bán, phòng sẽ được ngừng bán nhưng không bị xóa. Tiếp tục?" : "Phục hồi phòng này để khách có thể đặt lại?"} pendingLabel="Đang lưu...">Lưu phòng</ConfirmActionButton>
-                      </form>
+                      </MutationForm>
+                      <MutationForm action={createRoomRateInlineAction} className="mt-4 grid gap-3 rounded-xl border border-[#eadfd4] bg-white p-4 md:grid-cols-[1fr_1fr_1fr_auto]" resetOnSuccess>
+                        <input type="hidden" name="homestayId" value={homestay.id} />
+                        <input type="hidden" name="roomId" value={room.id} />
+                        <label className="grid gap-2 font-semibold text-[#3f3530]">
+                          Từ ngày
+                          <input className="field" name="startDate" type="date" required />
+                        </label>
+                        <label className="grid gap-2 font-semibold text-[#3f3530]">
+                          Đến ngày
+                          <input className="field" name="endDate" type="date" required />
+                        </label>
+                        <label className="grid gap-2 font-semibold text-[#3f3530]">
+                          Giá theo ngày
+                          <input className="field" name="pricePerNight" type="number" min="1" step="1000" placeholder="Ví dụ: 550000" required />
+                        </label>
+                        <ActionButton className="btn-secondary w-full self-end" pendingLabel="Đang thêm giá...">Thêm giá</ActionButton>
+                      </MutationForm>
                     </div>
                   )) : (
                     <p className="rounded-xl bg-[#fdf9f4] p-4 text-sm text-[#75675f]">Homestay này chưa có phòng. Thêm phòng ở form phía trên.</p>
@@ -361,7 +386,7 @@ export function OwnerInventory({ homestays }: { homestays: Homestay[] }) {
                   <div className="space-y-3">
                     <h3 className="font-bold text-[#1c1c19]">Dịch vụ bổ sung khách có thể đặt thêm</h3>
                     {addOnServices.length ? addOnServices.map((service) => (
-                      <form action={updateServiceAction} className="grid gap-3 rounded-xl bg-[#fdf9f4] p-4 text-sm" key={service.id}>
+                      <MutationForm action={updateServiceInlineAction} className="grid gap-3 rounded-xl bg-[#fdf9f4] p-4 text-sm" key={service.id}>
                         <input type="hidden" name="homestayId" value={homestay.id} />
                         <input type="hidden" name="serviceId" value={service.id} />
                         <input type="hidden" name="included" value="off" />
@@ -381,7 +406,7 @@ export function OwnerInventory({ homestays }: { homestays: Homestay[] }) {
                           <input name="active" type="checkbox" defaultChecked={service.active} /> {service.active ? "Đang bán" : "Đang ngừng bán"}
                         </label>
                         <ConfirmActionButton className="btn-secondary w-full" message={service.active ? "Nếu bỏ chọn Đang bán, dịch vụ sẽ được ngừng bán nhưng không bị xóa. Tiếp tục?" : "Phục hồi dịch vụ này để khách có thể đặt lại?"} pendingLabel="Đang lưu...">Lưu dịch vụ bổ sung</ConfirmActionButton>
-                      </form>
+                      </MutationForm>
                     )) : (
                       <p className="rounded-xl bg-[#fdf9f4] p-4 text-sm text-[#75675f]">Chưa có dịch vụ bổ sung.</p>
                     )}
@@ -390,7 +415,7 @@ export function OwnerInventory({ homestays }: { homestays: Homestay[] }) {
                   <div className="space-y-3">
                     <h3 className="font-bold text-[#1c1c19]">Dịch vụ đã bao gồm trong giá phòng</h3>
                     {includedServices.length ? includedServices.map((service) => (
-                      <form action={updateServiceAction} className="grid gap-3 rounded-xl border border-[#d7e2da] bg-[#f5fbf6] p-4 text-sm" key={service.id}>
+                      <MutationForm action={updateServiceInlineAction} className="grid gap-3 rounded-xl border border-[#d7e2da] bg-[#f5fbf6] p-4 text-sm" key={service.id}>
                         <input type="hidden" name="homestayId" value={homestay.id} />
                         <input type="hidden" name="serviceId" value={service.id} />
                         <input type="hidden" name="included" value="on" />
@@ -407,7 +432,7 @@ export function OwnerInventory({ homestays }: { homestays: Homestay[] }) {
                           <input name="active" type="checkbox" defaultChecked={service.active} /> {service.active ? "Đang hiển thị" : "Đang ẩn"}
                         </label>
                         <ConfirmActionButton className="btn-secondary w-full" message={service.active ? "Ẩn dịch vụ đã bao gồm này khỏi phần hiển thị? Dữ liệu booking cũ không bị xóa." : "Hiển thị lại dịch vụ đã bao gồm này?"} pendingLabel="Đang lưu...">Lưu dịch vụ đã bao gồm</ConfirmActionButton>
-                      </form>
+                      </MutationForm>
                     )) : (
                       <p className="rounded-xl bg-[#f5fbf6] p-4 text-sm text-[#75675f]">Chưa có dịch vụ đã bao gồm.</p>
                     )}

@@ -4,11 +4,12 @@ import { ActionButton } from "@/components/action-button";
 import { ConfirmActionButton } from "@/components/confirm-action-button";
 import { BookingTotals, PageShell, PaymentBadge, ServicesDisplay, StatusBadge } from "@/components/customer-ui";
 import { FlashMessage } from "@/components/feedback-state";
+import { MutationForm } from "@/components/mutation-form";
 import { getBooking, getHomestay, money } from "@/lib/api";
 import { canCreateOrRetryPayment, canViewPaymentStatus, paymentActionUnavailableReason } from "@/lib/booking-rules";
 import { flashFromSearchParams, FlashSearchParams } from "@/lib/flash";
 import { getCurrentUser } from "@/lib/rbac";
-import { addServiceAction, cancelBookingAction, markServiceServedAction, retryPaymentAction } from "./actions";
+import { addServiceInlineAction, cancelBookingInlineAction, markServiceServedInlineAction, retryPaymentAction } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -71,12 +72,12 @@ export default async function BookingDetailPage({ params, searchParams }: { para
               <h2 className="font-heading text-2xl text-[#9a4029]">Xác nhận dịch vụ đã phục vụ</h2>
               <div className="mt-4 space-y-3">
                 {booking.services.filter((service) => service.status === "PREPARING").map((service) => (
-                  <form action={markServiceServedAction} className="flex flex-col justify-between gap-3 rounded-2xl bg-[#fdf9f4] p-4 sm:flex-row sm:items-center" key={service.id}>
+                  <MutationForm action={markServiceServedInlineAction} className="flex flex-col justify-between gap-3 rounded-2xl bg-[#fdf9f4] p-4 sm:flex-row sm:items-center" key={service.id}>
                     <input type="hidden" name="bookingId" value={booking.id} />
                     <input type="hidden" name="serviceOrderId" value={service.id} />
                     <span>{service.name} · SL {service.quantity}</span>
                     <ActionButton className="btn-secondary" pendingLabel="Đang cập nhật...">Đánh dấu đã phục vụ</ActionButton>
-                  </form>
+                  </MutationForm>
                 ))}
               </div>
             </section>
@@ -101,7 +102,7 @@ export default async function BookingDetailPage({ params, searchParams }: { para
         <aside className="space-y-6">
           <BookingTotals booking={booking} />
           {canAddService && (
-            <form action={addServiceAction} className="card p-6">
+            <MutationForm action={addServiceInlineAction} className="card p-6" resetOnSuccess>
               <input type="hidden" name="bookingId" value={booking.id} />
               <h2 className="font-heading text-2xl text-[#9a4029]">Thêm dịch vụ</h2>
               <p className="mt-2 text-sm text-[#75675f]">Ghi nhận dịch vụ phát sinh khi khách đang lưu trú.</p>
@@ -115,7 +116,7 @@ export default async function BookingDetailPage({ params, searchParams }: { para
                 <ActionButton className="btn-primary w-full" disabled={!addOnServices.length} pendingLabel="Đang thêm...">Thêm vào hóa đơn</ActionButton>
                 {!addOnServices.length && <p className="text-sm font-semibold text-[#93000a]">Homestay chưa có dịch vụ bổ sung đang bán.</p>}
               </div>
-            </form>
+            </MutationForm>
           )}
           {canViewPaymentPanel && (
             <section className="card p-6">
@@ -137,12 +138,12 @@ export default async function BookingDetailPage({ params, searchParams }: { para
             </section>
           )}
           {canCancel && (
-            <form action={cancelBookingAction} className="card p-6">
+            <MutationForm action={cancelBookingInlineAction} className="card p-6">
               <input type="hidden" name="bookingId" value={booking.id} />
               <h2 className="font-heading text-2xl text-[#9a4029]">Hủy đơn</h2>
               <p className="mt-2 text-sm text-[#75675f]">Có thể hủy khi đơn còn chờ xác nhận hoặc đã xác nhận nhưng chưa check-in.</p>
               <ConfirmActionButton className="btn-secondary mt-4 w-full" message="Bạn chắc chắn muốn hủy đơn này?" pendingLabel="Đang hủy...">Hủy đơn</ConfirmActionButton>
-            </form>
+            </MutationForm>
           )}
         </aside>
       </section>

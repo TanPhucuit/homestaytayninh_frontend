@@ -13,13 +13,46 @@ type ProxyBookingFormProps = {
 
 const money = (value: number) => new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(value);
 
+function firstActiveRoom(homestay?: Homestay) {
+  return homestay?.rooms.find((room) => room.active);
+}
+
+function defaultGuestCount(capacity?: number) {
+  return Math.max(1, Math.min(2, capacity || 1));
+}
+
 export function ProxyBookingForm({ action, defaultCheckIn, defaultCheckOut, homestays }: ProxyBookingFormProps) {
   const [homestayId, setHomestayId] = useState(homestays[0]?.id ?? "");
   const selectedHomestay = useMemo(() => homestays.find((homestay) => homestay.id === homestayId) ?? homestays[0], [homestayId, homestays]);
+  const initialRoom = firstActiveRoom(selectedHomestay);
+  const [roomId, setRoomId] = useState(initialRoom?.id ?? "");
+  const [guestCount, setGuestCount] = useState(defaultGuestCount(initialRoom?.capacity));
   const rooms = selectedHomestay?.rooms.filter((room) => room.active) ?? [];
+  const selectedRoom = rooms.find((room) => room.id === roomId) ?? rooms[0];
   const services = selectedHomestay ? selectedHomestay.services.filter((service) => service.active && !service.included) : [];
   const hasRooms = rooms.length > 0;
   const [serviceQuantities, setServiceQuantities] = useState<Record<string, number>>({});
+
+  function selectHomestay(nextHomestayId: string) {
+    const nextHomestay = homestays.find((homestay) => homestay.id === nextHomestayId);
+    const nextRoom = firstActiveRoom(nextHomestay);
+    setHomestayId(nextHomestayId);
+    setRoomId(nextRoom?.id ?? "");
+    setGuestCount(defaultGuestCount(nextRoom?.capacity));
+    setServiceQuantities({});
+  }
+
+  function selectRoom(nextRoomId: string) {
+    const nextRoom = rooms.find((room) => room.id === nextRoomId);
+    setRoomId(nextRoomId);
+    setGuestCount((current) => Math.min(Math.max(1, current), nextRoom?.capacity ?? 1));
+  }
+
+  function changeGuestCount(value: string) {
+    const nextValue = Number(value);
+    const capacity = selectedRoom?.capacity ?? 1;
+    setGuestCount(Number.isFinite(nextValue) ? Math.min(Math.max(1, nextValue), capacity) : 1);
+  }
 
   function setServiceQuantity(serviceId: string, quantity: number) {
     setServiceQuantities((current) => ({ ...current, [serviceId]: Number.isFinite(quantity) && quantity > 0 ? Math.floor(quantity) : 0 }));
@@ -32,19 +65,28 @@ export function ProxyBookingForm({ action, defaultCheckIn, defaultCheckOut, home
         <h2 className="mt-2 font-heading text-2xl text-[#9a4029]">Thông tin booking hộ</h2>
         <div className="mt-5 grid gap-3 md:grid-cols-2">
           <label className="grid gap-2 text-sm font-semibold">Homestay
-            <select className="field" name="homestayId" onChange={(event) => setHomestayId(event.target.value)} value={homestayId} required>
+            <select className="field" name="homestayId" onChange={(event) => selectHomestay(event.target.value)} value={homestayId} required>
               {homestays.map((homestay) => <option key={homestay.id} value={homestay.id}>{homestay.name}</option>)}
             </select>
           </label>
           <label className="grid gap-2 text-sm font-semibold">Phòng còn bán
-            <select className="field" name="roomId" disabled={!hasRooms} required>
+            <select className="field" name="roomId" disabled={!hasRooms} onChange={(event) => selectRoom(event.target.value)} value={roomId} required>
               {rooms.map((room) => <option key={room.id} value={room.id}>{room.name} · {money(room.pricePerNight)} · tối đa {room.capacity} khách</option>)}
             </select>
           </label>
           <input className="field" name="customerId" placeholder="Mã hồ sơ khách đã có (có thể bỏ trống)" />
           <input className="field" name="guestName" placeholder="Tên khách" required />
           <input className="field" name="guestPhone" placeholder="Số điện thoại" required pattern="^[0-9+ ]{8,15}$" />
-          <input className="field" name="guestCount" type="number" min="1" defaultValue="2" required />
+          <input
+            className="field"
+            max={selectedRoom?.capacity ?? 1}
+            min="1"
+            name="guestCount"
+            onChange={(event) => changeGuestCount(event.target.value)}
+            type="number"
+            value={guestCount}
+            required
+          />
           <input className="field" name="checkIn" type="date" defaultValue={defaultCheckIn} required />
           <input className="field" name="checkOut" type="date" defaultValue={defaultCheckOut} required />
         </div>

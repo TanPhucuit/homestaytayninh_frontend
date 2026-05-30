@@ -1,10 +1,11 @@
 import { AccessDenied } from "@/components/access-denied";
 import { ActionButton } from "@/components/action-button";
+import { MutationForm } from "@/components/mutation-form";
 import { OwnerInventory, OwnerShell } from "@/components/owner-ui";
 import { getOwnerHomestays } from "@/lib/api";
 import { flashFromSearchParams, FlashSearchParams } from "@/lib/flash";
 import { canAccess, getCurrentUser } from "@/lib/rbac";
-import { createHomestayAction } from "../actions";
+import { createHomestayInlineAction } from "../actions";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +24,7 @@ export default async function OwnerManagePage({ searchParams }: { searchParams: 
   return (
     <OwnerShell title="Quản lý homestay, phòng, giá và dịch vụ" description="Tạo homestay, thêm phòng, cập nhật dịch vụ đi kèm, hình ảnh và giá theo ngày. Các thao tác ngừng bán chỉ đổi trạng thái, không xóa dữ liệu." flash={flash}>
       <section>
-        <form action={createHomestayAction} className="card p-6 md:p-8">
+        <MutationForm action={createHomestayInlineAction} className="card p-6 md:p-8" resetOnSuccess>
           <p className="eyebrow">Homestay</p>
           <h2 className="mt-2 font-heading text-2xl text-[#9a4029]">Thêm homestay</h2>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-[#75675f]">
@@ -67,7 +68,7 @@ export default async function OwnerManagePage({ searchParams }: { searchParams: 
             </div>
             <ActionButton className="btn-primary w-full md:col-span-2" pendingLabel="Đang tạo...">Tạo homestay</ActionButton>
           </div>
-        </form>
+        </MutationForm>
       </section>
 
       <section className="mt-8">

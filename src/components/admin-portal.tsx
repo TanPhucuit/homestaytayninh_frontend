@@ -1,7 +1,8 @@
-import { banUserAction, createAdminUserAction, assignRoleAction, unbanUserAction } from "@/app/admin/actions";
+import { assignRoleInlineAction, banUserInlineAction, createAdminUserInlineAction, unbanUserInlineAction } from "@/app/admin/actions";
 import { ActionButton } from "./action-button";
 import { ConfirmActionButton } from "./confirm-action-button";
 import { FlashMessage } from "./feedback-state";
+import { MutationForm } from "./mutation-form";
 import { money } from "@/lib/api";
 import { FlashState } from "@/lib/flash";
 import { SessionUser } from "@/lib/rbac";
@@ -97,7 +98,7 @@ export function AdminPortal({ dashboard, users, currentUser, flash }: { dashboar
             </div>
           </div>
 
-          <form action={createAdminUserAction} className="card p-6">
+          <MutationForm action={createAdminUserInlineAction} className="card p-6" resetOnSuccess>
             <h2 className="font-heading text-2xl text-[#9a4029]">Tạo tài khoản đối tác/nhân viên</h2>
             <div className="mt-5 grid gap-4 md:grid-cols-2">
               <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
@@ -110,7 +111,7 @@ export function AdminPortal({ dashboard, users, currentUser, flash }: { dashboar
               </label>
               <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
                 Số điện thoại
-                <input className="field" name="phone" placeholder="0901234567" />
+                <input className="field" name="phone" pattern="[0-9+\\-\\s().]{8,20}" placeholder="0901234567" />
               </label>
               <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
                 Vai trò
@@ -120,7 +121,7 @@ export function AdminPortal({ dashboard, users, currentUser, flash }: { dashboar
               </label>
               <ActionButton className="btn-primary w-full md:col-span-2" pendingLabel="Đang tạo...">Tạo tài khoản</ActionButton>
             </div>
-          </form>
+          </MutationForm>
         </section>
 
         <section className="card p-6">
@@ -145,7 +146,10 @@ export function AdminPortal({ dashboard, users, currentUser, flash }: { dashboar
                 </tr>
               </thead>
               <tbody>
-                {users.map((user) => (
+                {users.map((user) => {
+                  const isCurrentUser = user.id === currentUser.id;
+
+                  return (
                   <tr className="bg-[#fdf9f4]" key={user.id}>
                     <td className="rounded-l-xl px-3 py-3 font-semibold">{user.name}</td>
                     <td className="px-3 py-3">{user.email}</td>
@@ -153,24 +157,33 @@ export function AdminPortal({ dashboard, users, currentUser, flash }: { dashboar
                     <td className="px-3 py-3">{user.authLinked ? "Đã liên kết" : "Chờ đăng nhập Google"}</td>
                     <td className="px-3 py-3">{user.banned ? "Bị khóa" : "Hoạt động"}</td>
                     <td className="px-3 py-3">
-                      <form action={assignRoleAction} className="flex gap-2">
-                        <input name="userId" type="hidden" value={user.id} />
-                        <select className="rounded-lg border border-[#eadfd4] px-2 py-2" name="role" defaultValue={user.role}>
-                          {roles.map((role) => <option key={role}>{role}</option>)}
-                        </select>
-                        <ConfirmActionButton className="rounded-lg border border-[#466550] px-3 py-2 text-[#466550]" message="Xác nhận thay đổi vai trò? Người dùng sẽ thấy menu và quyền truy cập mới trong lần tải trang tiếp theo." pendingLabel="Đang lưu...">Lưu</ConfirmActionButton>
-                      </form>
+                      {isCurrentUser ? (
+                        <span className="rounded-lg bg-[#e8f0eb] px-3 py-2 text-xs font-bold text-[#466550]">Tài khoản hiện tại</span>
+                      ) : (
+                        <MutationForm action={assignRoleInlineAction} className="flex gap-2">
+                          <input name="userId" type="hidden" value={user.id} />
+                          <select className="rounded-lg border border-[#eadfd4] px-2 py-2" name="role" defaultValue={user.role}>
+                            {roles.map((role) => <option key={role}>{role}</option>)}
+                          </select>
+                          <ConfirmActionButton className="rounded-lg border border-[#466550] px-3 py-2 text-[#466550]" message="Xác nhận thay đổi vai trò? Người dùng sẽ thấy menu và quyền truy cập mới trong lần tải trang tiếp theo." pendingLabel="Đang lưu...">Lưu</ConfirmActionButton>
+                        </MutationForm>
+                      )}
                     </td>
                     <td className="rounded-r-xl px-3 py-3">
-                      <form action={user.banned ? unbanUserAction : banUserAction}>
-                        <input name="userId" type="hidden" value={user.id} />
-                        <ConfirmActionButton className="rounded-lg bg-[#9a4029] px-3 py-2 text-white" message={user.banned ? "Mở khóa tài khoản này để người dùng có thể đăng nhập và thao tác lại?" : "Khóa tài khoản này? Người dùng sẽ không thể tiếp tục thao tác trong hệ thống."} pendingLabel="Đang xử lý...">
-                          {user.banned ? "Mở khóa" : "Khóa"}
-                        </ConfirmActionButton>
-                      </form>
+                      {isCurrentUser ? (
+                        <span className="rounded-lg bg-[#f1ede8] px-3 py-2 text-xs font-bold text-[#75675f]">Không thể tự khóa</span>
+                      ) : (
+                        <MutationForm action={user.banned ? unbanUserInlineAction : banUserInlineAction}>
+                          <input name="userId" type="hidden" value={user.id} />
+                          <ConfirmActionButton className="rounded-lg bg-[#9a4029] px-3 py-2 text-white" message={user.banned ? "Mở khóa tài khoản này để người dùng có thể đăng nhập và thao tác lại?" : "Khóa tài khoản này? Người dùng sẽ không thể tiếp tục thao tác trong hệ thống."} pendingLabel="Đang xử lý...">
+                            {user.banned ? "Mở khóa" : "Khóa"}
+                          </ConfirmActionButton>
+                        </MutationForm>
+                      )}
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>
