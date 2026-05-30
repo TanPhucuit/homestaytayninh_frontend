@@ -17,7 +17,7 @@ export function ProxyBookingForm({ action, defaultCheckIn, defaultCheckOut, home
   const [homestayId, setHomestayId] = useState(homestays[0]?.id ?? "");
   const selectedHomestay = useMemo(() => homestays.find((homestay) => homestay.id === homestayId) ?? homestays[0], [homestayId, homestays]);
   const rooms = selectedHomestay?.rooms.filter((room) => room.active) ?? [];
-  const services = selectedHomestay ? [...selectedHomestay.includedServices, ...selectedHomestay.services].filter((service) => service.active) : [];
+  const services = selectedHomestay ? selectedHomestay.services.filter((service) => service.active && !service.included) : [];
   const hasRooms = rooms.length > 0;
   const [serviceQuantities, setServiceQuantities] = useState<Record<string, number>>({});
 
@@ -53,7 +53,7 @@ export function ProxyBookingForm({ action, defaultCheckIn, defaultCheckOut, home
       <aside className="card h-fit p-6">
         <p className="eyebrow">Theo homestay đã chọn</p>
         <h2 className="mt-2 font-heading text-2xl text-[#9a4029]">Dịch vụ gọi kèm</h2>
-        <p className="mt-2 text-sm leading-6 text-[#75675f]">Danh sách phòng và dịch vụ được lọc theo homestay đang chọn để tránh đặt nhầm.</p>
+        <p className="mt-2 text-sm leading-6 text-[#75675f]">Chỉ hiển thị dịch vụ bổ sung có tính phí. Dịch vụ đã bao gồm không cần đặt thêm cho khách.</p>
         <div className="mt-4 grid gap-3">
           {services.length ? services.map((service) => {
             const quantity = serviceQuantities[service.id] ?? 0;

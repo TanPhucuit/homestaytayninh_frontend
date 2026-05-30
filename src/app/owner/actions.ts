@@ -9,7 +9,6 @@ import {
   createOwnerRoomRate,
   createOwnerService,
   createProxyBooking,
-  deleteOwnerHomestay,
   updateOwnerBookingStatus,
   updateOwnerHomestay,
   updateOwnerRoom,
@@ -25,6 +24,64 @@ function ownerError(path: string, error: unknown): never {
 
 function text(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
+}
+
+function requiredText(formData: FormData, key: string, label: string) {
+  const value = text(formData, key);
+  if (!value) throw new Error(`Vui lòng nhập ${label}.`);
+  return value;
+}
+
+function numberValue(formData: FormData, key: string, label: string) {
+  const value = Number(formData.get(key));
+  if (!Number.isFinite(value)) throw new Error(`${label} không hợp lệ.`);
+  return value;
+}
+
+function nonNegativeNumber(formData: FormData, key: string, label: string) {
+  const value = numberValue(formData, key, label);
+  if (value < 0) throw new Error(`${label} không được âm.`);
+  return value;
+}
+
+function positiveInteger(formData: FormData, key: string, label: string) {
+  const value = numberValue(formData, key, label);
+  if (!Number.isInteger(value) || value < 1) throw new Error(`${label} phải là số nguyên lớn hơn 0.`);
+  return value;
+}
+
+function nonNegativeInteger(formData: FormData, key: string, label: string) {
+  const value = numberValue(formData, key, label);
+  if (!Number.isInteger(value) || value < 0) throw new Error(`${label} phải là số nguyên không âm.`);
+  return value;
+}
+
+function requiredUrl(formData: FormData, key: string, label: string) {
+  const value = requiredText(formData, key, label);
+  try {
+    new URL(value);
+  } catch {
+    throw new Error(`${label} phải là URL hợp lệ.`);
+  }
+  return value;
+}
+
+function optionalUrl(formData: FormData, key: string, label: string) {
+  const value = text(formData, key);
+  if (!value) return undefined;
+  try {
+    new URL(value);
+  } catch {
+    throw new Error(`${label} phải là URL hợp lệ.`);
+  }
+  return value;
+}
+
+function requiredDate(formData: FormData, key: string, label: string) {
+  const value = requiredText(formData, key, label);
+  const date = new Date(`${value}T00:00:00`);
+  if (Number.isNaN(date.getTime())) throw new Error(`${label} không hợp lệ.`);
+  return value;
 }
 
 export async function updateOwnerBookingStatusAction(formData: FormData) {
@@ -44,18 +101,19 @@ export async function createHomestayAction(formData: FormData) {
   try {
     await createOwnerHomestay(
       {
-        name: text(formData, "name"),
+        name: requiredText(formData, "name", "tên homestay"),
         type: text(formData, "type") || "Phòng",
-        location: text(formData, "location"),
-        description: text(formData, "description"),
-        priceFrom: Number(formData.get("priceFrom") ?? 500000),
-        capacity: Number(formData.get("capacity") ?? 2),
-        imageUrl: text(formData, "imageUrl"),
+        location: requiredText(formData, "location", "vị trí"),
+        description: requiredText(formData, "description", "mô tả"),
+        priceFrom: nonNegativeNumber(formData, "priceFrom", "Giá khởi điểm"),
+        capacity: positiveInteger(formData, "capacity", "Sức chứa"),
+        imageUrl: requiredUrl(formData, "imageUrl", "URL hình ảnh chính"),
         ownerId: text(formData, "ownerId") || undefined
       },
       "OWNER"
     );
     revalidatePath("/owner/manage");
+    revalidatePath("/homestays");
   } catch (error) {
     ownerError("/owner/manage", error);
   }
@@ -69,16 +127,17 @@ export async function createRoomAction(formData: FormData) {
     await createOwnerRoom(
       homestayId,
       {
-        name: text(formData, "name"),
+        name: requiredText(formData, "name", "tên phòng/căn"),
         roomType: text(formData, "roomType") || "Phòng",
-        imageUrl: text(formData, "imageUrl"),
-        pricePerNight: Number(formData.get("pricePerNight") ?? 500000),
-        capacity: Number(formData.get("capacity") ?? 2),
-        totalUnits: Number(formData.get("totalUnits") ?? 1)
+        imageUrl: optionalUrl(formData, "imageUrl", "URL ảnh phòng"),
+        pricePerNight: nonNegativeNumber(formData, "pricePerNight", "Giá cố định/đêm"),
+        capacity: positiveInteger(formData, "capacity", "Sức chứa mỗi phòng/căn"),
+        totalUnits: positiveInteger(formData, "totalUnits", "Số lượng phòng/căn cùng loại")
       },
       "OWNER"
     );
     revalidatePath("/owner/manage");
+    revalidatePath("/homestays");
   } catch (error) {
     ownerError("/owner/manage", error);
   }
@@ -92,14 +151,15 @@ export async function createServiceAction(formData: FormData) {
     await createOwnerService(
       homestayId,
       {
-        name: text(formData, "name"),
+        name: requiredText(formData, "name", "tên dịch vụ"),
         description: text(formData, "description"),
-        unitPrice: Number(formData.get("unitPrice") ?? 0),
+        unitPrice: nonNegativeNumber(formData, "unitPrice", "Đơn giá"),
         included: formData.get("included") === "on"
       },
       "OWNER"
     );
     revalidatePath("/owner/manage");
+    revalidatePath("/homestays");
   } catch (error) {
     ownerError("/owner/manage", error);
   }
@@ -111,15 +171,16 @@ export async function updateHomestayAction(formData: FormData) {
     const homestayId = text(formData, "homestayId");
     if (!homestayId) throw new Error("Thiếu homestay để cập nhật.");
     await updateOwnerHomestay(homestayId, {
-      name: text(formData, "name"),
+      name: requiredText(formData, "name", "tên homestay"),
       type: text(formData, "type") || "Phòng",
-      location: text(formData, "location"),
-      description: text(formData, "description"),
-      priceFrom: Number(formData.get("priceFrom") ?? 0),
-      capacity: Number(formData.get("capacity") ?? 1),
-      imageUrl: text(formData, "imageUrl")
+      location: requiredText(formData, "location", "vị trí"),
+      description: requiredText(formData, "description", "mô tả"),
+      priceFrom: nonNegativeNumber(formData, "priceFrom", "Giá khởi điểm"),
+      capacity: positiveInteger(formData, "capacity", "Sức chứa"),
+      imageUrl: requiredUrl(formData, "imageUrl", "URL hình ảnh chính")
     }, "OWNER");
     revalidatePath("/owner/manage");
+    revalidatePath("/homestays");
   } catch (error) {
     ownerError("/owner/manage", error);
   }
@@ -129,14 +190,11 @@ export async function updateHomestayAction(formData: FormData) {
 export async function deleteHomestayAction(formData: FormData) {
   try {
     const homestayId = text(formData, "homestayId");
-    if (!homestayId) throw new Error("Thiếu homestay để xóa.");
-    await deleteOwnerHomestay(homestayId, "OWNER");
-    revalidatePath("/owner/manage");
-    revalidatePath("/homestays");
+    if (!homestayId) throw new Error("Thiếu homestay để ngừng bán.");
+    throw new Error("Chức năng ngừng bán toàn bộ homestay chưa có API ẩn an toàn. Hãy ngừng bán từng phòng để không xóa dữ liệu.");
   } catch (error) {
     ownerError("/owner/manage", error);
   }
-  redirect(flashUrl("/owner/manage", "success", "Đã xóa homestay khỏi danh sách bán."));
 }
 
 export async function updateRoomAction(formData: FormData) {
@@ -145,15 +203,16 @@ export async function updateRoomAction(formData: FormData) {
     const roomId = text(formData, "roomId");
     if (!homestayId || !roomId) throw new Error("Thiếu homestay hoặc phòng để cập nhật.");
     await updateOwnerRoom(homestayId, roomId, {
-      name: text(formData, "name"),
+      name: requiredText(formData, "name", "tên phòng/căn"),
       roomType: text(formData, "roomType") || "Phòng",
-      imageUrl: text(formData, "imageUrl"),
-      pricePerNight: Number(formData.get("pricePerNight") ?? 0),
-      capacity: Number(formData.get("capacity") ?? 1),
-      totalUnits: Number(formData.get("totalUnits") ?? 1),
+      imageUrl: optionalUrl(formData, "imageUrl", "URL ảnh phòng"),
+      pricePerNight: nonNegativeNumber(formData, "pricePerNight", "Giá cố định/đêm"),
+      capacity: positiveInteger(formData, "capacity", "Sức chứa mỗi phòng/căn"),
+      totalUnits: positiveInteger(formData, "totalUnits", "Số lượng phòng/căn cùng loại"),
       active: formData.get("active") === "on"
     }, "OWNER");
     revalidatePath("/owner/manage");
+    revalidatePath("/homestays");
   } catch (error) {
     ownerError("/owner/manage", error);
   }
@@ -165,10 +224,15 @@ export async function createRoomRateAction(formData: FormData) {
     const homestayId = text(formData, "homestayId");
     const roomId = text(formData, "roomId");
     if (!homestayId || !roomId) throw new Error("Thiếu homestay hoặc phòng để tạo bảng giá.");
+    const startDate = requiredDate(formData, "startDate", "Ngày bắt đầu");
+    const endDate = requiredDate(formData, "endDate", "Ngày kết thúc");
+    if (new Date(`${endDate}T00:00:00`) < new Date(`${startDate}T00:00:00`)) {
+      throw new Error("Ngày kết thúc phải sau hoặc bằng ngày bắt đầu.");
+    }
     await createOwnerRoomRate(homestayId, roomId, {
-      startDate: text(formData, "startDate"),
-      endDate: text(formData, "endDate"),
-      pricePerNight: Number(formData.get("pricePerNight") ?? 0)
+      startDate,
+      endDate,
+      pricePerNight: nonNegativeNumber(formData, "pricePerNight", "Giá theo ngày")
     }, "OWNER");
     revalidatePath("/owner/manage");
   } catch (error) {
@@ -183,9 +247,9 @@ export async function updateServiceAction(formData: FormData) {
     const serviceId = text(formData, "serviceId");
     if (!homestayId || !serviceId) throw new Error("Thiếu homestay hoặc dịch vụ để cập nhật.");
     await updateOwnerService(homestayId, serviceId, {
-      name: text(formData, "name"),
+      name: requiredText(formData, "name", "tên dịch vụ"),
       description: text(formData, "description"),
-      unitPrice: Number(formData.get("unitPrice") ?? 0),
+      unitPrice: nonNegativeNumber(formData, "unitPrice", "Đơn giá"),
       included: formData.get("included") === "on",
       active: formData.get("active") === "on"
     }, "OWNER");
@@ -201,11 +265,12 @@ export async function createImageAction(formData: FormData) {
     const homestayId = text(formData, "homestayId");
     if (!homestayId) throw new Error("Thiếu homestay để thêm hình ảnh.");
     await createOwnerImage(homestayId, {
-      url: text(formData, "url"),
+      url: requiredUrl(formData, "url", "URL hình ảnh"),
       alt: text(formData, "alt"),
-      position: Number(formData.get("position") ?? 0)
+      position: nonNegativeInteger(formData, "position", "Thứ tự ảnh")
     }, "OWNER");
     revalidatePath("/owner/manage");
+    revalidatePath("/homestays");
   } catch (error) {
     ownerError("/owner/manage", error);
   }

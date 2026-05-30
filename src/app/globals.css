@@ -131,6 +131,8 @@ summary {
   border-radius: var(--radius-control);
   background: white;
   padding: 0.85rem 1rem;
+  width: 100%;
+  min-width: 0;
   color: var(--on-surface-variant);
   outline: none;
   transition: border-color 160ms ease, box-shadow 160ms ease;

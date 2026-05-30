@@ -6,7 +6,7 @@ import { FlashMessage } from "./feedback-state";
 import { Booking, Homestay } from "@/lib/types";
 import { money } from "@/lib/api";
 import { FlashState } from "@/lib/flash";
-import { createImageAction, createRoomRateAction, deleteHomestayAction, updateHomestayAction, updateRoomAction, updateServiceAction } from "@/app/owner/actions";
+import { createImageAction, createRoomAction, createServiceAction, updateHomestayAction, updateRoomAction, updateServiceAction } from "@/app/owner/actions";
 
 export function OwnerShell({ title, description, flash, children }: { title: string; description: string; flash?: FlashState | null; children: ReactNode }) {
   return (
@@ -124,109 +124,317 @@ export function OwnerBookingOps({ bookings, homestays, action }: { bookings: Boo
   );
 }
 
+function inventoryTotals(homestay: Homestay) {
+  const activeRooms = homestay.rooms.filter((room) => room.active !== false);
+  if (!activeRooms.length) {
+    return {
+      activeRooms,
+      priceFrom: homestay.priceFrom,
+      capacity: homestay.capacity,
+      source: "fallback" as const
+    };
+  }
+
+  return {
+    activeRooms,
+    priceFrom: Math.min(...activeRooms.map((room) => room.pricePerNight)),
+    capacity: activeRooms.reduce((sum, room) => sum + room.capacity * Math.max(1, room.totalUnits || 1), 0),
+    source: "rooms" as const
+  };
+}
+
 export function OwnerInventory({ homestays }: { homestays: Homestay[] }) {
   return (
     <section className="grid gap-5">
-      {homestays.map((homestay) => (
-        <article className="card p-6" key={homestay.id}>
-          <div className="flex flex-col justify-between gap-3 md:flex-row">
-            <div>
-              <p className="eyebrow">{homestay.type}</p>
-              <h2 className="mt-1 font-heading text-3xl text-[#9a4029]">{homestay.name}</h2>
-              <p className="mt-2 text-sm text-[#75675f]">{homestay.location} · {money(homestay.priceFrom)} · {homestay.capacity} khách</p>
-            </div>
-            <div className="h-28 w-full rounded-2xl bg-[#efe7dc] bg-cover bg-center md:w-44" style={{ backgroundImage: `url(${homestay.imageUrl})` }} aria-label={homestay.name} />
-          </div>
-          <div className="mt-4 flex flex-col gap-3 rounded-2xl border border-[#ffdad6] bg-[#fff8f7] p-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="font-bold text-[#93000a]">Ẩn/ngừng bán homestay</p>
-              <p className="mt-1 text-sm text-[#75675f]">Homestay sẽ bị ẩn khỏi danh sách bán và khách không thể đặt mới.</p>
-            </div>
-            <form action={deleteHomestayAction}>
-              <input type="hidden" name="homestayId" value={homestay.id} />
-              <ConfirmActionButton className="btn-secondary border-[#93000a]/35 text-[#93000a]" message="Ẩn homestay này khỏi danh sách bán? Thao tác này không xóa dữ liệu booking cũ." pendingLabel="Đang xử lý...">
-                Ẩn homestay
-              </ConfirmActionButton>
-            </form>
-          </div>
-          <details className="mt-5 rounded-2xl border border-[#eadfd4] bg-[#fdf9f4] p-4">
-            <summary className="cursor-pointer font-bold text-[#466550]">Thông tin</summary>
-            <form action={updateHomestayAction} className="mt-4 grid gap-3 md:grid-cols-2">
-              <input type="hidden" name="homestayId" value={homestay.id} />
-              <input className="field" name="name" defaultValue={homestay.name} required />
-              <select className="field" name="type" defaultValue={homestay.type}>
-                <option>Phòng</option>
-                <option>Lều</option>
-                <option>Nhà nguyên căn</option>
-              </select>
-              <input className="field" name="location" defaultValue={homestay.location} required />
-              <input className="field" name="priceFrom" type="number" min="0" defaultValue={homestay.priceFrom} required />
-              <input className="field" name="capacity" type="number" min="1" defaultValue={homestay.capacity} required />
-              <input className="field" name="imageUrl" type="url" defaultValue={homestay.imageUrl} required />
-              <textarea className="field min-h-20 md:col-span-2" name="description" defaultValue={homestay.description} required />
-              <ActionButton className="btn-primary justify-self-start" pendingLabel="Đang lưu...">Lưu homestay</ActionButton>
-            </form>
-          </details>
-          <details className="mt-4 rounded-2xl border border-[#eadfd4] bg-white p-4">
-            <summary className="cursor-pointer font-bold text-[#466550]">Ảnh</summary>
-            <form action={createImageAction} className="mt-4 grid gap-3 md:grid-cols-[1fr_1fr_120px_auto]">
-              <input type="hidden" name="homestayId" value={homestay.id} />
-              <input className="field" name="url" type="url" placeholder="URL hình ảnh mới" required />
-              <input className="field" name="alt" placeholder="Mô tả ảnh" />
-              <input className="field" name="position" type="number" min="0" defaultValue="1" />
-              <ActionButton className="btn-secondary" pendingLabel="Đang thêm...">Thêm ảnh</ActionButton>
-            </form>
-          </details>
-          <div className="mt-5 grid gap-4 lg:grid-cols-2">
-            <details className="rounded-2xl border border-[#eadfd4] bg-white p-4">
-              <summary className="cursor-pointer font-bold text-[#466550]">Phòng và bảng giá</summary>
-              <div className="mt-2 space-y-2">
-                {homestay.rooms.map((room) => (
-                  <div className="rounded-xl bg-[#fdf9f4] p-4 text-sm" key={room.id}>
-                    <form action={updateRoomAction} className="grid gap-2 md:grid-cols-2">
-                      <input type="hidden" name="homestayId" value={homestay.id} />
-                      <input type="hidden" name="roomId" value={room.id} />
-                      <input className="field" name="name" defaultValue={room.name} required />
-                      <input className="field" name="roomType" defaultValue={room.roomType} required />
-                      <input className="field" name="imageUrl" type="url" defaultValue={room.imageUrl ?? ""} placeholder="URL ảnh phòng" />
-                      <input className="field" name="pricePerNight" type="number" min="0" defaultValue={room.pricePerNight} required />
-                      <input className="field" name="capacity" type="number" min="1" defaultValue={room.capacity} required />
-                      <input className="field" name="totalUnits" type="number" min="1" defaultValue={room.totalUnits} required />
-                      <label className="flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-sm"><input name="active" type="checkbox" defaultChecked={room.active} /> {room.active ? "Đang bán" : "Đang ngừng bán"}</label>
-                      <ConfirmActionButton className="btn-secondary justify-self-start" message={room.active ? "Nếu bỏ chọn Đang bán, phòng sẽ được ngừng bán nhưng không bị xóa. Tiếp tục?" : "Phục hồi phòng này để khách có thể đặt lại?"} pendingLabel="Đang lưu...">Lưu phòng</ConfirmActionButton>
-                    </form>
-                    <form action={createRoomRateAction} className="mt-3 grid gap-2 md:grid-cols-[1fr_1fr_1fr_auto]">
-                      <input type="hidden" name="homestayId" value={homestay.id} />
-                      <input type="hidden" name="roomId" value={room.id} />
-                      <input className="field" name="startDate" type="date" required />
-                      <input className="field" name="endDate" type="date" required />
-                      <input className="field" name="pricePerNight" type="number" min="0" placeholder="Giá theo ngày" required />
-                      <ActionButton className="btn-secondary" pendingLabel="Đang thêm...">Thêm giá</ActionButton>
-                    </form>
+      {homestays.map((homestay) => {
+        const totals = inventoryTotals(homestay);
+        const includedServices = Array.from(
+          new Map([...homestay.includedServices, ...homestay.services.filter((service) => service.included)].map((service) => [service.id, service])).values()
+        );
+        const addOnServices = homestay.services.filter((service) => !service.included);
+        const totalsSynced = totals.priceFrom === homestay.priceFrom && totals.capacity === homestay.capacity;
+
+        return (
+          <article className="card p-6" key={homestay.id}>
+            <div className="flex flex-col justify-between gap-4 lg:flex-row">
+              <div className="min-w-0">
+                <p className="eyebrow">{homestay.type}</p>
+                <h2 className="mt-1 font-heading text-3xl text-[#9a4029]">{homestay.name}</h2>
+                <p className="mt-2 text-sm text-[#75675f]">{homestay.location}</p>
+                <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                  <div className="rounded-xl bg-[#fdf9f4] px-4 py-3">
+                    <p className="text-xs font-bold uppercase text-[#89726c]">Giá hiển thị</p>
+                    <p className="mt-1 font-bold text-[#466550]">{money(totals.priceFrom)}</p>
                   </div>
-                ))}
+                  <div className="rounded-xl bg-[#fdf9f4] px-4 py-3">
+                    <p className="text-xs font-bold uppercase text-[#89726c]">Sức chứa hiển thị</p>
+                    <p className="mt-1 font-bold text-[#466550]">{totals.capacity} khách</p>
+                  </div>
+                  <div className="rounded-xl bg-[#fdf9f4] px-4 py-3">
+                    <p className="text-xs font-bold uppercase text-[#89726c]">Phòng đang bán</p>
+                    <p className="mt-1 font-bold text-[#466550]">{totals.activeRooms.length} loại</p>
+                  </div>
+                </div>
+                <p className="mt-3 text-xs leading-5 text-[#75675f]">
+                  {totals.source === "rooms"
+                    ? "Giá và sức chứa đang được tính từ phòng đang bán. Dùng nút đồng bộ để cập nhật lại trường tổng hợp lưu trên homestay."
+                    : "Homestay chưa có phòng đang bán, hệ thống đang dùng giá và sức chứa tạm của homestay."}
+                </p>
               </div>
+              <div className="h-32 w-full shrink-0 rounded-2xl bg-[#efe7dc] bg-cover bg-center lg:w-52" style={{ backgroundImage: `url(${homestay.imageUrl})` }} aria-label={homestay.name} />
+            </div>
+
+            {totals.source === "rooms" && (
+              <form action={updateHomestayAction} className="mt-4 flex flex-col gap-3 rounded-2xl border border-[#d7e2da] bg-[#f5fbf6] p-4 sm:flex-row sm:items-center sm:justify-between">
+                <input type="hidden" name="homestayId" value={homestay.id} />
+                <input type="hidden" name="name" value={homestay.name} />
+                <input type="hidden" name="type" value={homestay.type} />
+                <input type="hidden" name="location" value={homestay.location} />
+                <input type="hidden" name="description" value={homestay.description} />
+                <input type="hidden" name="imageUrl" value={homestay.imageUrl} />
+                <input type="hidden" name="priceFrom" value={totals.priceFrom} />
+                <input type="hidden" name="capacity" value={totals.capacity} />
+                <div>
+                  <p className="font-bold text-[#466550]">{totalsSynced ? "Giá và sức chứa đã khớp phòng đang bán" : "Cần đồng bộ giá và sức chứa"}</p>
+                  <p className="mt-1 text-sm text-[#75675f]">Giá khởi điểm = giá/đêm thấp nhất; sức chứa = sức chứa mỗi phòng/căn x số lượng phòng/căn.</p>
+                </div>
+                <ActionButton className="btn-secondary w-full sm:w-auto" disabled={totalsSynced} pendingLabel="Đang đồng bộ...">Đồng bộ từ phòng</ActionButton>
+              </form>
+            )}
+
+            <details className="mt-5 rounded-2xl border border-[#eadfd4] bg-[#fdf9f4] p-4">
+              <summary className="cursor-pointer font-bold text-[#466550]">Thông tin homestay</summary>
+              <form action={updateHomestayAction} className="mt-4 grid gap-4 md:grid-cols-2">
+                <input type="hidden" name="homestayId" value={homestay.id} />
+                <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+                  Tên homestay
+                  <input className="field" name="name" defaultValue={homestay.name} required />
+                </label>
+                <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+                  Loại hình
+                  <select className="field" name="type" defaultValue={homestay.type}>
+                    <option>Phòng</option>
+                    <option>Lều</option>
+                    <option>Nhà nguyên căn</option>
+                  </select>
+                </label>
+                <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+                  Vị trí
+                  <input className="field" name="location" defaultValue={homestay.location} required />
+                </label>
+                <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+                  URL hình ảnh chính
+                  <input className="field" name="imageUrl" type="url" defaultValue={homestay.imageUrl} required />
+                </label>
+                <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+                  Giá khởi điểm đang lưu
+                  <input className="field" name="priceFrom" type="number" min="0" defaultValue={homestay.priceFrom} required />
+                </label>
+                <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+                  Sức chứa đang lưu
+                  <input className="field" name="capacity" type="number" min="1" defaultValue={homestay.capacity} required />
+                </label>
+                <label className="grid gap-2 text-sm font-semibold text-[#3f3530] md:col-span-2">
+                  Mô tả
+                  <textarea className="field min-h-24" name="description" defaultValue={homestay.description} required />
+                </label>
+                <ActionButton className="btn-primary w-full md:col-span-2" pendingLabel="Đang lưu...">Lưu homestay</ActionButton>
+              </form>
             </details>
-            <details className="rounded-2xl border border-[#eadfd4] bg-white p-4">
-              <summary className="cursor-pointer font-bold text-[#466550]">Dịch vụ</summary>
-              <div className="mt-2 space-y-2">
-                {[...homestay.includedServices, ...homestay.services].map((service) => (
-                  <form action={updateServiceAction} className="grid gap-2 rounded-xl bg-[#fdf9f4] p-4 text-sm" key={service.id}>
+
+            <details className="mt-4 rounded-2xl border border-[#eadfd4] bg-white p-4">
+              <summary className="cursor-pointer font-bold text-[#466550]">Ảnh</summary>
+              <form action={createImageAction} className="mt-4 grid gap-3 md:grid-cols-[1fr_1fr_120px_auto]">
+                <input type="hidden" name="homestayId" value={homestay.id} />
+                <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+                  URL hình ảnh mới
+                  <input className="field" name="url" type="url" placeholder="https://..." required />
+                </label>
+                <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+                  Mô tả ảnh
+                  <input className="field" name="alt" placeholder="Ví dụ: Sân vườn buổi sáng" />
+                </label>
+                <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+                  Thứ tự
+                  <input className="field" name="position" type="number" min="0" defaultValue="1" />
+                </label>
+                <ActionButton className="btn-secondary w-full self-end" pendingLabel="Đang thêm...">Thêm ảnh</ActionButton>
+              </form>
+            </details>
+
+            <div className="mt-5 grid gap-4 xl:grid-cols-2">
+              <details className="rounded-2xl border border-[#eadfd4] bg-white p-4">
+                <summary className="cursor-pointer font-bold text-[#466550]">Phòng và giá cố định</summary>
+                <form action={createRoomAction} className="mt-4 grid gap-4 rounded-2xl bg-[#fdf9f4] p-4 md:grid-cols-2">
+                  <input type="hidden" name="homestayId" value={homestay.id} />
+                  <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+                    Tên phòng/căn
+                    <input className="field" name="name" placeholder="Ví dụ: Phòng 2 người" required />
+                  </label>
+                  <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+                    Loại phòng/căn
+                    <input className="field" name="roomType" placeholder="Ví dụ: Phòng đôi, bungalow" required />
+                  </label>
+                  <label className="grid gap-2 text-sm font-semibold text-[#3f3530] md:col-span-2">
+                    URL ảnh phòng
+                    <input className="field" name="imageUrl" type="url" placeholder="https://..." />
+                  </label>
+                  <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+                    Giá cố định/đêm
+                    <input className="field" name="pricePerNight" type="number" min="0" placeholder="Ví dụ: 470000" required />
+                  </label>
+                  <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+                    Sức chứa mỗi phòng/căn
+                    <input className="field" name="capacity" type="number" min="1" placeholder="Ví dụ: 4" required />
+                  </label>
+                  <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+                    Số lượng phòng/căn cùng loại
+                    <input className="field" name="totalUnits" type="number" min="1" placeholder="Ví dụ: 2" required />
+                  </label>
+                  <div className="flex items-end">
+                    <ActionButton className="btn-primary w-full" pendingLabel="Đang thêm...">Thêm phòng</ActionButton>
+                  </div>
+                </form>
+
+                <div className="mt-5 space-y-3">
+                  <h3 className="font-bold text-[#1c1c19]">Phòng hiện có</h3>
+                  {homestay.rooms.length ? homestay.rooms.map((room) => (
+                    <div className="rounded-xl bg-[#fdf9f4] p-4 text-sm" key={room.id}>
+                      <form action={updateRoomAction} className="grid gap-4 md:grid-cols-2">
+                        <input type="hidden" name="homestayId" value={homestay.id} />
+                        <input type="hidden" name="roomId" value={room.id} />
+                        <label className="grid gap-2 font-semibold text-[#3f3530]">
+                          Tên phòng/căn
+                          <input className="field" name="name" defaultValue={room.name} required />
+                        </label>
+                        <label className="grid gap-2 font-semibold text-[#3f3530]">
+                          Loại phòng/căn
+                          <input className="field" name="roomType" defaultValue={room.roomType} required />
+                        </label>
+                        <label className="grid gap-2 font-semibold text-[#3f3530] md:col-span-2">
+                          URL ảnh phòng
+                          <input className="field" name="imageUrl" type="url" defaultValue={room.imageUrl ?? ""} placeholder="https://..." />
+                        </label>
+                        <label className="grid gap-2 font-semibold text-[#3f3530]">
+                          Giá cố định/đêm
+                          <input className="field" name="pricePerNight" type="number" min="0" defaultValue={room.pricePerNight} required />
+                        </label>
+                        <label className="grid gap-2 font-semibold text-[#3f3530]">
+                          Sức chứa mỗi phòng/căn
+                          <input className="field" name="capacity" type="number" min="1" defaultValue={room.capacity} required />
+                        </label>
+                        <label className="grid gap-2 font-semibold text-[#3f3530]">
+                          Số lượng phòng/căn cùng loại
+                          <input className="field" name="totalUnits" type="number" min="1" defaultValue={room.totalUnits} required />
+                        </label>
+                        <label className="flex items-center gap-2 rounded-xl bg-white px-3 py-2 font-semibold text-[#3f3530]">
+                          <input name="active" type="checkbox" defaultChecked={room.active} /> {room.active ? "Đang bán" : "Đang ngừng bán"}
+                        </label>
+                        <ConfirmActionButton className="btn-secondary w-full md:col-span-2" message={room.active ? "Nếu bỏ chọn Đang bán, phòng sẽ được ngừng bán nhưng không bị xóa. Tiếp tục?" : "Phục hồi phòng này để khách có thể đặt lại?"} pendingLabel="Đang lưu...">Lưu phòng</ConfirmActionButton>
+                      </form>
+                    </div>
+                  )) : (
+                    <p className="rounded-xl bg-[#fdf9f4] p-4 text-sm text-[#75675f]">Homestay này chưa có phòng. Thêm phòng ở form phía trên.</p>
+                  )}
+                </div>
+              </details>
+
+              <details className="rounded-2xl border border-[#eadfd4] bg-white p-4">
+                <summary className="cursor-pointer font-bold text-[#466550]">Dịch vụ</summary>
+                <div className="mt-4 grid gap-4">
+                  <form action={createServiceAction} className="grid gap-4 rounded-2xl bg-[#fdf9f4] p-4 md:grid-cols-2">
                     <input type="hidden" name="homestayId" value={homestay.id} />
-                    <input type="hidden" name="serviceId" value={service.id} />
-                    <input className="field" name="name" defaultValue={service.name} required />
-                    <textarea className="field min-h-16" name="description" defaultValue={service.description ?? ""} />
-                    <input className="field" name="unitPrice" type="number" min="0" defaultValue={service.unitPrice} required />
-                    <label className="flex items-center gap-2"><input name="included" type="checkbox" defaultChecked={service.included} /> Bao gồm</label>
-                    <label className="flex items-center gap-2 rounded-xl bg-white px-3 py-2"><input name="active" type="checkbox" defaultChecked={service.active} /> {service.active ? "Đang bán" : "Đang ngừng bán"}</label>
-                    <ConfirmActionButton className="btn-secondary justify-self-start" message={service.active ? "Nếu bỏ chọn Đang bán, dịch vụ sẽ được ngừng bán nhưng không bị xóa. Tiếp tục?" : "Phục hồi dịch vụ này để khách có thể đặt lại?"} pendingLabel="Đang lưu...">Lưu dịch vụ</ConfirmActionButton>
+                    <input type="hidden" name="included" value="off" />
+                    <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+                      Tên dịch vụ bổ sung
+                      <input className="field" name="name" placeholder="Ví dụ: BBQ sân vườn" required />
+                    </label>
+                    <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+                      Đơn giá
+                      <input className="field" name="unitPrice" type="number" min="0" placeholder="Ví dụ: 250000" required />
+                    </label>
+                    <label className="grid gap-2 text-sm font-semibold text-[#3f3530] md:col-span-2">
+                      Mô tả
+                      <textarea className="field min-h-20" name="description" placeholder="Mô tả ngắn để khách hiểu dịch vụ" />
+                    </label>
+                    <ActionButton className="btn-primary w-full md:col-span-2" pendingLabel="Đang thêm...">Thêm dịch vụ bổ sung</ActionButton>
                   </form>
-                ))}
-              </div>
-            </details>
-          </div>
-        </article>
-      ))}
+
+                  <form action={createServiceAction} className="grid gap-4 rounded-2xl border border-[#d7e2da] bg-[#f5fbf6] p-4 md:grid-cols-2">
+                    <input type="hidden" name="homestayId" value={homestay.id} />
+                    <input type="hidden" name="included" value="on" />
+                    <input type="hidden" name="unitPrice" value="0" />
+                    <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+                      Tên dịch vụ đã bao gồm
+                      <input className="field" name="name" placeholder="Ví dụ: Wifi, nước uống" required />
+                    </label>
+                    <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+                      Mô tả
+                      <input className="field" name="description" placeholder="Không tính thêm tiền khi đặt phòng" />
+                    </label>
+                    <ActionButton className="btn-secondary w-full md:col-span-2" pendingLabel="Đang thêm...">Thêm dịch vụ đã bao gồm</ActionButton>
+                  </form>
+
+                  <div className="space-y-3">
+                    <h3 className="font-bold text-[#1c1c19]">Dịch vụ bổ sung khách có thể đặt thêm</h3>
+                    {addOnServices.length ? addOnServices.map((service) => (
+                      <form action={updateServiceAction} className="grid gap-3 rounded-xl bg-[#fdf9f4] p-4 text-sm" key={service.id}>
+                        <input type="hidden" name="homestayId" value={homestay.id} />
+                        <input type="hidden" name="serviceId" value={service.id} />
+                        <input type="hidden" name="included" value="off" />
+                        <label className="grid gap-2 font-semibold text-[#3f3530]">
+                          Tên dịch vụ
+                          <input className="field" name="name" defaultValue={service.name} required />
+                        </label>
+                        <label className="grid gap-2 font-semibold text-[#3f3530]">
+                          Mô tả
+                          <textarea className="field min-h-16" name="description" defaultValue={service.description ?? ""} />
+                        </label>
+                        <label className="grid gap-2 font-semibold text-[#3f3530]">
+                          Đơn giá
+                          <input className="field" name="unitPrice" type="number" min="0" defaultValue={service.unitPrice} required />
+                        </label>
+                        <label className="flex items-center gap-2 rounded-xl bg-white px-3 py-2 font-semibold text-[#3f3530]">
+                          <input name="active" type="checkbox" defaultChecked={service.active} /> {service.active ? "Đang bán" : "Đang ngừng bán"}
+                        </label>
+                        <ConfirmActionButton className="btn-secondary w-full" message={service.active ? "Nếu bỏ chọn Đang bán, dịch vụ sẽ được ngừng bán nhưng không bị xóa. Tiếp tục?" : "Phục hồi dịch vụ này để khách có thể đặt lại?"} pendingLabel="Đang lưu...">Lưu dịch vụ bổ sung</ConfirmActionButton>
+                      </form>
+                    )) : (
+                      <p className="rounded-xl bg-[#fdf9f4] p-4 text-sm text-[#75675f]">Chưa có dịch vụ bổ sung.</p>
+                    )}
+                  </div>
+
+                  <div className="space-y-3">
+                    <h3 className="font-bold text-[#1c1c19]">Dịch vụ đã bao gồm trong giá phòng</h3>
+                    {includedServices.length ? includedServices.map((service) => (
+                      <form action={updateServiceAction} className="grid gap-3 rounded-xl border border-[#d7e2da] bg-[#f5fbf6] p-4 text-sm" key={service.id}>
+                        <input type="hidden" name="homestayId" value={homestay.id} />
+                        <input type="hidden" name="serviceId" value={service.id} />
+                        <input type="hidden" name="included" value="on" />
+                        <input type="hidden" name="unitPrice" value={service.unitPrice} />
+                        <label className="grid gap-2 font-semibold text-[#3f3530]">
+                          Tên dịch vụ
+                          <input className="field" name="name" defaultValue={service.name} required />
+                        </label>
+                        <label className="grid gap-2 font-semibold text-[#3f3530]">
+                          Mô tả
+                          <textarea className="field min-h-16" name="description" defaultValue={service.description ?? ""} />
+                        </label>
+                        <label className="flex items-center gap-2 rounded-xl bg-white px-3 py-2 font-semibold text-[#3f3530]">
+                          <input name="active" type="checkbox" defaultChecked={service.active} /> {service.active ? "Đang hiển thị" : "Đang ẩn"}
+                        </label>
+                        <ConfirmActionButton className="btn-secondary w-full" message={service.active ? "Ẩn dịch vụ đã bao gồm này khỏi phần hiển thị? Dữ liệu booking cũ không bị xóa." : "Hiển thị lại dịch vụ đã bao gồm này?"} pendingLabel="Đang lưu...">Lưu dịch vụ đã bao gồm</ConfirmActionButton>
+                      </form>
+                    )) : (
+                      <p className="rounded-xl bg-[#f5fbf6] p-4 text-sm text-[#75675f]">Chưa có dịch vụ đã bao gồm.</p>
+                    )}
+                  </div>
+                </div>
+              </details>
+            </div>
+          </article>
+        );
+      })}
     </section>
   );
 }

@@ -243,7 +243,7 @@ export async function getCheckoutPreview(draftOrHomestayId?: string | CheckoutDr
   const requestedGuests = Number(draft.guestCount ?? 2);
   const guestCount = Math.min(Number.isFinite(requestedGuests) && requestedGuests > 0 ? requestedGuests : 1, room.capacity);
   const selectedServices = (draft.serviceItems ?? []).map((item) => {
-    const service = homestay.services.find((candidate) => candidate.id === item.serviceId);
+    const service = homestay.services.find((candidate) => candidate.id === item.serviceId && candidate.active !== false && !candidate.included);
     if (!service || !Number.isInteger(item.quantity) || item.quantity < 1) return null;
     return { id: service.id, name: service.name, quantity: item.quantity, unitPrice: service.unitPrice, total: service.unitPrice * item.quantity };
   }).filter((item): item is CheckoutPreview["selectedServices"][number] => Boolean(item));

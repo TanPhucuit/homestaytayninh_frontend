@@ -35,6 +35,7 @@ export default async function BookingDetailPage({ params, searchParams }: { para
   const bookedRooms = booking.rooms?.length
     ? booking.rooms
     : homestay.rooms.filter((room) => room.id === booking.roomId);
+  const addOnServices = homestay.services.filter((service) => service.active !== false && !service.included);
 
   return (
     <PageShell eyebrow="Chi tiết đơn đặt" title={`Đơn ${booking.id}`} description={`${homestay.name} · ${booking.checkIn} → ${booking.checkOut}`}>
@@ -104,13 +105,14 @@ export default async function BookingDetailPage({ params, searchParams }: { para
               <h2 className="font-heading text-2xl text-[#9a4029]">Thêm dịch vụ</h2>
               <p className="mt-2 text-sm text-[#75675f]">Ghi nhận dịch vụ phát sinh khi khách đang lưu trú.</p>
               <div className="mt-4 grid gap-3">
-                <select className="field" name="serviceId" required>
-                  {homestay.services.map((service) => (
+                <select className="field" name="serviceId" disabled={!addOnServices.length} required>
+                  {addOnServices.map((service) => (
                     <option key={service.id} value={service.id}>{service.name} · {money(service.unitPrice)}</option>
                   ))}
                 </select>
                 <input className="field" name="quantity" type="number" min="1" defaultValue="1" aria-label="Số lượng dịch vụ" />
-                <ActionButton className="btn-primary w-full" pendingLabel="Đang thêm...">Thêm vào hóa đơn</ActionButton>
+                <ActionButton className="btn-primary w-full" disabled={!addOnServices.length} pendingLabel="Đang thêm...">Thêm vào hóa đơn</ActionButton>
+                {!addOnServices.length && <p className="text-sm font-semibold text-[#93000a]">Homestay chưa có dịch vụ bổ sung đang bán.</p>}
               </div>
             </form>
           )}

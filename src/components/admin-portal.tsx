@@ -103,14 +103,26 @@ export function AdminPortal({ dashboard, users, currentUser, flash }: { dashboar
 
           <form action={createAdminUserAction} className="card p-6">
             <h2 className="font-heading text-2xl text-[#9a4029]">Tạo tài khoản đối tác/nhân viên</h2>
-            <div className="mt-5 grid gap-3">
-              <input className="field" name="name" placeholder="Tên hiển thị" required />
-              <input className="field" name="email" placeholder="Email" required type="email" />
-              <input className="field" name="phone" placeholder="Số điện thoại" />
-              <select className="field" name="role" defaultValue="OWNER">
-                {roles.filter((role) => role !== "CUSTOMER").map((role) => <option key={role}>{role}</option>)}
-              </select>
-              <ActionButton pendingLabel="Đang tạo...">Tạo tài khoản</ActionButton>
+            <div className="mt-5 grid gap-4 md:grid-cols-2">
+              <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+                Tên hiển thị
+                <input className="field" name="name" placeholder="Ví dụ: Owner Demo" required />
+              </label>
+              <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+                Email
+                <input className="field" name="email" placeholder="owner@email.com" required type="email" />
+              </label>
+              <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+                Số điện thoại
+                <input className="field" name="phone" placeholder="0901234567" />
+              </label>
+              <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+                Vai trò
+                <select className="field" name="role" defaultValue="OWNER">
+                  {roles.filter((role) => role !== "CUSTOMER").map((role) => <option key={role}>{role}</option>)}
+                </select>
+              </label>
+              <ActionButton className="btn-primary w-full md:col-span-2" pendingLabel="Đang tạo...">Tạo tài khoản</ActionButton>
             </div>
           </form>
         </section>

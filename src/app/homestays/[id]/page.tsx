@@ -118,6 +118,7 @@ export default async function HomestayDetailPage({ params, searchParams }: { par
     description: roomDescription(room, homestay.location),
     thumbnail: room.imageUrl ?? gallery[(index + 1) % gallery.length]?.url ?? homestay.imageUrl
   }));
+  const addOnServices = homestay.services.filter((service) => service.active !== false && !service.included);
 
   return (
     <main className="min-h-screen pb-24 text-[#1c1c19] lg:pb-0">
@@ -212,13 +213,15 @@ export default async function HomestayDetailPage({ params, searchParams }: { par
           <section className="border-b border-[#e8e1d5] pb-10">
             <h2 className="font-heading text-3xl text-[#1c1c19]">Dịch vụ có thể đặt thêm</h2>
             <div className="mt-5 grid gap-3 md:grid-cols-2">
-              {homestay.services.map((service) => (
+              {addOnServices.length ? addOnServices.map((service) => (
                 <div className="rounded-2xl border border-[#eadfd4] bg-white p-4 shadow-[0_10px_30px_rgba(154,64,41,0.05)]" key={service.id}>
                   <p className="font-bold text-[#466550]">{service.name}</p>
                   {service.description && <p className="mt-1 text-sm text-[#75675f]">{service.description}</p>}
                   <p className="mt-3 font-bold text-[#9a4029]">{money(service.unitPrice)}</p>
                 </div>
-              ))}
+              )) : (
+                <p className="rounded-2xl bg-[#fdf9f4] p-4 text-sm text-[#75675f]">Homestay này chưa mở bán dịch vụ bổ sung.</p>
+              )}
             </div>
           </section>
 
