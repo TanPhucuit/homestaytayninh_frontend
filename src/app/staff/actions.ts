@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createArticle, deleteArticle, resolveViolationReport, setArticlePublished, setUserBanned, updateArticle } from "@/lib/api";
+import { createArticle, deleteArticle, getUsers, resolveViolationReport, setArticlePublished, setUserBanned, updateArticle } from "@/lib/api";
 import { actionErrorMessage } from "@/lib/action-errors";
 import { flashUrl } from "@/lib/flash";
 import { getCurrentUser } from "@/lib/rbac";
@@ -19,6 +19,12 @@ async function requireStaff() {
   const user = await getCurrentUser();
   if (user.authorizationError) throw new Error(user.authorizationError);
   if (user.role !== "STAFF") throw new Error("Chỉ Staff được quản lý nội dung và kiểm soát người dùng.");
+}
+
+async function requireCustomerTarget(userId: string) {
+  const target = (await getUsers("STAFF")).find((user) => user.id === userId);
+  if (!target) throw new Error("Không tìm thấy tài khoản cần kiểm soát.");
+  if (target.role !== "CUSTOMER") throw new Error("Staff chỉ được khóa hoặc mở khóa tài khoản Customer.");
 }
 
 export async function createArticleAction(formData: FormData) {
@@ -119,6 +125,7 @@ export async function banModeratedUserAction(formData: FormData) {
     await requireStaff();
     const userId = text(formData, "userId");
     if (!userId) throw new Error("Thiếu user để khóa tài khoản.");
+    await requireCustomerTarget(userId);
     await setUserBanned(userId, true, "STAFF");
     revalidatePath("/staff/moderation");
   } catch (error) {
@@ -132,6 +139,7 @@ export async function unbanModeratedUserAction(formData: FormData) {
     await requireStaff();
     const userId = text(formData, "userId");
     if (!userId) throw new Error("Thiếu user để mở khóa tài khoản.");
+    await requireCustomerTarget(userId);
     await setUserBanned(userId, false, "STAFF");
     revalidatePath("/staff/moderation");
   } catch (error) {

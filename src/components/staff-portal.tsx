@@ -121,7 +121,7 @@ export function StaffCmsPortal({ articles, flash }: { articles: Article[]; flash
 }
 
 export function StaffModerationPortal({ reports, users, currentRole, flash }: { reports: ViolationReport[]; users: UserProfile[]; currentRole: UserRole; flash?: FlashState | null }) {
-  const manageableUsers = currentRole === "ADMIN" ? users : users.filter((user) => user.role !== "ADMIN");
+  const manageableUsers = currentRole === "STAFF" ? users.filter((user) => user.role === "CUSTOMER") : [];
 
   return (
     <StaffShell
@@ -157,10 +157,10 @@ export function StaffModerationPortal({ reports, users, currentRole, flash }: { 
       </section>
       <section className="card p-6">
         <h2 className="font-heading text-3xl text-[#9a4029]">Kiểm soát tài khoản</h2>
-        <p className="mt-2 text-sm text-[#75675f]">Nhân viên có thể khóa hoặc mở khóa tài khoản khi xử lý vi phạm; phân quyền chỉ do quản trị viên thực hiện.</p>
+        <p className="mt-2 text-sm text-[#75675f]">Nhân viên chỉ được khóa hoặc mở khóa tài khoản khách hàng khi xử lý vi phạm; Owner, Owner Staff và Admin do quản trị viên xử lý.</p>
         <div className="mt-5 grid gap-3">
           {manageableUsers.length === 0 ? (
-            <EmptyState title="Chưa có người dùng" description="Danh sách người dùng sẽ hiển thị khi hệ thống có tài khoản." />
+            <EmptyState title="Chưa có khách hàng" description="Chỉ tài khoản Customer được hiển thị trong khu vực kiểm soát của Staff." />
           ) : manageableUsers.map((user) => (
             <article className="flex flex-col justify-between gap-3 rounded-2xl bg-[#fdf9f4] p-4 sm:flex-row sm:items-center" key={user.id}>
               <div>
