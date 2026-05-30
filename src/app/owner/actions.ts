@@ -17,6 +17,7 @@ import {
 } from "@/lib/api";
 import { actionErrorMessage } from "@/lib/action-errors";
 import { flashUrl } from "@/lib/flash";
+import { getCurrentUser } from "@/lib/rbac";
 import { BookingStatus } from "@/lib/types";
 
 export type OwnerFormState = {
@@ -27,6 +28,18 @@ export type OwnerFormState = {
 
 function ownerError(path: string, error: unknown): never {
   redirect(flashUrl(path, "error", actionErrorMessage(error)));
+}
+
+async function requireOwner() {
+  const user = await getCurrentUser();
+  if (user.authorizationError) throw new Error(user.authorizationError);
+  if (user.role !== "OWNER") throw new Error("Chỉ Owner được quản lý homestay, phòng, giá, hình ảnh và dịch vụ.");
+}
+
+async function requireOwnerStaff() {
+  const user = await getCurrentUser();
+  if (user.authorizationError) throw new Error(user.authorizationError);
+  if (user.role !== "OWNER_STAFF") throw new Error("Chỉ Owner Staff được xử lý booking và đặt hộ khách hàng.");
 }
 
 function text(formData: FormData, key: string) {
@@ -110,6 +123,7 @@ async function syncHomestayRoomTotals(homestayId: string) {
 
 export async function updateOwnerBookingStatusAction(formData: FormData) {
   try {
+    await requireOwnerStaff();
     const bookingId = text(formData, "bookingId");
     const status = text(formData, "status") as BookingStatus;
     if (!bookingId || !status) throw new Error("Thiếu booking hoặc trạng thái cần cập nhật.");
@@ -123,6 +137,7 @@ export async function updateOwnerBookingStatusAction(formData: FormData) {
 
 export async function createHomestayAction(formData: FormData) {
   try {
+    await requireOwner();
     await createOwnerHomestay(
       {
         name: requiredText(formData, "name", "tên homestay"),
@@ -146,6 +161,7 @@ export async function createHomestayAction(formData: FormData) {
 
 export async function createRoomAction(formData: FormData) {
   try {
+    await requireOwner();
     const homestayId = text(formData, "homestayId");
     if (!homestayId) throw new Error("Thiếu homestay để tạo phòng.");
     await createOwnerRoom(
@@ -171,6 +187,7 @@ export async function createRoomAction(formData: FormData) {
 
 export async function createRoomInlineAction(_state: OwnerFormState, formData: FormData): Promise<OwnerFormState> {
   try {
+    await requireOwner();
     const homestayId = text(formData, "homestayId");
     if (!homestayId) throw new Error("Thiếu homestay để tạo phòng.");
     await createOwnerRoom(
@@ -196,6 +213,7 @@ export async function createRoomInlineAction(_state: OwnerFormState, formData: F
 
 export async function createServiceAction(formData: FormData) {
   try {
+    await requireOwner();
     const homestayId = text(formData, "homestayId");
     if (!homestayId) throw new Error("Thiếu homestay để tạo dịch vụ.");
     const included = formData.get("included") === "on";
@@ -220,6 +238,7 @@ export async function createServiceAction(formData: FormData) {
 
 export async function createServiceInlineAction(_state: OwnerFormState, formData: FormData): Promise<OwnerFormState> {
   try {
+    await requireOwner();
     const homestayId = text(formData, "homestayId");
     if (!homestayId) throw new Error("Thiếu homestay để tạo dịch vụ.");
     const included = formData.get("included") === "on";
@@ -247,6 +266,7 @@ export async function createServiceInlineAction(_state: OwnerFormState, formData
 
 export async function updateHomestayAction(formData: FormData) {
   try {
+    await requireOwner();
     const homestayId = text(formData, "homestayId");
     if (!homestayId) throw new Error("Thiếu homestay để cập nhật.");
     await updateOwnerHomestay(homestayId, {
@@ -268,6 +288,7 @@ export async function updateHomestayAction(formData: FormData) {
 
 export async function deleteHomestayAction(formData: FormData) {
   try {
+    await requireOwner();
     const homestayId = text(formData, "homestayId");
     if (!homestayId) throw new Error("Thiếu homestay để ngừng bán.");
     throw new Error("Chức năng ngừng bán toàn bộ homestay chưa có API ẩn an toàn. Hãy ngừng bán từng phòng để không xóa dữ liệu.");
@@ -278,6 +299,7 @@ export async function deleteHomestayAction(formData: FormData) {
 
 export async function updateRoomAction(formData: FormData) {
   try {
+    await requireOwner();
     const homestayId = text(formData, "homestayId");
     const roomId = text(formData, "roomId");
     if (!homestayId || !roomId) throw new Error("Thiếu homestay hoặc phòng để cập nhật.");
@@ -301,6 +323,7 @@ export async function updateRoomAction(formData: FormData) {
 
 export async function createRoomRateAction(formData: FormData) {
   try {
+    await requireOwner();
     const homestayId = text(formData, "homestayId");
     const roomId = text(formData, "roomId");
     if (!homestayId || !roomId) throw new Error("Thiếu homestay hoặc phòng để tạo bảng giá.");
@@ -323,6 +346,7 @@ export async function createRoomRateAction(formData: FormData) {
 
 export async function updateServiceAction(formData: FormData) {
   try {
+    await requireOwner();
     const homestayId = text(formData, "homestayId");
     const serviceId = text(formData, "serviceId");
     if (!homestayId || !serviceId) throw new Error("Thiếu homestay hoặc dịch vụ để cập nhật.");
@@ -342,6 +366,7 @@ export async function updateServiceAction(formData: FormData) {
 
 export async function createImageAction(formData: FormData) {
   try {
+    await requireOwner();
     const homestayId = text(formData, "homestayId");
     if (!homestayId) throw new Error("Thiếu homestay để thêm hình ảnh.");
     await createOwnerImage(homestayId, {
@@ -360,6 +385,7 @@ export async function createImageAction(formData: FormData) {
 export async function createProxyBookingAction(formData: FormData) {
   let bookingId = "";
   try {
+    await requireOwnerStaff();
     const homestayId = text(formData, "homestayId");
     const roomId = text(formData, "roomId");
     const customerId = text(formData, "customerId");

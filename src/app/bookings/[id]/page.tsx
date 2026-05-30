@@ -25,7 +25,7 @@ export default async function BookingDetailPage({ params, searchParams }: { para
   const { id } = await params;
   const booking = await getBooking(id, user.role);
   const homestay = await getHomestay(booking.homestayId, "CUSTOMER");
-  const isOpsRole = user.role === "OWNER_STAFF" || user.role === "ADMIN";
+  const isOpsRole = user.role === "OWNER_STAFF";
   const canAddService = booking.status === "IN_STAY" && isOpsRole;
   const canCancel = user.role === "CUSTOMER" && (booking.status === "PENDING" || booking.status === "CONFIRMED");
   const isPaid = booking.payment?.status === "PAID";

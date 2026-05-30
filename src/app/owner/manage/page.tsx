@@ -1,7 +1,7 @@
 import { AccessDenied } from "@/components/access-denied";
 import { ActionButton } from "@/components/action-button";
 import { OwnerInventory, OwnerShell } from "@/components/owner-ui";
-import { getOwnerHomestays, getUsers } from "@/lib/api";
+import { getOwnerHomestays } from "@/lib/api";
 import { flashFromSearchParams, FlashSearchParams } from "@/lib/flash";
 import { canAccess, getCurrentUser } from "@/lib/rbac";
 import { createHomestayAction } from "../actions";
@@ -11,15 +11,14 @@ export const dynamic = "force-dynamic";
 export default async function OwnerManagePage({ searchParams }: { searchParams: Promise<FlashSearchParams> }) {
   const user = await getCurrentUser();
   const flash = flashFromSearchParams(await searchParams);
-  const allowed = ["OWNER", "ADMIN"] as const;
+  const allowed = ["OWNER"] as const;
 
   if (user.authorizationError) return <AccessDenied description={user.authorizationError} />;
   if (!canAccess(user.role, [...allowed])) {
-    return <AccessDenied description="Trang quản lý homestay chỉ dành cho Owner hoặc Admin." />;
+    return <AccessDenied description="Trang quản lý homestay, phòng, hình ảnh và dịch vụ chỉ dành cho Owner." />;
   }
 
-  const homestays = await getOwnerHomestays(user.role === "ADMIN" ? "ADMIN" : "OWNER");
-  const ownerUsers = user.role === "ADMIN" ? (await getUsers("ADMIN")).filter((item) => item.role === "OWNER" && !item.banned) : [];
+  const homestays = await getOwnerHomestays("OWNER");
 
   return (
     <OwnerShell title="Quản lý homestay, phòng, giá và dịch vụ" description="Tạo homestay, thêm phòng, cập nhật dịch vụ đi kèm, hình ảnh và giá theo ngày. Các thao tác ngừng bán chỉ đổi trạng thái, không xóa dữ liệu." flash={flash}>
@@ -63,15 +62,6 @@ export default async function OwnerManagePage({ searchParams }: { searchParams: 
               Mô tả
               <textarea className="field min-h-24" name="description" placeholder="Mô tả ngắn về không gian, vị trí và trải nghiệm lưu trú" required />
             </label>
-            {user.role === "ADMIN" && (
-              <label className="grid gap-2 text-sm font-semibold text-[#3f3530] md:col-span-2">
-                Chủ homestay
-                <select className="field" name="ownerId" required defaultValue={ownerUsers[0]?.id ?? ""}>
-                  <option value="" disabled>Chọn chủ homestay</option>
-                  {ownerUsers.map((owner) => <option key={owner.id} value={owner.id}>{owner.name} · {owner.email}</option>)}
-                </select>
-              </label>
-            )}
             <div className="rounded-xl bg-[#fdf9f4] p-4 text-sm leading-6 text-[#75675f] md:col-span-2">
               Giá khởi điểm và sức chứa tạm chỉ dùng khi homestay chưa có phòng. Khi đã thêm phòng, hãy dùng nút đồng bộ trong từng homestay để lấy giá thấp nhất và tổng sức chứa từ phòng đang bán.
             </div>

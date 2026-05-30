@@ -9,16 +9,16 @@ export const dynamic = "force-dynamic";
 export default async function StaffPage({ searchParams }: { searchParams: Promise<FlashSearchParams> }) {
   const user = await getCurrentUser();
   const flash = flashFromSearchParams(await searchParams);
-  const allowed = ["STAFF", "ADMIN"] as const;
+  const allowed = ["STAFF"] as const;
 
   if (user.authorizationError) {
     return <AccessDenied description={user.authorizationError} />;
   }
 
   if (!canAccess(user.role, [...allowed])) {
-    return <AccessDenied description="Khu vực nội dung chỉ dành cho Staff hoặc Admin." />;
+    return <AccessDenied description="Khu vực quản lý nội dung chỉ dành cho Staff." />;
   }
 
-  const articles = await getArticles(user.role === "ADMIN" ? "ADMIN" : "STAFF");
+  const articles = await getArticles("STAFF");
   return <StaffCmsPortal articles={articles} flash={flash} />;
 }

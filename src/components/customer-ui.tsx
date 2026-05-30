@@ -96,9 +96,7 @@ async function PageQuickLinks() {
         { label: "Kiểm soát người dùng", href: "/staff/moderation" }
       ],
       ADMIN: [
-        { label: "Tổng quan Admin", href: "/admin" },
-        { label: "Quản lý homestay", href: "/owner/manage" },
-        { label: "Vận hành booking", href: "/owner" }
+        { label: "Tổng quan Admin", href: "/admin" }
       ]
     };
     return roleLinks[user.role].map((item) => <Link className="btn-secondary" href={item.href} key={item.href}>{item.label}</Link>);

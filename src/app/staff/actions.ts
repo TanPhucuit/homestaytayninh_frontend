@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { createArticle, deleteArticle, resolveViolationReport, setArticlePublished, setUserBanned, updateArticle } from "@/lib/api";
 import { actionErrorMessage } from "@/lib/action-errors";
 import { flashUrl } from "@/lib/flash";
+import { getCurrentUser } from "@/lib/rbac";
 
 function text(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
@@ -14,8 +15,15 @@ function staffError(path: string, error: unknown): never {
   redirect(flashUrl(path, "error", actionErrorMessage(error)));
 }
 
+async function requireStaff() {
+  const user = await getCurrentUser();
+  if (user.authorizationError) throw new Error(user.authorizationError);
+  if (user.role !== "STAFF") throw new Error("Chỉ Staff được quản lý nội dung và kiểm soát người dùng.");
+}
+
 export async function createArticleAction(formData: FormData) {
   try {
+    await requireStaff();
     const title = text(formData, "title");
     const slug = text(formData, "slug");
     if (!title || !slug) throw new Error("Thiếu tiêu đề hoặc slug bài viết.");
@@ -36,6 +44,7 @@ export async function createArticleAction(formData: FormData) {
 
 export async function updateArticleAction(formData: FormData) {
   try {
+    await requireStaff();
     const articleId = text(formData, "articleId");
     if (!articleId) throw new Error("Thiếu bài viết để cập nhật.");
     await updateArticle(articleId, {
@@ -55,6 +64,7 @@ export async function updateArticleAction(formData: FormData) {
 
 export async function deleteArticleAction(formData: FormData) {
   try {
+    await requireStaff();
     const articleId = text(formData, "articleId");
     if (!articleId) throw new Error("Thiếu bài viết để xóa.");
     await deleteArticle(articleId);
@@ -67,6 +77,7 @@ export async function deleteArticleAction(formData: FormData) {
 
 export async function publishArticleAction(formData: FormData) {
   try {
+    await requireStaff();
     const articleId = text(formData, "articleId");
     if (!articleId) throw new Error("Thiếu bài viết để publish.");
     await setArticlePublished(articleId, true);
@@ -79,6 +90,7 @@ export async function publishArticleAction(formData: FormData) {
 
 export async function unpublishArticleAction(formData: FormData) {
   try {
+    await requireStaff();
     const articleId = text(formData, "articleId");
     if (!articleId) throw new Error("Thiếu bài viết để unpublish.");
     await setArticlePublished(articleId, false);
@@ -91,6 +103,7 @@ export async function unpublishArticleAction(formData: FormData) {
 
 export async function resolveReportAction(formData: FormData) {
   try {
+    await requireStaff();
     const reportId = text(formData, "reportId");
     if (!reportId) throw new Error("Thiếu report để xử lý.");
     await resolveViolationReport(reportId);
@@ -103,6 +116,7 @@ export async function resolveReportAction(formData: FormData) {
 
 export async function banModeratedUserAction(formData: FormData) {
   try {
+    await requireStaff();
     const userId = text(formData, "userId");
     if (!userId) throw new Error("Thiếu user để khóa tài khoản.");
     await setUserBanned(userId, true, "STAFF");
@@ -115,6 +129,7 @@ export async function banModeratedUserAction(formData: FormData) {
 
 export async function unbanModeratedUserAction(formData: FormData) {
   try {
+    await requireStaff();
     const userId = text(formData, "userId");
     if (!userId) throw new Error("Thiếu user để mở khóa tài khoản.");
     await setUserBanned(userId, false, "STAFF");
