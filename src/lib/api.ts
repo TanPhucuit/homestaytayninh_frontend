@@ -147,7 +147,7 @@ export async function getPaymentStatus(bookingId: string, role: UserRole = "CUST
 }
 
 export async function getOwnerHomestays(role: UserRole = "OWNER"): Promise<Homestay[]> {
-  return apiGet<Homestay[]>(endpoints.owner.homestays, role);
+  return apiGet<Homestay[]>(endpoints.owner.homestays, role, { cache: "no-store" });
 }
 
 export async function getOwnerBookings(role: UserRole = "OWNER_STAFF"): Promise<Booking[]> {

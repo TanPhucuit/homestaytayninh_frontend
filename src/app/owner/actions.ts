@@ -9,6 +9,7 @@ import {
   createOwnerRoomRate,
   createOwnerService,
   createProxyBooking,
+  getOwnerHomestays,
   updateOwnerBookingStatus,
   updateOwnerHomestay,
   updateOwnerRoom,
@@ -90,6 +91,23 @@ function requiredDate(formData: FormData, key: string, label: string) {
   return value;
 }
 
+async function syncHomestayRoomTotals(homestayId: string) {
+  const homestay = (await getOwnerHomestays("OWNER")).find((item) => item.id === homestayId);
+  if (!homestay) return;
+
+  const activeRooms = homestay.rooms.filter((room) => room.active !== false);
+  if (!activeRooms.length) return;
+
+  await updateOwnerHomestay(
+    homestayId,
+    {
+      priceFrom: Math.min(...activeRooms.map((room) => room.pricePerNight)),
+      capacity: activeRooms.reduce((sum, room) => sum + room.capacity * Math.max(1, room.totalUnits || 1), 0)
+    },
+    "OWNER"
+  );
+}
+
 export async function updateOwnerBookingStatusAction(formData: FormData) {
   try {
     const bookingId = text(formData, "bookingId");
@@ -142,6 +160,7 @@ export async function createRoomAction(formData: FormData) {
       },
       "OWNER"
     );
+    await syncHomestayRoomTotals(homestayId);
     revalidatePath("/owner/manage");
     revalidatePath("/homestays");
   } catch (error) {
@@ -166,9 +185,10 @@ export async function createRoomInlineAction(_state: OwnerFormState, formData: F
       },
       "OWNER"
     );
+    await syncHomestayRoomTotals(homestayId);
     revalidatePath("/owner/manage");
     revalidatePath("/homestays");
-    return { type: "success", message: "Đã thêm phòng.", nonce: Date.now() };
+    return { type: "success", message: "Đã thêm phòng và tự đồng bộ giá/sức chứa.", nonce: Date.now() };
   } catch (error) {
     return { type: "error", message: actionErrorMessage(error), nonce: Date.now() };
   }
@@ -241,6 +261,7 @@ export async function updateRoomAction(formData: FormData) {
       totalUnits: positiveInteger(formData, "totalUnits", "Số lượng phòng/căn cùng loại"),
       active: formData.get("active") === "on"
     }, "OWNER");
+    await syncHomestayRoomTotals(homestayId);
     revalidatePath("/owner/manage");
     revalidatePath("/homestays");
   } catch (error) {

@@ -153,7 +153,6 @@ export function OwnerInventory({ homestays }: { homestays: Homestay[] }) {
           new Map([...homestay.includedServices, ...homestay.services.filter((service) => service.included)].map((service) => [service.id, service])).values()
         );
         const addOnServices = homestay.services.filter((service) => !service.included);
-        const totalsSynced = totals.priceFrom === homestay.priceFrom && totals.capacity === homestay.capacity;
 
         return (
           <article className="card p-6" key={homestay.id}>
@@ -178,30 +177,12 @@ export function OwnerInventory({ homestays }: { homestays: Homestay[] }) {
                 </div>
                 <p className="mt-3 text-xs leading-5 text-[#75675f]">
                   {totals.source === "rooms"
-                    ? "Giá và sức chứa đang được tính từ phòng đang bán. Dùng nút đồng bộ để cập nhật lại trường tổng hợp lưu trên homestay."
+                    ? "Giá và sức chứa được hệ thống tự đồng bộ từ phòng đang bán sau mỗi lần thêm hoặc lưu phòng."
                     : "Homestay chưa có phòng đang bán, hệ thống đang dùng giá và sức chứa tạm của homestay."}
                 </p>
               </div>
               <div className="h-32 w-full shrink-0 rounded-2xl bg-[#efe7dc] bg-cover bg-center lg:w-52" style={{ backgroundImage: `url(${homestay.imageUrl})` }} aria-label={homestay.name} />
             </div>
-
-            {totals.source === "rooms" && (
-              <form action={updateHomestayAction} className="mt-4 flex flex-col gap-3 rounded-2xl border border-[#d7e2da] bg-[#f5fbf6] p-4 sm:flex-row sm:items-center sm:justify-between">
-                <input type="hidden" name="homestayId" value={homestay.id} />
-                <input type="hidden" name="name" value={homestay.name} />
-                <input type="hidden" name="type" value={homestay.type} />
-                <input type="hidden" name="location" value={homestay.location} />
-                <input type="hidden" name="description" value={homestay.description} />
-                <input type="hidden" name="imageUrl" value={homestay.imageUrl} />
-                <input type="hidden" name="priceFrom" value={totals.priceFrom} />
-                <input type="hidden" name="capacity" value={totals.capacity} />
-                <div>
-                  <p className="font-bold text-[#466550]">{totalsSynced ? "Giá và sức chứa đã khớp phòng đang bán" : "Cần đồng bộ giá và sức chứa"}</p>
-                  <p className="mt-1 text-sm text-[#75675f]">Giá khởi điểm = giá/đêm thấp nhất; sức chứa = sức chứa mỗi phòng/căn x số lượng phòng/căn.</p>
-                </div>
-                <ActionButton className="btn-secondary w-full sm:w-auto" disabled={totalsSynced} pendingLabel="Đang đồng bộ...">Đồng bộ từ phòng</ActionButton>
-              </form>
-            )}
 
             <details className="mt-5 rounded-2xl border border-[#eadfd4] bg-[#fdf9f4] p-4">
               <summary className="cursor-pointer font-bold text-[#466550]">Thông tin homestay</summary>
@@ -227,14 +208,31 @@ export function OwnerInventory({ homestays }: { homestays: Homestay[] }) {
                   URL hình ảnh chính
                   <input className="field" name="imageUrl" type="url" defaultValue={homestay.imageUrl} required />
                 </label>
-                <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
-                  Giá khởi điểm đang lưu
-                  <input className="field" name="priceFrom" type="number" min="0" defaultValue={homestay.priceFrom} required />
-                </label>
-                <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
-                  Sức chứa đang lưu
-                  <input className="field" name="capacity" type="number" min="1" defaultValue={homestay.capacity} required />
-                </label>
+                {totals.source === "rooms" ? (
+                  <>
+                    <input type="hidden" name="priceFrom" value={homestay.priceFrom} />
+                    <input type="hidden" name="capacity" value={homestay.capacity} />
+                    <div className="rounded-xl bg-white px-4 py-3 text-sm">
+                      <p className="font-semibold text-[#3f3530]">Giá khởi điểm tự đồng bộ</p>
+                      <p className="mt-1 font-bold text-[#466550]">{money(homestay.priceFrom)}</p>
+                    </div>
+                    <div className="rounded-xl bg-white px-4 py-3 text-sm">
+                      <p className="font-semibold text-[#3f3530]">Sức chứa tự đồng bộ</p>
+                      <p className="mt-1 font-bold text-[#466550]">{homestay.capacity} khách</p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+                      Giá khởi điểm tạm
+                      <input className="field" name="priceFrom" type="number" min="0" defaultValue={homestay.priceFrom} required />
+                    </label>
+                    <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+                      Sức chứa tạm
+                      <input className="field" name="capacity" type="number" min="1" defaultValue={homestay.capacity} required />
+                    </label>
+                  </>
+                )}
                 <label className="grid gap-2 text-sm font-semibold text-[#3f3530] md:col-span-2">
                   Mô tả
                   <textarea className="field min-h-24" name="description" defaultValue={homestay.description} required />
