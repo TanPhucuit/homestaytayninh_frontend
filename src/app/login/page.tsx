@@ -1,5 +1,13 @@
 import Link from "next/link";
 
+const demoAccounts = [
+  { role: "Customer", email: "demo@gmail.com", note: "Đặt phòng và theo dõi booking" },
+  { role: "Owner", email: "ownerdemo@gmail.com", note: "Quản lý homestay, phòng, dịch vụ" },
+  { role: "Owner Staff", email: "ownerstaff.demo@homestay.local", note: "Vận hành booking, đặt hộ khách" },
+  { role: "Staff", email: "staff.demo@homestay.local", note: "CMS nội dung, kiểm soát người dùng" },
+  { role: "Admin", email: "admindemo@gmail.com", note: "Thống kê, tài khoản, phân quyền" }
+];
+
 function errorMessage(error?: string) {
   if (error === "api_env") return "Hệ thống đăng nhập chưa sẵn sàng. Vui lòng thử lại sau.";
   if (error === "google_env") return "Đăng nhập Google chưa sẵn sàng. Vui lòng thử cách khác.";
@@ -66,8 +74,20 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           <button className="btn-primary w-full" type="submit">Đăng nhập demo</button>
         </form>
 
-        <div className="mt-5 rounded-2xl bg-white/78 px-4 py-3 text-center text-xs leading-5 text-[#75675f]">
-          Tài khoản demo: <strong>demo@gmail.com</strong> / <strong>demo123</strong>
+        <div className="mt-5 rounded-2xl bg-white/78 px-4 py-3 text-xs leading-5 text-[#75675f]">
+          <p className="text-center font-bold text-[#466550]">Mật khẩu demo chung: demo123</p>
+          <div className="mt-3 grid gap-2">
+            {demoAccounts.map((account) => (
+              <div className="rounded-xl bg-[#fdf9f4] px-3 py-2" key={account.role}>
+                <p className="font-bold text-[#9a4029]">{account.role}</p>
+                <p><strong>{account.email}</strong></p>
+                <p>{account.note}</p>
+              </div>
+            ))}
+          </div>
+          <p className="mt-3 text-center">
+            Có thể nhập nhanh <strong>ownerstaffdemo</strong> hoặc <strong>staffdemo</strong>, hệ thống sẽ tự đổi sang email demo đúng.
+          </p>
         </div>
         <Link className="btn-secondary mt-3 w-full bg-white" href="/">
           Quay về trang chủ

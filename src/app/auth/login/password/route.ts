@@ -13,7 +13,7 @@ type BackendLoginResponse = {
 export async function POST(request: NextRequest) {
   const origin = request.nextUrl.origin;
   const formData = await request.formData();
-  const email = String(formData.get("email") ?? "").trim();
+  const email = normalizeDemoLoginEmail(String(formData.get("email") ?? "").trim());
   const password = String(formData.get("password") ?? "");
   const next = safeNext(String(formData.get("next") ?? ""));
   const apiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
@@ -52,4 +52,15 @@ export async function POST(request: NextRequest) {
 function safeNext(value?: string) {
   if (!value || !value.startsWith("/") || value.startsWith("//")) return "/";
   return value;
+}
+
+function normalizeDemoLoginEmail(value: string) {
+  const key = value.toLowerCase();
+  const aliases: Record<string, string> = {
+    staffdemo: "staff.demo@homestay.local",
+    "staffdemo@gmail.com": "staff.demo@homestay.local",
+    ownerstaffdemo: "ownerstaff.demo@homestay.local",
+    "ownerstaffdemo@gmail.com": "ownerstaff.demo@homestay.local"
+  };
+  return aliases[key] ?? value;
 }
