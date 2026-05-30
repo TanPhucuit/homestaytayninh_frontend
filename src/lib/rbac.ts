@@ -110,7 +110,8 @@ export function navForRole(role: UserRole): NavItem[] {
     ],
     OWNER: [
       { label: "Bảng điều khiển chủ nhà", href: "/owner" },
-      { label: "Quản lý homestay", href: "/owner/manage" }
+      { label: "Quản lý homestay", href: "/owner/manage" },
+      { label: "Đặt hộ khách", href: "/owner/proxy-booking" }
     ],
     OWNER_STAFF: [
       { label: "Booking vận hành", href: "/owner" },

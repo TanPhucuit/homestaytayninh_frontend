@@ -6,8 +6,9 @@ import { FlashMessage } from "./feedback-state";
 import { Booking, Homestay } from "@/lib/types";
 import { money } from "@/lib/api";
 import { FlashState } from "@/lib/flash";
-import { createImageAction, createServiceAction, updateHomestayAction, updateRoomAction, updateServiceAction } from "@/app/owner/actions";
+import { createImageAction, updateHomestayAction, updateRoomAction, updateServiceAction } from "@/app/owner/actions";
 import { OwnerRoomCreateForm } from "./owner-room-create-form";
+import { OwnerAddOnServiceCreateForm, OwnerIncludedServiceCreateForm } from "./owner-service-create-forms";
 
 export function OwnerShell({ title, description, flash, children }: { title: string; description: string; flash?: FlashState | null; children: ReactNode }) {
   return (
@@ -312,38 +313,8 @@ export function OwnerInventory({ homestays }: { homestays: Homestay[] }) {
               <details className="rounded-2xl border border-[#eadfd4] bg-white p-4">
                 <summary className="cursor-pointer font-bold text-[#466550]">Dịch vụ</summary>
                 <div className="mt-4 grid gap-4">
-                  <form action={createServiceAction} className="grid gap-4 rounded-2xl bg-[#fdf9f4] p-4 md:grid-cols-2">
-                    <input type="hidden" name="homestayId" value={homestay.id} />
-                    <input type="hidden" name="included" value="off" />
-                    <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
-                      Tên dịch vụ bổ sung
-                      <input className="field" name="name" placeholder="Ví dụ: BBQ sân vườn" required />
-                    </label>
-                    <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
-                      Đơn giá
-                      <input className="field" name="unitPrice" type="number" min="0" placeholder="Ví dụ: 250000" required />
-                    </label>
-                    <label className="grid gap-2 text-sm font-semibold text-[#3f3530] md:col-span-2">
-                      Mô tả
-                      <textarea className="field min-h-20" name="description" placeholder="Mô tả ngắn để khách hiểu dịch vụ" />
-                    </label>
-                    <ActionButton className="btn-primary w-full md:col-span-2" pendingLabel="Đang thêm...">Thêm dịch vụ bổ sung</ActionButton>
-                  </form>
-
-                  <form action={createServiceAction} className="grid gap-4 rounded-2xl border border-[#d7e2da] bg-[#f5fbf6] p-4 md:grid-cols-2">
-                    <input type="hidden" name="homestayId" value={homestay.id} />
-                    <input type="hidden" name="included" value="on" />
-                    <input type="hidden" name="unitPrice" value="0" />
-                    <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
-                      Tên dịch vụ đã bao gồm
-                      <input className="field" name="name" placeholder="Ví dụ: Wifi, nước uống" required />
-                    </label>
-                    <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
-                      Mô tả
-                      <input className="field" name="description" placeholder="Không tính thêm tiền khi đặt phòng" />
-                    </label>
-                    <ActionButton className="btn-secondary w-full md:col-span-2" pendingLabel="Đang thêm...">Thêm dịch vụ đã bao gồm</ActionButton>
-                  </form>
+                  <OwnerAddOnServiceCreateForm homestayId={homestay.id} />
+                  <OwnerIncludedServiceCreateForm homestayId={homestay.id} />
 
                   <div className="space-y-3">
                     <h3 className="font-bold text-[#1c1c19]">Dịch vụ bổ sung khách có thể đặt thêm</h3>

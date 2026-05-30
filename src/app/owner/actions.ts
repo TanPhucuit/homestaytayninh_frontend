@@ -198,13 +198,14 @@ export async function createServiceAction(formData: FormData) {
   try {
     const homestayId = text(formData, "homestayId");
     if (!homestayId) throw new Error("Thiếu homestay để tạo dịch vụ.");
+    const included = formData.get("included") === "on";
     await createOwnerService(
       homestayId,
       {
         name: requiredText(formData, "name", "tên dịch vụ"),
         description: text(formData, "description"),
-        unitPrice: nonNegativeNumber(formData, "unitPrice", "Đơn giá"),
-        included: formData.get("included") === "on"
+        unitPrice: included ? 0 : nonNegativeNumber(formData, "unitPrice", "Đơn giá"),
+        included
       },
       "OWNER"
     );
@@ -214,6 +215,33 @@ export async function createServiceAction(formData: FormData) {
     ownerError("/owner/manage", error);
   }
   redirect(flashUrl("/owner/manage", "success", "Đã thêm dịch vụ."));
+}
+
+export async function createServiceInlineAction(_state: OwnerFormState, formData: FormData): Promise<OwnerFormState> {
+  try {
+    const homestayId = text(formData, "homestayId");
+    if (!homestayId) throw new Error("Thiếu homestay để tạo dịch vụ.");
+    const included = formData.get("included") === "on";
+    await createOwnerService(
+      homestayId,
+      {
+        name: requiredText(formData, "name", "tên dịch vụ"),
+        description: text(formData, "description"),
+        unitPrice: included ? 0 : nonNegativeNumber(formData, "unitPrice", "Đơn giá"),
+        included
+      },
+      "OWNER"
+    );
+    revalidatePath("/owner/manage");
+    revalidatePath("/homestays");
+    return {
+      type: "success",
+      message: included ? "Đã thêm dịch vụ đã bao gồm." : "Đã thêm dịch vụ bổ sung.",
+      nonce: Date.now()
+    };
+  } catch (error) {
+    return { type: "error", message: actionErrorMessage(error), nonce: Date.now() };
+  }
 }
 
 export async function updateHomestayAction(formData: FormData) {

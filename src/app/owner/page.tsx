@@ -58,7 +58,7 @@ export default async function OwnerPage({ searchParams }: { searchParams: Promis
   const filteredBookings = filterBookings(bookings, params);
   const sortedBookings = [...filteredBookings].sort((a, b) => opsPriority[a.status] - opsPriority[b.status]);
   const canManageInventory = user.role === "OWNER" || user.role === "ADMIN";
-  const canOperateBooking = user.role === "OWNER_STAFF" || user.role === "ADMIN";
+  const canOperateBooking = user.role === "OWNER" || user.role === "OWNER_STAFF" || user.role === "ADMIN";
 
   return (
     <OwnerShell title="Bảng điều khiển vận hành homestay" description="Theo dõi booking, check-in/check-out và truy cập nhanh các nghiệp vụ của chủ homestay." flash={flash}>
