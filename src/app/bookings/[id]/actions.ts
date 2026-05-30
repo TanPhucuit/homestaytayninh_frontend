@@ -7,6 +7,7 @@ import { actionErrorMessage } from "@/lib/action-errors";
 import { ApiClientError } from "@/lib/api-client";
 import { canCreateOrRetryPayment, paymentActionUnavailableReason } from "@/lib/booking-rules";
 import { flashUrl } from "@/lib/flash";
+import { getCurrentUser } from "@/lib/rbac";
 import type { Booking } from "@/lib/types";
 
 function redirectToLogin(bookingId: string): never {
@@ -18,12 +19,20 @@ function paymentDestination(bookingId: string, payment: NonNullable<Booking["pay
   return payment.qrUrl ? resultUrl : payment.checkoutUrl || resultUrl;
 }
 
+async function requireBookingRole(bookingId: string, role: "CUSTOMER" | "OWNER_STAFF", message: string) {
+  const user = await getCurrentUser();
+  if (!user.authenticated) redirectToLogin(bookingId);
+  if (user.authorizationError) redirect(flashUrl(`/bookings/${bookingId}`, "error", user.authorizationError));
+  if (user.role !== role) redirect(flashUrl(`/bookings/${bookingId}`, "error", message));
+}
+
 export async function addServiceAction(formData: FormData) {
   const bookingId = String(formData.get("bookingId") ?? "");
   const serviceId = String(formData.get("serviceId") ?? "");
   const quantity = Math.max(1, Number(formData.get("quantity") ?? 1));
   if (!bookingId || !serviceId) redirect(flashUrl(`/bookings/${bookingId || ""}`, "error", "Thiếu booking hoặc dịch vụ để thêm vào đơn."));
   try {
+    await requireBookingRole(bookingId, "OWNER_STAFF", "Chỉ Owner Staff được thêm dịch vụ phát sinh cho booking.");
     await addBookingService(bookingId, serviceId, quantity, "OWNER_STAFF");
   } catch (error) {
     if (error instanceof ApiClientError && error.status === 401) redirectToLogin(bookingId);
@@ -38,6 +47,7 @@ export async function markServiceServedAction(formData: FormData) {
   const serviceOrderId = String(formData.get("serviceOrderId") ?? "");
   if (!bookingId || !serviceOrderId) redirect(flashUrl(`/bookings/${bookingId || ""}`, "error", "Thiếu booking hoặc dịch vụ để cập nhật trạng thái."));
   try {
+    await requireBookingRole(bookingId, "OWNER_STAFF", "Chỉ Owner Staff được cập nhật trạng thái dịch vụ.");
     await setBookingServiceStatus(bookingId, serviceOrderId, "SERVED", "OWNER_STAFF");
   } catch (error) {
     redirect(flashUrl(`/bookings/${bookingId}`, "error", actionErrorMessage(error)));
@@ -50,6 +60,7 @@ export async function cancelBookingAction(formData: FormData) {
   const bookingId = String(formData.get("bookingId") ?? "");
   if (!bookingId) redirect(flashUrl("/bookings", "error", "Thiếu booking để hủy đơn."));
   try {
+    await requireBookingRole(bookingId, "CUSTOMER", "Chỉ khách hàng được hủy booking của mình.");
     await updateBookingStatus(bookingId, "CANCELLED", "CUSTOMER");
   } catch (error) {
     if (error instanceof ApiClientError && error.status === 401) redirectToLogin(bookingId);
@@ -66,6 +77,7 @@ export async function retryPaymentAction(formData: FormData) {
   let booking: Awaited<ReturnType<typeof getBooking>> | undefined;
   let paymentError: unknown;
   if (!bookingId) redirect(flashUrl("/bookings", "error", "Thiếu booking để thử lại thanh toán."));
+  await requireBookingRole(bookingId, "CUSTOMER", "Booking hộ khách không gọi ApiPay. Chỉ khách hàng tự đặt mới được thanh toán qua ApiPay.");
   try {
     booking = await getBooking(bookingId, "CUSTOMER");
   } catch (error) {

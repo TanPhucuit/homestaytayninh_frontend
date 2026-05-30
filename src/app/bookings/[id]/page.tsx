@@ -28,9 +28,10 @@ export default async function BookingDetailPage({ params, searchParams }: { para
   const isOpsRole = user.role === "OWNER_STAFF";
   const canAddService = booking.status === "IN_STAY" && isOpsRole;
   const canCancel = user.role === "CUSTOMER" && (booking.status === "PENDING" || booking.status === "CONFIRMED");
+  const canViewPaymentPanel = user.role === "CUSTOMER";
   const isPaid = booking.payment?.status === "PAID";
-  const canRetryPayment = canCreateOrRetryPayment(booking);
-  const canCheckPayment = canViewPaymentStatus(booking);
+  const canRetryPayment = user.role === "CUSTOMER" && canCreateOrRetryPayment(booking);
+  const canCheckPayment = user.role === "CUSTOMER" && canViewPaymentStatus(booking);
   const paymentNotice = paymentActionUnavailableReason(booking);
   const bookedRooms = booking.rooms?.length
     ? booking.rooms
@@ -116,23 +117,25 @@ export default async function BookingDetailPage({ params, searchParams }: { para
               </div>
             </form>
           )}
-          <section className="card p-6">
-            <h2 className="font-heading text-2xl text-[#9a4029]">Thanh toán</h2>
-            <p className="mt-3 text-sm text-[#75675f]">Số tiền: {money(booking.payment?.amount ?? booking.grandTotal)}</p>
-            {!booking.payment && canRetryPayment && <p className="mt-2 text-sm text-[#75675f]">Đơn này chưa có giao dịch thanh toán. Bạn có thể tạo lại thanh toán qua ApiPay.</p>}
-            {paymentNotice && !isPaid && <p className="mt-2 rounded-xl bg-[#fdf3ef] px-4 py-3 text-sm font-semibold text-[#9a4029]">{paymentNotice}</p>}
-            {canRetryPayment && (
-              <form action={retryPaymentAction} className="mt-3">
-                <input type="hidden" name="bookingId" value={booking.id} />
-                <ActionButton className="btn-primary w-full" pendingLabel="Đang tạo...">Thanh toán qua ApiPay</ActionButton>
-              </form>
-            )}
-            {isPaid ? (
-              <div className="mt-3 rounded-xl border border-[#d7e2da] bg-[#e8f0eb] px-4 py-3 text-center text-sm font-bold text-[#466550]">Đã thanh toán</div>
-            ) : (
-              canCheckPayment ? <a className="btn-secondary mt-3 w-full" href={`/payment/result?bookingId=${booking.id}&status=${booking.payment?.status ?? "pending"}`}>Kiểm tra trạng thái</a> : null
-            )}
-          </section>
+          {canViewPaymentPanel && (
+            <section className="card p-6">
+              <h2 className="font-heading text-2xl text-[#9a4029]">Thanh toán</h2>
+              <p className="mt-3 text-sm text-[#75675f]">Số tiền: {money(booking.payment?.amount ?? booking.grandTotal)}</p>
+              {!booking.payment && canRetryPayment && <p className="mt-2 text-sm text-[#75675f]">Đơn này chưa có giao dịch thanh toán. Bạn có thể tạo lại thanh toán qua ApiPay.</p>}
+              {paymentNotice && !isPaid && <p className="mt-2 rounded-xl bg-[#fdf3ef] px-4 py-3 text-sm font-semibold text-[#9a4029]">{paymentNotice}</p>}
+              {canRetryPayment && (
+                <form action={retryPaymentAction} className="mt-3">
+                  <input type="hidden" name="bookingId" value={booking.id} />
+                  <ActionButton className="btn-primary w-full" pendingLabel="Đang tạo...">Thanh toán qua ApiPay</ActionButton>
+                </form>
+              )}
+              {isPaid ? (
+                <div className="mt-3 rounded-xl border border-[#d7e2da] bg-[#e8f0eb] px-4 py-3 text-center text-sm font-bold text-[#466550]">Đã thanh toán</div>
+              ) : (
+                canCheckPayment ? <a className="btn-secondary mt-3 w-full" href={`/payment/result?bookingId=${booking.id}&status=${booking.payment?.status ?? "pending"}`}>Kiểm tra trạng thái</a> : null
+              )}
+            </section>
+          )}
           {canCancel && (
             <form action={cancelBookingAction} className="card p-6">
               <input type="hidden" name="bookingId" value={booking.id} />
