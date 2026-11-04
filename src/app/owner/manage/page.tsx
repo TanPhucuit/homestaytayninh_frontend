@@ -26,16 +26,16 @@ export default async function OwnerManagePage({ searchParams }: { searchParams: 
       <section>
         <MutationForm action={createHomestayInlineAction} className="card p-6 md:p-8" resetOnSuccess>
           <p className="eyebrow">Homestay</p>
-          <h2 className="mt-2 font-heading text-2xl text-[#9a4029]">Thêm homestay</h2>
-          <p className="mt-2 max-w-3xl text-sm leading-6 text-[#75675f]">
+          <h2 className="mt-2 font-heading text-2xl text-brand">Thêm homestay</h2>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-muted">
             Tạo hồ sơ homestay trước. Sau khi homestay xuất hiện trong danh sách bên dưới, mở từng homestay để thêm phòng, giá phòng cố định và dịch vụ.
           </p>
           <div className="mt-5 grid gap-4 md:grid-cols-2">
-            <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+            <label className="grid gap-2 text-sm font-semibold text-ink-soft">
               Tên homestay
               <input className="field" name="name" placeholder="Ví dụ: Nhà vườn núi Bà Đen" required />
             </label>
-            <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+            <label className="grid gap-2 text-sm font-semibold text-ink-soft">
               Loại hình
               <select className="field" name="type" defaultValue="Phòng">
                 <option>Phòng</option>
@@ -43,27 +43,27 @@ export default async function OwnerManagePage({ searchParams }: { searchParams: 
                 <option>Nhà nguyên căn</option>
               </select>
             </label>
-            <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+            <label className="grid gap-2 text-sm font-semibold text-ink-soft">
               Vị trí
               <input className="field" name="location" placeholder="Ví dụ: Xã Thạnh Tân, Tây Ninh" required />
             </label>
-            <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+            <label className="grid gap-2 text-sm font-semibold text-ink-soft">
               URL hình ảnh chính
               <input className="field" name="imageUrl" type="url" placeholder="https://..." required />
             </label>
-            <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+            <label className="grid gap-2 text-sm font-semibold text-ink-soft">
               Giá khởi điểm tạm
               <input className="field" name="priceFrom" type="number" min="0" placeholder="Ví dụ: 470000" required />
             </label>
-            <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+            <label className="grid gap-2 text-sm font-semibold text-ink-soft">
               Sức chứa tạm
               <input className="field" name="capacity" type="number" min="1" placeholder="Ví dụ: 4" required />
             </label>
-            <label className="grid gap-2 text-sm font-semibold text-[#3f3530] md:col-span-2">
+            <label className="grid gap-2 text-sm font-semibold text-ink-soft md:col-span-2">
               Mô tả
               <textarea className="field min-h-24" name="description" placeholder="Mô tả ngắn về không gian, vị trí và trải nghiệm lưu trú" required />
             </label>
-            <div className="rounded-xl bg-[#fdf9f4] p-4 text-sm leading-6 text-[#75675f] md:col-span-2">
+            <div className="rounded-xl bg-sand p-4 text-sm leading-6 text-muted md:col-span-2">
               Giá khởi điểm và sức chứa tạm chỉ dùng khi homestay chưa có phòng. Khi đã thêm phòng, hãy dùng nút đồng bộ trong từng homestay để lấy giá thấp nhất và tổng sức chứa từ phòng đang bán.
             </div>
             <ActionButton className="btn-primary w-full md:col-span-2" pendingLabel="Đang tạo...">Tạo homestay</ActionButton>
@@ -75,9 +75,9 @@ export default async function OwnerManagePage({ searchParams }: { searchParams: 
         <div className="mb-4 flex flex-col justify-between gap-2 md:flex-row md:items-end">
           <div>
             <p className="eyebrow">Tài sản đang quản lý</p>
-            <h2 className="mt-2 font-heading text-3xl text-[#9a4029]">Danh sách homestay</h2>
+            <h2 className="mt-2 font-heading text-3xl text-brand">Danh sách homestay</h2>
           </div>
-          <p className="max-w-xl text-sm leading-6 text-[#75675f]">Ảnh, bảng giá theo ngày, trạng thái bán phòng và dịch vụ được chỉnh trong từng homestay bên dưới.</p>
+          <p className="max-w-xl text-sm leading-6 text-muted">Ảnh, bảng giá theo ngày, trạng thái bán phòng và dịch vụ được chỉnh trong từng homestay bên dưới.</p>
         </div>
         <OwnerInventory homestays={homestays} />
       </section>

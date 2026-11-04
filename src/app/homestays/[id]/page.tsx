@@ -1,6 +1,7 @@
+import { Star } from "lucide-react";
 import type { ReactNode } from "react";
 import { redirect } from "next/navigation";
-import { AppTopBar } from "@/components/customer-ui";
+import { AppTopBar, SiteFooter } from "@/components/customer-ui";
 import { HomestayGallery } from "@/components/homestay-gallery";
 import { RoomSelectionCheckout } from "@/components/room-selection-checkout";
 import { getHomestay, money } from "@/lib/api";
@@ -121,16 +122,16 @@ export default async function HomestayDetailPage({ params, searchParams }: { par
   const addOnServices = homestay.services.filter((service) => service.active !== false && !service.included);
 
   return (
-    <main className="min-h-screen pb-24 text-[#1c1c19] lg:pb-0">
+    <main id="main" className="min-h-screen pb-24 text-ink lg:pb-0">
       <AppTopBar />
 
       <section className="mx-auto max-w-7xl px-4 py-8 md:px-8">
         <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-end">
           <div>
             <p className="eyebrow">{homestay.type}</p>
-            <h1 className="mt-2 font-heading text-4xl leading-tight text-[#1c1c19] md:text-5xl">{homestay.name}</h1>
-            <p className="mt-2 flex flex-wrap gap-2 text-[#56423d]">
-              <span>★ {homestay.rating}</span>
+            <h1 className="mt-2 font-heading text-4xl leading-tight text-ink md:text-5xl">{homestay.name}</h1>
+            <p className="mt-2 flex flex-wrap gap-2 text-ink-muted">
+              <span className="inline-flex items-center gap-1"><Star className="size-4 fill-amber-400 text-amber-500" aria-hidden="true" />{homestay.rating}</span>
               <span>·</span>
               <span>{homestay.location}</span>
             </p>
@@ -149,7 +150,7 @@ export default async function HomestayDetailPage({ params, searchParams }: { par
           <div className="flex flex-wrap gap-2">
             {highlightTags.map((tag) => (
               <span
-                className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-bold ${tag.tone === "terracotta" ? "border-[#9a4029]/24 bg-[#9a4029]/10 text-[#7b2914]" : "border-[#466550]/24 bg-[#466550]/10 text-[#2f4d3a]"}`}
+                className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-bold ${tag.tone === "terracotta" ? "border-brand/24 bg-brand/10 text-brand-strong" : "border-leaf/24 bg-leaf/10 text-leaf-strong"}`}
                 key={tag.label}
               >
                 <DetailIcon name={tag.icon} />
@@ -158,9 +159,9 @@ export default async function HomestayDetailPage({ params, searchParams }: { par
             ))}
           </div>
 
-          <section className="border-b border-[#e8e1d5] pb-10">
-            <h2 className="font-heading text-3xl leading-tight text-[#1c1c19] md:text-4xl">Nơi đất sét nung gặp gỡ đại ngàn</h2>
-            <div className="mt-5 max-w-3xl space-y-4 text-base leading-8 text-[#56423d] md:text-lg">
+          <section className="border-b border-line-soft pb-10">
+            <h2 className="font-heading text-3xl leading-tight text-ink md:text-4xl">Nơi đất sét nung gặp gỡ đại ngàn</h2>
+            <div className="mt-5 max-w-3xl space-y-4 text-base leading-8 text-ink-muted md:text-lg">
               <p>{homestay.description}</p>
               <p>
                 Không gian được tổ chức theo tinh thần mộc mạc của Tây Ninh: chất đất nung ấm, mảng xanh sân vườn và nhịp sống chậm để mỗi buổi sáng bắt đầu bằng ánh nắng dịu qua hiên nhà.
@@ -169,23 +170,23 @@ export default async function HomestayDetailPage({ params, searchParams }: { par
                 Buổi tối là thời điểm đẹp để quây quần bên khu BBQ, thưởng thức đặc sản địa phương và nghỉ ngơi trong bầu không khí yên tĩnh sau một ngày khám phá núi Bà Đen.
               </p>
             </div>
-            <a className="mt-5 inline-flex font-bold text-[#9a4029] underline decoration-[#9a4029]/40 underline-offset-4 hover:decoration-[#9a4029]" href="#rooms">
+            <a className="mt-5 inline-flex font-bold text-brand underline decoration-brand/40 underline-offset-4 hover:decoration-brand" href="#rooms">
               Xem phòng
             </a>
           </section>
 
-          <section className="border-b border-[#e8e1d5] pb-10" id="amenities">
+          <section className="border-b border-line-soft pb-10" id="amenities">
             <div className="flex flex-col justify-between gap-3 md:flex-row md:items-end">
               <div>
                 <p className="eyebrow">Tiện nghi</p>
-                <h2 className="mt-2 font-heading text-3xl text-[#1c1c19]">Tiện ích nổi bật</h2>
+                <h2 className="mt-2 font-heading text-3xl text-ink">Tiện ích nổi bật</h2>
               </div>
-              {homestay.amenities.length > 0 && <p className="text-sm font-semibold text-[#75675f]">Bao gồm {homestay.amenities.length} tiện ích đang được chủ nhà công bố</p>}
+              {homestay.amenities.length > 0 && <p className="text-sm font-semibold text-muted">Bao gồm {homestay.amenities.length} tiện ích đang được chủ nhà công bố</p>}
             </div>
             <div className="mt-6 grid gap-x-4 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
               {featuredAmenities.map((amenity) => (
-                <div className="flex items-center gap-3 text-[#56423d]" key={amenity.label}>
-                  <span className="grid size-11 shrink-0 place-items-center rounded-full bg-[#e8f0eb] text-[#466550]">
+                <div className="flex items-center gap-3 text-ink-muted" key={amenity.label}>
+                  <span className="grid size-11 shrink-0 place-items-center rounded-full bg-leaf-soft text-leaf">
                     <DetailIcon name={amenity.icon} />
                   </span>
                   <span className="font-semibold">{amenity.label}</span>
@@ -195,7 +196,7 @@ export default async function HomestayDetailPage({ params, searchParams }: { par
             {homestay.amenities.length > 0 && (
               <div className="mt-6 flex flex-wrap gap-2">
                 {homestay.amenities.slice(0, 8).map((amenity) => (
-                  <span className="rounded-full bg-[#ffdad2] px-3 py-1 text-xs font-bold text-[#7b2914]" key={amenity}>{amenity}</span>
+                  <span className="rounded-full bg-brand-tint px-3 py-1 text-xs font-bold text-brand-strong" key={amenity}>{amenity}</span>
                 ))}
               </div>
             )}
@@ -210,40 +211,40 @@ export default async function HomestayDetailPage({ params, searchParams }: { par
             initialGuests={initialGuestCount}
           />
 
-          <section className="border-b border-[#e8e1d5] pb-10">
-            <h2 className="font-heading text-3xl text-[#1c1c19]">Dịch vụ có thể đặt thêm</h2>
+          <section className="border-b border-line-soft pb-10">
+            <h2 className="font-heading text-3xl text-ink">Dịch vụ có thể đặt thêm</h2>
             <div className="mt-5 grid gap-3 md:grid-cols-2">
               {addOnServices.length ? addOnServices.map((service) => (
-                <div className="rounded-2xl border border-[#eadfd4] bg-white p-4 shadow-[0_10px_30px_rgba(154,64,41,0.05)]" key={service.id}>
-                  <p className="font-bold text-[#466550]">{service.name}</p>
-                  {service.description && <p className="mt-1 text-sm text-[#75675f]">{service.description}</p>}
-                  <p className="mt-3 font-bold text-[#9a4029]">{money(service.unitPrice)}</p>
+                <div className="rounded-2xl border border-line-soft bg-white p-4 shadow-card" key={service.id}>
+                  <p className="font-bold text-leaf">{service.name}</p>
+                  {service.description && <p className="mt-1 text-sm text-muted">{service.description}</p>}
+                  <p className="mt-3 font-bold text-brand">{money(service.unitPrice)}</p>
                 </div>
               )) : (
-                <p className="rounded-2xl bg-[#fdf9f4] p-4 text-sm text-[#75675f]">Homestay này chưa mở bán dịch vụ bổ sung.</p>
+                <p className="rounded-2xl bg-sand p-4 text-sm text-muted">Homestay này chưa mở bán dịch vụ bổ sung.</p>
               )}
             </div>
           </section>
 
-          <section className="border-b border-[#e8e1d5] pb-10">
-            <h2 className="font-heading text-3xl text-[#1c1c19]">Đánh giá</h2>
+          <section className="border-b border-line-soft pb-10">
+            <h2 className="font-heading text-3xl text-ink">Đánh giá</h2>
             <div className="mt-5 grid gap-4 md:grid-cols-2">
               {homestay.reviews.length ? homestay.reviews.map((review) => (
-                <article className="rounded-2xl bg-white p-4 shadow-[0_10px_30px_rgba(154,64,41,0.05)]" key={review.id}>
-                  <p className="font-bold text-[#466550]">★ {review.rating}</p>
-                  <p className="mt-2 text-sm leading-6 text-[#56423d]">{review.comment}</p>
+                <article className="rounded-2xl bg-white p-4 shadow-card" key={review.id}>
+                  <p className="font-bold text-leaf"><Star className="mr-1 inline size-4 fill-amber-400 text-amber-500" aria-hidden="true" />{review.rating}</p>
+                  <p className="mt-2 text-sm leading-6 text-ink-muted">{review.comment}</p>
                 </article>
-              )) : <p className="text-sm text-[#75675f]">Chưa có đánh giá.</p>}
+              )) : <p className="text-sm text-muted">Chưa có đánh giá.</p>}
             </div>
           </section>
 
           <section>
-            <h2 className="font-heading text-3xl text-[#1c1c19]">Vị trí</h2>
-            <p className="mt-2 text-[#56423d]">{homestay.location}</p>
-            <div className="mt-4 overflow-hidden rounded-2xl border border-[#eadfd4] bg-white">
-              <div className="grid min-h-64 place-items-center bg-[#e8f0eb] p-6 text-center">
+            <h2 className="font-heading text-3xl text-ink">Vị trí</h2>
+            <p className="mt-2 text-ink-muted">{homestay.location}</p>
+            <div className="mt-4 overflow-hidden rounded-2xl border border-line-soft bg-white">
+              <div className="grid min-h-64 place-items-center bg-leaf-soft p-6 text-center">
                 <div>
-                  <p className="font-bold text-[#466550]">{homestay.location}</p>
+                  <p className="font-bold text-leaf">{homestay.location}</p>
                   <a className="btn-secondary mt-4 w-fit" href={mapHref} rel="noreferrer" target="_blank">Mở Google Maps</a>
                 </div>
               </div>
@@ -251,6 +252,7 @@ export default async function HomestayDetailPage({ params, searchParams }: { par
           </section>
         </div>
       </section>
+      <SiteFooter />
     </main>
   );
 }

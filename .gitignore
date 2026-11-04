@@ -13,3 +13,5 @@ apikey.txt
 skills-lock.json
 test-results
 playwright-report
+
+*.tsbuildinfo

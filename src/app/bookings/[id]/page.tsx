@@ -51,13 +51,13 @@ export default async function BookingDetailPage({ params, searchParams }: { para
               <div>
                 <div className="flex flex-wrap gap-2">
                   <StatusBadge status={booking.status} />
-                  {booking.payment?.status ? <PaymentBadge status={booking.payment.status} /> : <span className="rounded-full bg-[#fff3d6] px-3 py-1 text-xs font-bold text-[#7a4a12]">Chưa có giao dịch thanh toán</span>}
+                  {booking.payment?.status ? <PaymentBadge status={booking.payment.status} /> : <span className="rounded-full bg-warn-soft px-3 py-1 text-xs font-bold text-warn">Chưa có giao dịch thanh toán</span>}
                 </div>
-                <h2 className="mt-4 font-heading text-3xl text-[#9a4029]">{homestay.name}</h2>
-                <p className="mt-2 text-sm leading-6 text-[#75675f]">
+                <h2 className="mt-4 font-heading text-3xl text-brand">{homestay.name}</h2>
+                <p className="mt-2 text-sm leading-6 text-muted">
                   Khách: {booking.guestName} · SĐT: {booking.guestPhone} · {booking.guestCount} khách
                 </p>
-                <p className="mt-1 text-sm font-semibold text-[#466550]">
+                <p className="mt-1 text-sm font-semibold text-leaf">
                   {bookedRooms.length ? bookedRooms.map((room) => room.name).join(", ") : `Phòng ${booking.roomId}`}
                 </p>
               </div>
@@ -69,10 +69,10 @@ export default async function BookingDetailPage({ params, searchParams }: { para
 
           {isOpsRole && booking.services.some((service) => service.status === "PREPARING") && (
             <section className="card p-6">
-              <h2 className="font-heading text-2xl text-[#9a4029]">Xác nhận dịch vụ đã phục vụ</h2>
+              <h2 className="font-heading text-2xl text-brand">Xác nhận dịch vụ đã phục vụ</h2>
               <div className="mt-4 space-y-3">
                 {booking.services.filter((service) => service.status === "PREPARING").map((service) => (
-                  <MutationForm action={markServiceServedInlineAction} className="flex flex-col justify-between gap-3 rounded-2xl bg-[#fdf9f4] p-4 sm:flex-row sm:items-center" key={service.id}>
+                  <MutationForm action={markServiceServedInlineAction} className="flex flex-col justify-between gap-3 rounded-2xl bg-sand p-4 sm:flex-row sm:items-center" key={service.id}>
                     <input type="hidden" name="bookingId" value={booking.id} />
                     <input type="hidden" name="serviceOrderId" value={service.id} />
                     <span>{service.name} · SL {service.quantity}</span>
@@ -85,8 +85,8 @@ export default async function BookingDetailPage({ params, searchParams }: { para
 
           {user.role === "CUSTOMER" && booking.status === "IN_STAY" && (
             <section className="card p-6">
-              <h2 className="font-heading text-2xl text-[#9a4029]">Cần thêm dịch vụ?</h2>
-              <p className="mt-2 text-sm leading-6 text-[#75675f]">
+              <h2 className="font-heading text-2xl text-brand">Cần thêm dịch vụ?</h2>
+              <p className="mt-2 text-sm leading-6 text-muted">
                 Dịch vụ phát sinh sẽ do nhân viên homestay ghi nhận vào hóa đơn của đơn đang lưu trú để tránh chọn nhầm dịch vụ hoặc sai chi phí.
               </p>
               <div className="mt-4 flex flex-col gap-3 sm:flex-row">
@@ -104,8 +104,8 @@ export default async function BookingDetailPage({ params, searchParams }: { para
           {canAddService && (
             <MutationForm action={addServiceInlineAction} className="card p-6" resetOnSuccess>
               <input type="hidden" name="bookingId" value={booking.id} />
-              <h2 className="font-heading text-2xl text-[#9a4029]">Thêm dịch vụ</h2>
-              <p className="mt-2 text-sm text-[#75675f]">Ghi nhận dịch vụ phát sinh khi khách đang lưu trú.</p>
+              <h2 className="font-heading text-2xl text-brand">Thêm dịch vụ</h2>
+              <p className="mt-2 text-sm text-muted">Ghi nhận dịch vụ phát sinh khi khách đang lưu trú.</p>
               <div className="mt-4 grid gap-3">
                 <select className="field" name="serviceId" disabled={!addOnServices.length} required>
                   {addOnServices.map((service) => (
@@ -114,16 +114,16 @@ export default async function BookingDetailPage({ params, searchParams }: { para
                 </select>
                 <input className="field" name="quantity" type="number" min="1" defaultValue="1" aria-label="Số lượng dịch vụ" />
                 <ActionButton className="btn-primary w-full" disabled={!addOnServices.length} pendingLabel="Đang thêm...">Thêm vào hóa đơn</ActionButton>
-                {!addOnServices.length && <p className="text-sm font-semibold text-[#93000a]">Homestay chưa có dịch vụ bổ sung đang bán.</p>}
+                {!addOnServices.length && <p className="text-sm font-semibold text-danger">Homestay chưa có dịch vụ bổ sung đang bán.</p>}
               </div>
             </MutationForm>
           )}
           {canViewPaymentPanel && (
             <section className="card p-6">
-              <h2 className="font-heading text-2xl text-[#9a4029]">Thanh toán</h2>
-              <p className="mt-3 text-sm text-[#75675f]">Số tiền: {money(booking.payment?.amount ?? booking.grandTotal)}</p>
-              {!booking.payment && canRetryPayment && <p className="mt-2 text-sm text-[#75675f]">Đơn này chưa có giao dịch thanh toán. Bạn có thể tạo lại thanh toán qua ApiPay.</p>}
-              {paymentNotice && !isPaid && <p className="mt-2 rounded-xl bg-[#fdf3ef] px-4 py-3 text-sm font-semibold text-[#9a4029]">{paymentNotice}</p>}
+              <h2 className="font-heading text-2xl text-brand">Thanh toán</h2>
+              <p className="mt-3 text-sm text-muted">Số tiền: {money(booking.payment?.amount ?? booking.grandTotal)}</p>
+              {!booking.payment && canRetryPayment && <p className="mt-2 text-sm text-muted">Đơn này chưa có giao dịch thanh toán. Bạn có thể tạo lại thanh toán qua ApiPay.</p>}
+              {paymentNotice && !isPaid && <p className="mt-2 rounded-xl bg-brand-wash px-4 py-3 text-sm font-semibold text-brand">{paymentNotice}</p>}
               {canRetryPayment && (
                 <form action={retryPaymentAction} className="mt-3">
                   <input type="hidden" name="bookingId" value={booking.id} />
@@ -131,7 +131,7 @@ export default async function BookingDetailPage({ params, searchParams }: { para
                 </form>
               )}
               {isPaid ? (
-                <div className="mt-3 rounded-xl border border-[#d7e2da] bg-[#e8f0eb] px-4 py-3 text-center text-sm font-bold text-[#466550]">Đã thanh toán</div>
+                <div className="mt-3 rounded-xl border border-leaf-soft bg-leaf-soft px-4 py-3 text-center text-sm font-bold text-leaf">Đã thanh toán</div>
               ) : (
                 canCheckPayment ? <a className="btn-secondary mt-3 w-full" href={`/payment/result?bookingId=${booking.id}&status=${booking.payment?.status ?? "pending"}`}>Kiểm tra trạng thái</a> : null
               )}
@@ -140,8 +140,8 @@ export default async function BookingDetailPage({ params, searchParams }: { para
           {canCancel && (
             <MutationForm action={cancelBookingInlineAction} className="card p-6">
               <input type="hidden" name="bookingId" value={booking.id} />
-              <h2 className="font-heading text-2xl text-[#9a4029]">Hủy đơn</h2>
-              <p className="mt-2 text-sm text-[#75675f]">Có thể hủy khi đơn còn chờ xác nhận hoặc đã xác nhận nhưng chưa check-in.</p>
+              <h2 className="font-heading text-2xl text-brand">Hủy đơn</h2>
+              <p className="mt-2 text-sm text-muted">Có thể hủy khi đơn còn chờ xác nhận hoặc đã xác nhận nhưng chưa check-in.</p>
               <ConfirmActionButton className="btn-secondary mt-4 w-full" message="Bạn chắc chắn muốn hủy đơn này?" pendingLabel="Đang hủy...">Hủy đơn</ConfirmActionButton>
             </MutationForm>
           )}

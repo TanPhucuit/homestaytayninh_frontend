@@ -1,4 +1,4 @@
-import { AppTopBar, Stepper } from "@/components/customer-ui";
+import { AppTopBar, SiteFooter, Stepper } from "@/components/customer-ui";
 import { MultiRoomServicesForm } from "@/components/multi-room-services-form";
 import { getHomestay } from "@/lib/api";
 
@@ -68,16 +68,17 @@ function detailRoomsHref(homestayId?: string, params?: CheckoutServiceParams, ro
 
 function Notice({ message, homestayId, params }: { message: string; homestayId?: string; params?: CheckoutServiceParams }) {
   return (
-    <main className="min-h-screen text-[#1c1c19]">
+    <main id="main" className="min-h-screen text-ink">
       <AppTopBar />
       <div className="mx-auto max-w-3xl px-4 py-12 md:px-8">
         <section className="card p-6 text-center md:p-8">
           <p className="eyebrow">Dịch vụ bổ sung</p>
-          <h1 className="mt-3 font-heading text-4xl text-[#9a4029]">Cần chọn lại phòng</h1>
-          <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-[#75675f]">{message}</p>
+          <h1 className="mt-3 font-heading text-4xl text-brand">Cần chọn lại phòng</h1>
+          <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-muted">{message}</p>
           <a className="btn-primary mt-6" href={detailRoomsHref(homestayId, params)}>Quay lại chọn phòng</a>
         </section>
       </div>
+      <SiteFooter />
     </main>
   );
 }
@@ -103,16 +104,16 @@ export default async function CheckoutServicesPage({ searchParams }: { searchPar
   const backHref = detailRoomsHref(homestay.id, params, roomIds);
 
   return (
-    <main className="min-h-screen text-[#1c1c19]">
+    <main id="main" className="min-h-screen text-ink">
       <AppTopBar />
       <div className="mx-auto max-w-7xl px-4 py-8 md:px-8">
         <div className="mb-8 grid gap-6 lg:grid-cols-[1fr_430px]">
           <div>
             <p className="eyebrow">Thanh toán</p>
-            <h1 className="mt-2 font-heading text-4xl text-[#9a4029] md:text-5xl">Dịch vụ bổ sung</h1>
-            <p className="mt-3 text-[#56423d]">Chọn dịch vụ riêng cho từng phòng. Có thể bỏ qua nếu không cần.</p>
+            <h1 className="mt-2 font-heading text-4xl text-brand md:text-5xl">Dịch vụ bổ sung</h1>
+            <p className="mt-3 text-ink-muted">Chọn dịch vụ riêng cho từng phòng. Có thể bỏ qua nếu không cần.</p>
           </div>
-          <div className="rounded-2xl bg-white p-5 shadow-[0_18px_55px_rgba(123,41,20,0.08)]">
+          <div className="rounded-2xl bg-white p-5 shadow-card">
             <Stepper active={2} />
           </div>
         </div>
@@ -127,6 +128,7 @@ export default async function CheckoutServicesPage({ searchParams }: { searchPar
           backHref={backHref}
         />
       </div>
+      <SiteFooter />
     </main>
   );
 }

@@ -40,16 +40,16 @@ export function HomestayGallery({ images }: { images: GalleryImage[] }) {
 
           return (
             <button
-              className={`group relative overflow-hidden bg-[#efe7dc] text-left md:min-h-0 ${isMain ? "col-span-2 min-h-[260px] md:row-span-2" : "min-h-[140px]"}`}
+              className={`group relative overflow-hidden bg-sand-deep text-left md:min-h-0 ${isMain ? "col-span-2 min-h-[260px] md:row-span-2" : "min-h-[140px]"}`}
               key={`${image.url}-${index}`}
               onClick={() => setActiveIndex(index)}
               type="button"
               aria-label={`Xem ảnh ${index + 1}`}
             >
               <img className="h-full w-full object-cover transition duration-700 group-hover:scale-105" src={image.url} alt={image.alt} />
-              <span className="absolute inset-0 bg-gradient-to-t from-[#1c1c19]/18 via-transparent to-transparent opacity-70 transition group-hover:opacity-100" />
+              <span className="absolute inset-0 bg-gradient-to-t from-ink/18 via-transparent to-transparent opacity-70 transition group-hover:opacity-100" />
               {isLast && (
-                <span className="absolute inset-0 grid place-items-center bg-[#fdf9f4]/54 text-center font-heading text-2xl font-bold text-[#1c1c19] backdrop-blur-sm">
+                <span className="absolute inset-0 grid place-items-center bg-sand/54 text-center font-heading text-2xl font-bold text-ink backdrop-blur-sm">
                   Xem tất cả ảnh
                 </span>
               )}
@@ -59,25 +59,25 @@ export function HomestayGallery({ images }: { images: GalleryImage[] }) {
       </div>
 
       {activeImage && (
-        <div className="fixed inset-0 z-50 grid bg-[#1c1c19]/88 p-4 backdrop-blur-sm md:p-8" role="dialog" aria-modal="true" aria-label="Xem ảnh homestay">
+        <div className="fixed inset-0 z-50 grid bg-ink/88 p-4 backdrop-blur-sm md:p-8" role="dialog" aria-modal="true" aria-label="Xem ảnh homestay">
           <div className="mb-4 flex items-center justify-between gap-3 text-white">
             <p className="text-sm font-bold">{activeIndex! + 1} / {images.length}</p>
-            <button className="rounded-full bg-white px-4 py-2 text-sm font-bold text-[#1c1c19]" onClick={() => setActiveIndex(null)} type="button">
+            <button className="rounded-full bg-white px-4 py-2 text-sm font-bold text-ink" onClick={() => setActiveIndex(null)} type="button">
               Đóng
             </button>
           </div>
           <div className="relative grid min-h-0 place-items-center">
             <button
-              className="absolute left-0 top-1/2 z-10 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-white/92 font-bold text-[#1c1c19] shadow-lg"
+              className="absolute left-0 top-1/2 z-10 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-white/92 font-bold text-ink shadow-lg"
               onClick={() => setActiveIndex((current) => (current === null ? 0 : (current - 1 + images.length) % images.length))}
               type="button"
               aria-label="Ảnh trước"
             >
               ‹
             </button>
-            <img className="max-h-[78vh] w-auto max-w-full rounded-2xl object-contain shadow-[0_30px_90px_rgba(0,0,0,0.35)]" src={activeImage.url} alt={activeImage.alt} />
+            <img className="max-h-[78vh] w-auto max-w-full rounded-2xl object-contain shadow-card" src={activeImage.url} alt={activeImage.alt} />
             <button
-              className="absolute right-0 top-1/2 z-10 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-white/92 font-bold text-[#1c1c19] shadow-lg"
+              className="absolute right-0 top-1/2 z-10 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-white/92 font-bold text-ink shadow-lg"
               onClick={() => setActiveIndex((current) => (current === null ? 0 : (current + 1) % images.length))}
               type="button"
               aria-label="Ảnh tiếp theo"

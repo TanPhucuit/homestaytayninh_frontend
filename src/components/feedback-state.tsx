@@ -4,8 +4,8 @@ import { FlashState } from "@/lib/flash";
 export function FlashMessage({ flash }: { flash?: FlashState | null }) {
   if (!flash) return null;
   const tone = flash.type === "success"
-    ? "border-[#c8ebd0] bg-[#eef8f1] text-[#2f4d3a]"
-    : "border-[#ffdad6] bg-[#fff8f7] text-[#93000a]";
+    ? "border-leaf/30 bg-leaf-soft text-leaf-strong"
+    : "border-danger-soft bg-brand-wash text-danger";
 
   return (
     <div className={`rounded-2xl border px-4 py-3 text-sm font-semibold ${tone}`} role={flash.type === "error" ? "alert" : "status"}>
@@ -29,9 +29,9 @@ export function EmptyState({
 }) {
   return (
     <div className="card flex min-h-64 flex-col items-center justify-center p-8 text-center">
-      <div className="flex size-14 items-center justify-center rounded-full bg-[#466550]/10 text-2xl font-bold text-[#466550]">{icon}</div>
-      <h2 className="mt-4 text-2xl font-bold text-[#466550]">{title}</h2>
-      <p className="mt-2 max-w-md text-sm leading-6 text-[#75675f]">{description}</p>
+      <div className="flex size-14 items-center justify-center rounded-full bg-leaf/10 text-2xl font-bold text-leaf">{icon}</div>
+      <h2 className="mt-4 text-2xl font-bold text-leaf">{title}</h2>
+      <p className="mt-2 max-w-md text-sm leading-6 text-muted">{description}</p>
       {actionHref && actionLabel && (
         <Link href={actionHref} className="btn-primary mt-5">
           {actionLabel}
@@ -116,7 +116,7 @@ export function PageSkeleton({
   variant?: "cards" | "media" | "dashboard" | "detail";
 }) {
   return (
-    <main className="mx-auto max-w-7xl px-4 py-8 md:px-8 md:py-12">
+    <main id="main" className="mx-auto max-w-7xl px-4 py-8 md:px-8 md:py-12">
       <div className="mb-8">
         <div className="skeleton-shimmer h-4 w-44 rounded-full" />
         <div className="skeleton-shimmer mt-4 h-10 w-full max-w-xl rounded-full" />

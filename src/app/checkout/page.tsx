@@ -1,4 +1,4 @@
-import { AppTopBar } from "@/components/customer-ui";
+import { AppTopBar, SiteFooter } from "@/components/customer-ui";
 
 export const dynamic = "force-dynamic";
 
@@ -20,18 +20,19 @@ function CheckoutSelectionNotice({ homestayId, roomIds }: { homestayId?: string;
   if (roomIds.length) query.set("roomIds", roomIds.join(","));
   const backHref = homestayId ? `/homestays/${homestayId}${query.toString() ? `?${query.toString()}` : ""}#rooms` : "/homestays";
   return (
-    <main className="min-h-screen text-[#1c1c19]">
+    <main id="main" className="min-h-screen text-ink">
       <AppTopBar />
       <div className="mx-auto max-w-3xl px-4 py-12 md:px-8">
         <section className="card p-6 text-center md:p-8">
           <p className="eyebrow">Checkout</p>
-          <h1 className="mt-3 font-heading text-4xl text-[#9a4029]">Bắt đầu từ chọn phòng</h1>
-          <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-[#75675f]">
+          <h1 className="mt-3 font-heading text-4xl text-brand">Bắt đầu từ chọn phòng</h1>
+          <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-muted">
             Vui lòng chọn phòng, ngày lưu trú và số khách trong khung đặt phòng của homestay trước khi tiếp tục thanh toán.
           </p>
           <a className="btn-primary mt-6" href={backHref}>Quay lại chọn phòng</a>
         </section>
       </div>
+      <SiteFooter />
     </main>
   );
 }

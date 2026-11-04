@@ -1,7 +1,6 @@
-import Link from "next/link";
 import { Article, UserProfile, UserRole, ViolationReport } from "@/lib/types";
 import { ActionButton } from "./action-button";
-import { AppTopBar } from "./customer-ui";
+import { AppTopBar, PortalHero } from "./customer-ui";
 import { ConfirmActionButton } from "./confirm-action-button";
 import { EmptyState, FlashMessage } from "./feedback-state";
 import { MutationForm } from "./mutation-form";
@@ -19,27 +18,25 @@ import {
 
 function StaffShell({ title, description, flash, children }: { title: string; description: string; flash?: FlashState | null; children: React.ReactNode }) {
   return (
-    <main className="min-h-screen px-4 py-8 text-[#2f2926] md:px-8">
+    <>
       <AppTopBar />
-      <div className="mx-auto max-w-7xl space-y-8">
-        <header className="stitch-panel bg-[#466550] p-6 text-white md:p-8">
-          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-            <div>
-              <p className="text-sm uppercase tracking-[0.25em] text-white/70">Khu vực nội dung</p>
-              <h1 className="mt-2 font-heading text-4xl">{title}</h1>
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-white/80">{description}</p>
-            </div>
-            <nav className="flex flex-wrap gap-2">
-              <a className="rounded-xl bg-white/10 px-4 py-3 text-sm font-semibold text-white" href="/staff">CMS bài viết</a>
-              <a className="rounded-xl bg-white/10 px-4 py-3 text-sm font-semibold text-white" href="/staff/moderation">Kiểm soát user</a>
-              <Link className="rounded-xl bg-[#fdf9f4] px-4 py-3 text-sm font-semibold text-[#9a4029]" href="/">Trang chủ</Link>
-            </nav>
-          </div>
-        </header>
-        <FlashMessage flash={flash} />
-        {children}
-      </div>
-    </main>
+      <main id="main" className="min-h-screen px-4 py-8 text-ink md:px-8">
+        <div className="mx-auto max-w-7xl space-y-8">
+          <PortalHero
+            eyebrow="Khu vực nội dung"
+            title={title}
+            description={description}
+            links={[
+              { label: "CMS bài viết", href: "/staff" },
+              { label: "Kiểm soát user", href: "/staff/moderation" },
+              { label: "Trang chủ", href: "/" }
+            ]}
+          />
+          <FlashMessage flash={flash} />
+          {children}
+        </div>
+      </main>
+    </>
   );
 }
 
@@ -61,7 +58,7 @@ export function StaffCmsPortal({ articles, flash }: { articles: Article[]; flash
       <section className="grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
         <MutationForm action={createArticleInlineAction} className="card p-6" resetOnSuccess>
           <p className="eyebrow">Tạo bài viết</p>
-          <h2 className="mt-2 font-heading text-3xl text-[#9a4029]">Bài viết mới</h2>
+          <h2 className="mt-2 font-heading text-3xl text-brand">Bài viết mới</h2>
           <div className="mt-5 grid gap-3">
             <input className="field" name="title" placeholder="Tiêu đề" required />
             <input className="field" name="slug" pattern="[a-z0-9]+(-[a-z0-9]+)*" placeholder="du-lich-nui-ba-den" required />
@@ -85,8 +82,8 @@ export function StaffCmsPortal({ articles, flash }: { articles: Article[]; flash
                 <div className="flex flex-col justify-between gap-3 md:flex-row md:items-start">
                   <div>
                     <ArticleStatus status={article.status} />
-                    <h3 className="mt-3 font-heading text-2xl text-[#9a4029]">{article.title}</h3>
-                    <p className="mt-1 text-sm text-[#75675f]">/{article.slug}</p>
+                    <h3 className="mt-3 font-heading text-2xl text-brand">{article.title}</h3>
+                    <p className="mt-1 text-sm text-muted">/{article.slug}</p>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <MutationForm action={article.status === "PUBLISHED" ? unpublishArticleInlineAction : publishArticleInlineAction}>
@@ -139,11 +136,11 @@ export function StaffModerationPortal({ reports, users, currentRole, flash }: { 
               <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
                 <div>
                   <span className={report.status === "OPEN" ? "badge badge-red" : "badge badge-green"}>{report.status === "OPEN" ? "Đang mở" : "Đã xử lý"}</span>
-                  <h2 className="mt-3 font-heading text-2xl text-[#9a4029]">Báo cáo {report.id}</h2>
-                  <p className="mt-2 text-sm text-[#75675f]">
+                  <h2 className="mt-3 font-heading text-2xl text-brand">Báo cáo {report.id}</h2>
+                  <p className="mt-2 text-sm text-muted">
                     Người báo cáo: {report.reporterId} · Người bị báo cáo: {report.reportedUserId}
                   </p>
-                  <p className="mt-2 text-base text-[#2f2926]">{report.reason}</p>
+                  <p className="mt-2 text-base text-ink">{report.reason}</p>
                 </div>
                 {report.status === "OPEN" && (
                   <MutationForm action={resolveReportInlineAction}>
@@ -157,16 +154,16 @@ export function StaffModerationPortal({ reports, users, currentRole, flash }: { 
         )}
       </section>
       <section className="card p-6">
-        <h2 className="font-heading text-3xl text-[#9a4029]">Kiểm soát tài khoản</h2>
-        <p className="mt-2 text-sm text-[#75675f]">Nhân viên chỉ được khóa hoặc mở khóa tài khoản khách hàng khi xử lý vi phạm; Owner, Owner Staff và Admin do quản trị viên xử lý.</p>
+        <h2 className="font-heading text-3xl text-brand">Kiểm soát tài khoản</h2>
+        <p className="mt-2 text-sm text-muted">Nhân viên chỉ được khóa hoặc mở khóa tài khoản khách hàng khi xử lý vi phạm; Owner, Owner Staff và Admin do quản trị viên xử lý.</p>
         <div className="mt-5 grid gap-3">
           {manageableUsers.length === 0 ? (
             <EmptyState title="Chưa có khách hàng" description="Chỉ tài khoản Customer được hiển thị trong khu vực kiểm soát của Staff." />
           ) : manageableUsers.map((user) => (
-            <article className="flex flex-col justify-between gap-3 rounded-2xl bg-[#fdf9f4] p-4 sm:flex-row sm:items-center" key={user.id}>
+            <article className="flex flex-col justify-between gap-3 rounded-2xl bg-sand p-4 sm:flex-row sm:items-center" key={user.id}>
               <div>
-                <p className="font-semibold text-[#2f2926]">{user.name}</p>
-                <p className="mt-1 text-sm text-[#75675f]">{user.email} · {user.role}</p>
+                <p className="font-semibold text-ink">{user.name}</p>
+                <p className="mt-1 text-sm text-muted">{user.email} · {user.role}</p>
               </div>
               <MutationForm action={user.banned ? unbanModeratedUserInlineAction : banModeratedUserInlineAction}>
                 <input name="userId" type="hidden" value={user.id} />

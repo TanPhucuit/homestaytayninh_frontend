@@ -44,13 +44,13 @@ export function OwnerStats({ homestays, bookings }: { homestays: Homestay[]; boo
     <section className="grid gap-4 md:grid-cols-4">
       {stats.map(([label, value]) => (
         <div className="card p-5" key={label}>
-          <p className="text-sm font-semibold text-[#466550]">{label}</p>
-          <p className="mt-2 font-heading text-3xl font-bold text-[#9a4029]">{value}</p>
+          <p className="text-sm font-semibold text-leaf">{label}</p>
+          <p className="mt-2 font-heading text-3xl font-bold text-brand">{value}</p>
         </div>
       ))}
       <div className="card p-5 md:col-span-4">
-        <p className="text-sm font-semibold text-[#466550]">Doanh thu đã thanh toán</p>
-        <p className="mt-2 font-heading text-3xl font-bold text-[#9a4029]">{money(paidRevenue)}</p>
+        <p className="text-sm font-semibold text-leaf">Doanh thu đã thanh toán</p>
+        <p className="mt-2 font-heading text-3xl font-bold text-brand">{money(paidRevenue)}</p>
       </div>
     </section>
   );
@@ -68,7 +68,7 @@ export function OwnerBookingFilters({
   checkInTo?: string;
 }) {
   return (
-    <form className="mb-5 grid gap-3 rounded-2xl border border-[#eadfd4] bg-white p-4 shadow-[0_14px_45px_rgba(123,41,20,0.06)] lg:grid-cols-[1fr_180px_170px_170px_auto]" method="get">
+    <form className="mb-5 grid gap-3 rounded-2xl border border-line-soft bg-white p-4 shadow-card lg:grid-cols-[1fr_180px_170px_170px_auto]" method="get">
       <input className="field" name="q" defaultValue={keyword ?? ""} placeholder="Tìm mã booking, khách, SĐT" />
       <select className="field" name="status" defaultValue={status ?? ""}>
         <option value="">Tất cả trạng thái</option>
@@ -109,8 +109,8 @@ export function OwnerBookingOps({ bookings, homestays }: { bookings: Booking[]; 
           <div className="flex flex-col justify-between gap-3 lg:flex-row lg:items-start">
             <div>
               <StatusBadge status={booking.status} />
-              <h3 className="mt-3 font-heading text-2xl text-[#9a4029]">{homestayById.get(booking.homestayId)?.name ?? booking.homestayId}</h3>
-              <p className="mt-1 text-sm text-[#75675f]">{booking.guestName} · {booking.checkIn} → {booking.checkOut} · {money(booking.grandTotal)}</p>
+              <h3 className="mt-3 font-heading text-2xl text-brand">{homestayById.get(booking.homestayId)?.name ?? booking.homestayId}</h3>
+              <p className="mt-1 text-sm text-muted">{booking.guestName} · {booking.checkIn} → {booking.checkOut} · {money(booking.grandTotal)}</p>
             </div>
             <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap">
               {(nextActions[booking.status] ?? []).map((item) => (
@@ -128,7 +128,7 @@ export function OwnerBookingOps({ bookings, homestays }: { bookings: Booking[]; 
           </div>
         </div>
       )) : (
-        <div className="rounded-2xl border border-dashed border-[#dcc0ba] bg-white/70 p-8 text-[#75675f]">Không có booking cần thao tác ngay.</div>
+        <div className="rounded-2xl border border-dashed border-line bg-white/70 p-8 text-muted">Không có booking cần thao tác ngay.</div>
       )}
     </section>
   );
@@ -146,29 +146,29 @@ export function OwnerBookingHistory({ bookings, homestays }: { bookings: Booking
           : booking.roomId;
 
         return (
-          <article className="rounded-2xl border border-[#eadfd4] bg-white p-4 shadow-[0_12px_35px_rgba(123,41,20,0.05)]" key={booking.id}>
+          <article className="rounded-2xl border border-line-soft bg-white p-4 shadow-card" key={booking.id}>
             <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
                   <StatusBadge status={booking.status} />
-                  <span className="rounded-full bg-[#f1ede8] px-3 py-1 text-xs font-bold text-[#56423d]">{booking.id}</span>
+                  <span className="rounded-full bg-sand-deep px-3 py-1 text-xs font-bold text-ink-muted">{booking.id}</span>
                 </div>
-                <h3 className="mt-3 font-heading text-2xl text-[#9a4029]">{homestay?.name ?? booking.homestayId}</h3>
-                <p className="mt-1 text-sm leading-6 text-[#75675f]">
+                <h3 className="mt-3 font-heading text-2xl text-brand">{homestay?.name ?? booking.homestayId}</h3>
+                <p className="mt-1 text-sm leading-6 text-muted">
                   {booking.guestName} · {booking.guestPhone} · {booking.checkIn} → {booking.checkOut}
                 </p>
-                <p className="mt-1 text-sm font-semibold text-[#466550]">{roomSummary}</p>
+                <p className="mt-1 text-sm font-semibold text-leaf">{roomSummary}</p>
               </div>
               <div className="flex flex-col gap-2 text-left lg:items-end lg:text-right">
-                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#89726c]">Tổng hóa đơn</p>
-                <p className="font-heading text-2xl font-bold text-[#466550]">{money(booking.grandTotal)}</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-subtle">Tổng hóa đơn</p>
+                <p className="font-heading text-2xl font-bold text-leaf">{money(booking.grandTotal)}</p>
                 <a className="btn-secondary w-full justify-center lg:w-auto" href={`/bookings/${booking.id}`}>Xem chi tiết</a>
               </div>
             </div>
           </article>
         );
       }) : (
-        <div className="rounded-2xl border border-dashed border-[#dcc0ba] bg-white/70 p-8 text-[#75675f]">
+        <div className="rounded-2xl border border-dashed border-line bg-white/70 p-8 text-muted">
           Chưa có booking đã hoàn thành hoặc đã hủy theo bộ lọc hiện tại.
         </div>
       )}
@@ -210,40 +210,40 @@ export function OwnerInventory({ homestays }: { homestays: Homestay[] }) {
             <div className="flex flex-col justify-between gap-4 lg:flex-row">
               <div className="min-w-0">
                 <p className="eyebrow">{homestay.type}</p>
-                <h2 className="mt-1 font-heading text-3xl text-[#9a4029]">{homestay.name}</h2>
-                <p className="mt-2 text-sm text-[#75675f]">{homestay.location}</p>
+                <h2 className="mt-1 font-heading text-3xl text-brand">{homestay.name}</h2>
+                <p className="mt-2 text-sm text-muted">{homestay.location}</p>
                 <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                  <div className="rounded-xl bg-[#fdf9f4] px-4 py-3">
-                    <p className="text-xs font-bold uppercase text-[#89726c]">Giá hiển thị</p>
-                    <p className="mt-1 font-bold text-[#466550]">{money(totals.priceFrom)}</p>
+                  <div className="rounded-xl bg-sand px-4 py-3">
+                    <p className="text-xs font-bold uppercase text-subtle">Giá hiển thị</p>
+                    <p className="mt-1 font-bold text-leaf">{money(totals.priceFrom)}</p>
                   </div>
-                  <div className="rounded-xl bg-[#fdf9f4] px-4 py-3">
-                    <p className="text-xs font-bold uppercase text-[#89726c]">Sức chứa hiển thị</p>
-                    <p className="mt-1 font-bold text-[#466550]">{totals.capacity} khách</p>
+                  <div className="rounded-xl bg-sand px-4 py-3">
+                    <p className="text-xs font-bold uppercase text-subtle">Sức chứa hiển thị</p>
+                    <p className="mt-1 font-bold text-leaf">{totals.capacity} khách</p>
                   </div>
-                  <div className="rounded-xl bg-[#fdf9f4] px-4 py-3">
-                    <p className="text-xs font-bold uppercase text-[#89726c]">Phòng đang bán</p>
-                    <p className="mt-1 font-bold text-[#466550]">{totals.activeRooms.length} loại</p>
+                  <div className="rounded-xl bg-sand px-4 py-3">
+                    <p className="text-xs font-bold uppercase text-subtle">Phòng đang bán</p>
+                    <p className="mt-1 font-bold text-leaf">{totals.activeRooms.length} loại</p>
                   </div>
                 </div>
-                <p className="mt-3 text-xs leading-5 text-[#75675f]">
+                <p className="mt-3 text-xs leading-5 text-muted">
                   {totals.source === "rooms"
                     ? "Giá và sức chứa được hệ thống tự đồng bộ từ phòng đang bán sau mỗi lần thêm hoặc lưu phòng."
                     : "Homestay chưa có phòng đang bán, hệ thống đang dùng giá và sức chứa tạm của homestay."}
                 </p>
               </div>
-              <div className="h-32 w-full shrink-0 rounded-2xl bg-[#efe7dc] bg-cover bg-center lg:w-52" style={{ backgroundImage: `url(${homestay.imageUrl})` }} aria-label={homestay.name} />
+              <div className="h-32 w-full shrink-0 rounded-2xl bg-sand-deep bg-cover bg-center lg:w-52" style={{ backgroundImage: `url(${homestay.imageUrl})` }} aria-label={homestay.name} />
             </div>
 
-            <details className="mt-5 rounded-2xl border border-[#eadfd4] bg-[#fdf9f4] p-4">
-              <summary className="cursor-pointer font-bold text-[#466550]">Thông tin homestay</summary>
+            <details className="mt-5 rounded-2xl border border-line-soft bg-sand p-4">
+              <summary className="cursor-pointer font-bold text-leaf">Thông tin homestay</summary>
               <MutationForm action={updateHomestayInlineAction} className="mt-4 grid gap-4 md:grid-cols-2">
                 <input type="hidden" name="homestayId" value={homestay.id} />
-                <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+                <label className="grid gap-2 text-sm font-semibold text-ink-soft">
                   Tên homestay
                   <input className="field" name="name" defaultValue={homestay.name} required />
                 </label>
-                <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+                <label className="grid gap-2 text-sm font-semibold text-ink-soft">
                   Loại hình
                   <select className="field" name="type" defaultValue={homestay.type}>
                     <option>Phòng</option>
@@ -251,11 +251,11 @@ export function OwnerInventory({ homestays }: { homestays: Homestay[] }) {
                     <option>Nhà nguyên căn</option>
                   </select>
                 </label>
-                <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+                <label className="grid gap-2 text-sm font-semibold text-ink-soft">
                   Vị trí
                   <input className="field" name="location" defaultValue={homestay.location} required />
                 </label>
-                <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+                <label className="grid gap-2 text-sm font-semibold text-ink-soft">
                   URL hình ảnh chính
                   <input className="field" name="imageUrl" type="url" defaultValue={homestay.imageUrl} required />
                 </label>
@@ -264,27 +264,27 @@ export function OwnerInventory({ homestays }: { homestays: Homestay[] }) {
                     <input type="hidden" name="priceFrom" value={homestay.priceFrom} />
                     <input type="hidden" name="capacity" value={homestay.capacity} />
                     <div className="rounded-xl bg-white px-4 py-3 text-sm">
-                      <p className="font-semibold text-[#3f3530]">Giá khởi điểm tự đồng bộ</p>
-                      <p className="mt-1 font-bold text-[#466550]">{money(homestay.priceFrom)}</p>
+                      <p className="font-semibold text-ink-soft">Giá khởi điểm tự đồng bộ</p>
+                      <p className="mt-1 font-bold text-leaf">{money(homestay.priceFrom)}</p>
                     </div>
                     <div className="rounded-xl bg-white px-4 py-3 text-sm">
-                      <p className="font-semibold text-[#3f3530]">Sức chứa tự đồng bộ</p>
-                      <p className="mt-1 font-bold text-[#466550]">{homestay.capacity} khách</p>
+                      <p className="font-semibold text-ink-soft">Sức chứa tự đồng bộ</p>
+                      <p className="mt-1 font-bold text-leaf">{homestay.capacity} khách</p>
                     </div>
                   </>
                 ) : (
                   <>
-                    <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+                    <label className="grid gap-2 text-sm font-semibold text-ink-soft">
                       Giá khởi điểm tạm
                       <input className="field" name="priceFrom" type="number" min="0" defaultValue={homestay.priceFrom} required />
                     </label>
-                    <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+                    <label className="grid gap-2 text-sm font-semibold text-ink-soft">
                       Sức chứa tạm
                       <input className="field" name="capacity" type="number" min="1" defaultValue={homestay.capacity} required />
                     </label>
                   </>
                 )}
-                <label className="grid gap-2 text-sm font-semibold text-[#3f3530] md:col-span-2">
+                <label className="grid gap-2 text-sm font-semibold text-ink-soft md:col-span-2">
                   Mô tả
                   <textarea className="field min-h-24" name="description" defaultValue={homestay.description} required />
                 </label>
@@ -292,19 +292,19 @@ export function OwnerInventory({ homestays }: { homestays: Homestay[] }) {
               </MutationForm>
             </details>
 
-            <details className="mt-4 rounded-2xl border border-[#eadfd4] bg-white p-4">
-              <summary className="cursor-pointer font-bold text-[#466550]">Ảnh</summary>
+            <details className="mt-4 rounded-2xl border border-line-soft bg-white p-4">
+              <summary className="cursor-pointer font-bold text-leaf">Ảnh</summary>
               <MutationForm action={createImageInlineAction} className="mt-4 grid gap-3 md:grid-cols-[1fr_1fr_120px_auto]" resetOnSuccess>
                 <input type="hidden" name="homestayId" value={homestay.id} />
-                <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+                <label className="grid gap-2 text-sm font-semibold text-ink-soft">
                   URL hình ảnh mới
                   <input className="field" name="url" type="url" placeholder="https://..." required />
                 </label>
-                <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+                <label className="grid gap-2 text-sm font-semibold text-ink-soft">
                   Mô tả ảnh
                   <input className="field" name="alt" placeholder="Ví dụ: Sân vườn buổi sáng" />
                 </label>
-                <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+                <label className="grid gap-2 text-sm font-semibold text-ink-soft">
                   Thứ tự
                   <input className="field" name="position" type="number" min="0" defaultValue="1" />
                 </label>
@@ -313,58 +313,58 @@ export function OwnerInventory({ homestays }: { homestays: Homestay[] }) {
             </details>
 
             <div className="mt-5 grid gap-4 xl:grid-cols-2">
-              <details className="rounded-2xl border border-[#eadfd4] bg-white p-4">
-                <summary className="cursor-pointer font-bold text-[#466550]">Phòng và giá cố định</summary>
+              <details className="rounded-2xl border border-line-soft bg-white p-4">
+                <summary className="cursor-pointer font-bold text-leaf">Phòng và giá cố định</summary>
                 <OwnerRoomCreateForm homestayId={homestay.id} />
 
                 <div className="mt-5 space-y-3">
-                  <h3 className="font-bold text-[#1c1c19]">Phòng hiện có</h3>
+                  <h3 className="font-bold text-ink">Phòng hiện có</h3>
                   {homestay.rooms.length ? homestay.rooms.map((room) => (
-                    <div className="rounded-xl bg-[#fdf9f4] p-4 text-sm" key={room.id}>
+                    <div className="rounded-xl bg-sand p-4 text-sm" key={room.id}>
                       <MutationForm action={updateRoomInlineAction} className="grid gap-4 md:grid-cols-2">
                         <input type="hidden" name="homestayId" value={homestay.id} />
                         <input type="hidden" name="roomId" value={room.id} />
-                        <label className="grid gap-2 font-semibold text-[#3f3530]">
+                        <label className="grid gap-2 font-semibold text-ink-soft">
                           Tên phòng/căn
                           <input className="field" name="name" defaultValue={room.name} required />
                         </label>
-                        <label className="grid gap-2 font-semibold text-[#3f3530]">
+                        <label className="grid gap-2 font-semibold text-ink-soft">
                           Loại phòng/căn
                           <input className="field" name="roomType" defaultValue={room.roomType} required />
                         </label>
-                        <label className="grid gap-2 font-semibold text-[#3f3530] md:col-span-2">
+                        <label className="grid gap-2 font-semibold text-ink-soft md:col-span-2">
                           URL ảnh phòng
                           <input className="field" name="imageUrl" type="url" defaultValue={room.imageUrl ?? ""} placeholder="https://..." />
                         </label>
-                        <label className="grid gap-2 font-semibold text-[#3f3530]">
+                        <label className="grid gap-2 font-semibold text-ink-soft">
                           Giá cố định/đêm
                           <input className="field" name="pricePerNight" type="number" min="1" step="1000" defaultValue={room.pricePerNight} required />
                         </label>
-                        <label className="grid gap-2 font-semibold text-[#3f3530]">
+                        <label className="grid gap-2 font-semibold text-ink-soft">
                           Sức chứa mỗi phòng/căn
                           <input className="field" name="capacity" type="number" min="1" defaultValue={room.capacity} required />
                         </label>
-                        <label className="grid gap-2 font-semibold text-[#3f3530]">
+                        <label className="grid gap-2 font-semibold text-ink-soft">
                           Số lượng phòng/căn cùng loại
                           <input className="field" name="totalUnits" type="number" min="1" defaultValue={room.totalUnits} required />
                         </label>
-                        <label className="flex items-center gap-2 rounded-xl bg-white px-3 py-2 font-semibold text-[#3f3530]">
+                        <label className="flex items-center gap-2 rounded-xl bg-white px-3 py-2 font-semibold text-ink-soft">
                           <input name="active" type="checkbox" defaultChecked={room.active} /> {room.active ? "Đang bán" : "Đang ngừng bán"}
                         </label>
                         <ConfirmActionButton className="btn-secondary w-full md:col-span-2" message={room.active ? "Nếu bỏ chọn Đang bán, phòng sẽ được ngừng bán nhưng không bị xóa. Tiếp tục?" : "Phục hồi phòng này để khách có thể đặt lại?"} pendingLabel="Đang lưu...">Lưu phòng</ConfirmActionButton>
                       </MutationForm>
-                      <MutationForm action={createRoomRateInlineAction} className="mt-4 grid gap-3 rounded-xl border border-[#eadfd4] bg-white p-4 md:grid-cols-[1fr_1fr_1fr_auto]" resetOnSuccess>
+                      <MutationForm action={createRoomRateInlineAction} className="mt-4 grid gap-3 rounded-xl border border-line-soft bg-white p-4 md:grid-cols-[1fr_1fr_1fr_auto]" resetOnSuccess>
                         <input type="hidden" name="homestayId" value={homestay.id} />
                         <input type="hidden" name="roomId" value={room.id} />
-                        <label className="grid gap-2 font-semibold text-[#3f3530]">
+                        <label className="grid gap-2 font-semibold text-ink-soft">
                           Từ ngày
                           <input className="field" name="startDate" type="date" required />
                         </label>
-                        <label className="grid gap-2 font-semibold text-[#3f3530]">
+                        <label className="grid gap-2 font-semibold text-ink-soft">
                           Đến ngày
                           <input className="field" name="endDate" type="date" required />
                         </label>
-                        <label className="grid gap-2 font-semibold text-[#3f3530]">
+                        <label className="grid gap-2 font-semibold text-ink-soft">
                           Giá theo ngày
                           <input className="field" name="pricePerNight" type="number" min="1" step="1000" placeholder="Ví dụ: 550000" required />
                         </label>
@@ -372,69 +372,69 @@ export function OwnerInventory({ homestays }: { homestays: Homestay[] }) {
                       </MutationForm>
                     </div>
                   )) : (
-                    <p className="rounded-xl bg-[#fdf9f4] p-4 text-sm text-[#75675f]">Homestay này chưa có phòng. Thêm phòng ở form phía trên.</p>
+                    <p className="rounded-xl bg-sand p-4 text-sm text-muted">Homestay này chưa có phòng. Thêm phòng ở form phía trên.</p>
                   )}
                 </div>
               </details>
 
-              <details className="rounded-2xl border border-[#eadfd4] bg-white p-4">
-                <summary className="cursor-pointer font-bold text-[#466550]">Dịch vụ</summary>
+              <details className="rounded-2xl border border-line-soft bg-white p-4">
+                <summary className="cursor-pointer font-bold text-leaf">Dịch vụ</summary>
                 <div className="mt-4 grid gap-4">
                   <OwnerAddOnServiceCreateForm homestayId={homestay.id} />
                   <OwnerIncludedServiceCreateForm homestayId={homestay.id} />
 
                   <div className="space-y-3">
-                    <h3 className="font-bold text-[#1c1c19]">Dịch vụ bổ sung khách có thể đặt thêm</h3>
+                    <h3 className="font-bold text-ink">Dịch vụ bổ sung khách có thể đặt thêm</h3>
                     {addOnServices.length ? addOnServices.map((service) => (
-                      <MutationForm action={updateServiceInlineAction} className="grid gap-3 rounded-xl bg-[#fdf9f4] p-4 text-sm" key={service.id}>
+                      <MutationForm action={updateServiceInlineAction} className="grid gap-3 rounded-xl bg-sand p-4 text-sm" key={service.id}>
                         <input type="hidden" name="homestayId" value={homestay.id} />
                         <input type="hidden" name="serviceId" value={service.id} />
                         <input type="hidden" name="included" value="off" />
-                        <label className="grid gap-2 font-semibold text-[#3f3530]">
+                        <label className="grid gap-2 font-semibold text-ink-soft">
                           Tên dịch vụ
                           <input className="field" name="name" defaultValue={service.name} required />
                         </label>
-                        <label className="grid gap-2 font-semibold text-[#3f3530]">
+                        <label className="grid gap-2 font-semibold text-ink-soft">
                           Mô tả
                           <textarea className="field min-h-16" name="description" defaultValue={service.description ?? ""} />
                         </label>
-                        <label className="grid gap-2 font-semibold text-[#3f3530]">
+                        <label className="grid gap-2 font-semibold text-ink-soft">
                           Đơn giá
                           <input className="field" name="unitPrice" type="number" min="0" defaultValue={service.unitPrice} required />
                         </label>
-                        <label className="flex items-center gap-2 rounded-xl bg-white px-3 py-2 font-semibold text-[#3f3530]">
+                        <label className="flex items-center gap-2 rounded-xl bg-white px-3 py-2 font-semibold text-ink-soft">
                           <input name="active" type="checkbox" defaultChecked={service.active} /> {service.active ? "Đang bán" : "Đang ngừng bán"}
                         </label>
                         <ConfirmActionButton className="btn-secondary w-full" message={service.active ? "Nếu bỏ chọn Đang bán, dịch vụ sẽ được ngừng bán nhưng không bị xóa. Tiếp tục?" : "Phục hồi dịch vụ này để khách có thể đặt lại?"} pendingLabel="Đang lưu...">Lưu dịch vụ bổ sung</ConfirmActionButton>
                       </MutationForm>
                     )) : (
-                      <p className="rounded-xl bg-[#fdf9f4] p-4 text-sm text-[#75675f]">Chưa có dịch vụ bổ sung.</p>
+                      <p className="rounded-xl bg-sand p-4 text-sm text-muted">Chưa có dịch vụ bổ sung.</p>
                     )}
                   </div>
 
                   <div className="space-y-3">
-                    <h3 className="font-bold text-[#1c1c19]">Dịch vụ đã bao gồm trong giá phòng</h3>
+                    <h3 className="font-bold text-ink">Dịch vụ đã bao gồm trong giá phòng</h3>
                     {includedServices.length ? includedServices.map((service) => (
-                      <MutationForm action={updateServiceInlineAction} className="grid gap-3 rounded-xl border border-[#d7e2da] bg-[#f5fbf6] p-4 text-sm" key={service.id}>
+                      <MutationForm action={updateServiceInlineAction} className="grid gap-3 rounded-xl border border-leaf-soft bg-leaf-soft p-4 text-sm" key={service.id}>
                         <input type="hidden" name="homestayId" value={homestay.id} />
                         <input type="hidden" name="serviceId" value={service.id} />
                         <input type="hidden" name="included" value="on" />
                         <input type="hidden" name="unitPrice" value={service.unitPrice} />
-                        <label className="grid gap-2 font-semibold text-[#3f3530]">
+                        <label className="grid gap-2 font-semibold text-ink-soft">
                           Tên dịch vụ
                           <input className="field" name="name" defaultValue={service.name} required />
                         </label>
-                        <label className="grid gap-2 font-semibold text-[#3f3530]">
+                        <label className="grid gap-2 font-semibold text-ink-soft">
                           Mô tả
                           <textarea className="field min-h-16" name="description" defaultValue={service.description ?? ""} />
                         </label>
-                        <label className="flex items-center gap-2 rounded-xl bg-white px-3 py-2 font-semibold text-[#3f3530]">
+                        <label className="flex items-center gap-2 rounded-xl bg-white px-3 py-2 font-semibold text-ink-soft">
                           <input name="active" type="checkbox" defaultChecked={service.active} /> {service.active ? "Đang hiển thị" : "Đang ẩn"}
                         </label>
                         <ConfirmActionButton className="btn-secondary w-full" message={service.active ? "Ẩn dịch vụ đã bao gồm này khỏi phần hiển thị? Dữ liệu booking cũ không bị xóa." : "Hiển thị lại dịch vụ đã bao gồm này?"} pendingLabel="Đang lưu...">Lưu dịch vụ đã bao gồm</ConfirmActionButton>
                       </MutationForm>
                     )) : (
-                      <p className="rounded-xl bg-[#f5fbf6] p-4 text-sm text-[#75675f]">Chưa có dịch vụ đã bao gồm.</p>
+                      <p className="rounded-xl bg-leaf-soft p-4 text-sm text-muted">Chưa có dịch vụ đã bao gồm.</p>
                     )}
                   </div>
                 </div>

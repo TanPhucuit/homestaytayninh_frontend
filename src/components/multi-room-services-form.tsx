@@ -126,20 +126,20 @@ export function MultiRoomServicesForm({ homestayId, rooms, services, initialSele
               <div className="flex flex-col justify-between gap-3 md:flex-row md:items-start">
                 <div>
                   <p className="eyebrow">Phòng đã chọn</p>
-                  <h2 className="mt-2 font-heading text-3xl text-[#9a4029]">{room.name}</h2>
-                  <p className="mt-2 text-sm text-[#75675f]">{money(room.pricePerNight)} / đêm x {nights} đêm</p>
+                  <h2 className="mt-2 font-heading text-3xl text-brand">{room.name}</h2>
+                  <p className="mt-2 text-sm text-muted">{money(room.pricePerNight)} / đêm x {nights} đêm</p>
                 </div>
-                <strong className="rounded-full bg-[#ffdad2] px-4 py-2 text-sm text-[#7b2914]">{money(roomLineTotal)}</strong>
+                <strong className="rounded-full bg-brand-tint px-4 py-2 text-sm text-brand-strong">{money(roomLineTotal)}</strong>
               </div>
 
               <div className="mt-6">
                 <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-end">
                   <div>
-                    <h3 className="font-heading text-2xl text-[#1c1c19]">Dịch vụ bổ sung</h3>
-                    <p className="mt-1 text-sm text-[#75675f]">Chọn riêng cho phòng này. Có thể bỏ qua nếu không cần.</p>
+                    <h3 className="font-heading text-2xl text-ink">Dịch vụ bổ sung</h3>
+                    <p className="mt-1 text-sm text-muted">Chọn riêng cho phòng này. Có thể bỏ qua nếu không cần.</p>
                   </div>
                   {services.length > 0 && (
-                    <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#466550]">{services.length} dịch vụ khả dụng</p>
+                    <p className="text-xs font-bold uppercase tracking-[0.12em] text-leaf">{services.length} dịch vụ khả dụng</p>
                   )}
                 </div>
                 <div className="mt-4 grid gap-3 md:grid-cols-2">
@@ -148,27 +148,27 @@ export function MultiRoomServicesForm({ homestayId, rooms, services, initialSele
                     const quantity = quantities[key] ?? 0;
                     const isSelected = quantity > 0;
                     return (
-                      <article className={`rounded-2xl border bg-white p-4 text-sm shadow-[0_10px_30px_rgba(154,64,41,0.05)] ${isSelected ? "border-[#9a4029] bg-[#fff8f5]" : "border-[#eadfd4]"}`} data-testid={`service-card-${room.id}-${service.id}`} key={service.id}>
+                      <article className={`rounded-2xl border bg-white p-4 text-sm shadow-card ${isSelected ? "border-brand bg-brand-wash" : "border-line-soft"}`} data-testid={`service-card-${room.id}-${service.id}`} key={service.id}>
                         <div className="flex items-start justify-between gap-3">
                           <div>
-                            <h4 className="font-bold text-[#1c1c19]">{service.name}</h4>
-                            {service.description && <p className="mt-1 leading-6 text-[#75675f]">{service.description}</p>}
-                            <p className="mt-2 font-bold text-[#9a4029]">{money(service.unitPrice)} / lượt</p>
+                            <h4 className="font-bold text-ink">{service.name}</h4>
+                            {service.description && <p className="mt-1 leading-6 text-muted">{service.description}</p>}
+                            <p className="mt-2 font-bold text-brand">{money(service.unitPrice)} / lượt</p>
                           </div>
                           <input
                             aria-label={`${isSelected ? "Bỏ chọn" : "Chọn"} ${service.name} cho ${room.name}`}
                             checked={isSelected}
-                            className="mt-1 size-5 accent-[#9a4029]"
+                            className="mt-1 size-5 accent-brand"
                             disabled={!isReady}
                             onChange={() => toggleService(room.id, service.id)}
                             type="checkbox"
                           />
                         </div>
-                        <div className="mt-4 grid gap-2 border-t border-[#e8e1d5] pt-3 sm:grid-cols-[auto_1fr]">
-                          <button className={isSelected ? "btn-secondary px-4 py-2 text-[#9a4029]" : "btn-primary px-4 py-2"} disabled={!isReady} onClick={() => toggleService(room.id, service.id)} type="button">
+                        <div className="mt-4 grid gap-2 border-t border-line-soft pt-3 sm:grid-cols-[auto_1fr]">
+                          <button className={isSelected ? "btn-secondary px-4 py-2 text-brand" : "btn-primary px-4 py-2"} disabled={!isReady} onClick={() => toggleService(room.id, service.id)} type="button">
                             {isSelected ? "Bỏ chọn" : "Thêm"}
                           </button>
-                          <label className="flex items-center justify-between gap-3 rounded-xl bg-[#fdf9f4] px-3 py-2 text-sm font-semibold text-[#75675f]">
+                          <label className="flex items-center justify-between gap-3 rounded-xl bg-sand px-3 py-2 text-sm font-semibold text-muted">
                             Số lượng
                             <input
                               aria-label={`Số lượng ${service.name} cho ${room.name}`}
@@ -189,7 +189,7 @@ export function MultiRoomServicesForm({ homestayId, rooms, services, initialSele
                       </article>
                     );
                   }) : (
-                    <p className="rounded-2xl bg-[#fdf9f4] p-4 text-sm text-[#75675f]">Homestay chưa mở bán dịch vụ bổ sung.</p>
+                    <p className="rounded-2xl bg-sand p-4 text-sm text-muted">Homestay chưa mở bán dịch vụ bổ sung.</p>
                   )}
                 </div>
               </div>
@@ -198,9 +198,9 @@ export function MultiRoomServicesForm({ homestayId, rooms, services, initialSele
         })}
       </div>
 
-      <aside className="h-fit rounded-2xl bg-white p-6 shadow-[0_24px_80px_rgba(123,41,20,0.1)] lg:sticky lg:top-28">
-        <h2 className="border-b border-[#e8e1d5] pb-4 font-heading text-2xl text-[#1c1c19]">Tóm tắt đơn đặt</h2>
-        <p className="mt-4 text-sm text-[#75675f]">{rooms.length} phòng · {nights} đêm · {guests} khách</p>
+      <aside className="h-fit rounded-2xl bg-white p-6 shadow-card lg:sticky lg:top-28">
+        <h2 className="border-b border-line-soft pb-4 font-heading text-2xl text-ink">Tóm tắt đơn đặt</h2>
+        <p className="mt-4 text-sm text-muted">{rooms.length} phòng · {nights} đêm · {guests} khách</p>
         <div className="mt-5 space-y-3 text-sm">
           <div className="flex justify-between gap-4"><span>Nhận phòng</span><strong data-testid="services-check-in-display">{formatDate(checkIn)}</strong></div>
           <div className="flex justify-between gap-4"><span>Trả phòng</span><strong data-testid="services-check-out-display">{formatDate(checkOut)}</strong></div>
@@ -210,7 +210,7 @@ export function MultiRoomServicesForm({ homestayId, rooms, services, initialSele
             {selectedServices.length ? (
               <div className="mt-3 space-y-2">
                 {selectedServices.map(({ room, service, quantity, total }) => (
-                  <div className="rounded-xl bg-[#fdf9f4] px-3 py-2 text-xs" data-testid="selected-service-row" key={`${room.id}-${service.id}`}>
+                  <div className="rounded-xl bg-sand px-3 py-2 text-xs" data-testid="selected-service-row" key={`${room.id}-${service.id}`}>
                     <div className="flex justify-between gap-3">
                       <span>{room.name} · {service.name} · SL {quantity} · {money(service.unitPrice)} / lượt</span>
                       <strong>{money(total)}</strong>
@@ -219,13 +219,13 @@ export function MultiRoomServicesForm({ homestayId, rooms, services, initialSele
                 ))}
               </div>
             ) : (
-              <p className="mt-2 rounded-xl bg-[#fdf9f4] px-3 py-2 text-xs text-[#75675f]">Bạn có thể bỏ qua dịch vụ bổ sung và xác nhận đặt phòng.</p>
+              <p className="mt-2 rounded-xl bg-sand px-3 py-2 text-xs text-muted">Bạn có thể bỏ qua dịch vụ bổ sung và xác nhận đặt phòng.</p>
             )}
           </div>
           <div className="flex justify-between gap-4"><span>Thuế/phụ phí 10%</span><strong data-testid="services-tax-total">{money(taxTotal)}</strong></div>
-          <div className="border-t border-[#e8e1d5] pt-4">
-            <div className="flex justify-between gap-4 text-lg"><span className="font-bold">Tổng thanh toán</span><strong className="text-[#9a4029]" data-testid="services-grand-total">{money(grandTotal)}</strong></div>
-            <p className="mt-1 text-xs text-[#75675f]">Tổng tiền tự cập nhật khi chọn hoặc bỏ chọn dịch vụ.</p>
+          <div className="border-t border-line-soft pt-4">
+            <div className="flex justify-between gap-4 text-lg"><span className="font-bold">Tổng thanh toán</span><strong className="text-brand" data-testid="services-grand-total">{money(grandTotal)}</strong></div>
+            <p className="mt-1 text-xs text-muted">Tổng tiền tự cập nhật khi chọn hoặc bỏ chọn dịch vụ.</p>
           </div>
         </div>
         <button className="btn-primary mt-6 w-full disabled:cursor-not-allowed disabled:opacity-55" disabled={!isReady || isSubmitting} onClick={goToConfirm} type="button">

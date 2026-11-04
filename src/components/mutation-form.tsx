@@ -53,10 +53,10 @@ function MutationToast({ state }: { state: MutationState }) {
 
   return (
     <div
-      className={`fixed right-4 top-4 z-50 max-w-sm rounded-2xl border px-4 py-3 text-sm font-semibold shadow-[0_18px_50px_rgba(47,41,38,0.18)] ${
+      className={`fixed right-4 top-4 z-50 max-w-sm rounded-2xl border px-4 py-3 text-sm font-semibold shadow-card ${
         success
-          ? "border-[#b8d8c5] bg-[#f4fbf6] text-[#2f5b3b]"
-          : "border-[#e4b4a8] bg-[#fff7f4] text-[#9a4029]"
+          ? "border-leaf/30 bg-leaf-soft text-leaf-strong"
+          : "border-brand/30 bg-brand-wash text-brand"
       }`}
       role={success ? "status" : "alert"}
     >

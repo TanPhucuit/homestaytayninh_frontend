@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AppTopBar, HomestayCard } from "@/components/customer-ui";
+import { AppTopBar, SiteFooter, HomestayCard } from "@/components/customer-ui";
 import { EmptyState } from "@/components/feedback-state";
 import { SearchBar } from "@/components/search-bar";
 import { getHomestays } from "@/lib/api";
@@ -28,16 +28,16 @@ export default async function HomestaysPage({ searchParams }: { searchParams: Pr
   const appliedFilters = getAppliedFilterLabels(filters);
 
   return (
-    <main className="min-h-screen text-[#1c1c19]">
+    <main id="main" className="min-h-screen text-ink">
       <AppTopBar />
       <div className="mx-auto max-w-7xl px-4 py-8 md:px-8 md:py-12">
         <header className="mb-8 grid gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
           <div>
             <p className="eyebrow">Kết quả tìm kiếm</p>
-            <h1 className="mt-2 font-heading text-4xl text-[#1c1c19] md:text-5xl">
+            <h1 className="mt-2 font-heading text-4xl text-ink md:text-5xl">
               Tìm thấy {filteredHomestays.length} homestay tại Tây Ninh
             </h1>
-            <p className="mt-3 max-w-2xl text-[#56423d]">
+            <p className="mt-3 max-w-2xl text-ink-muted">
               Lọc danh sách theo số khách, loại hình, mức giá và tiện ích. Ngày lưu trú sẽ được chọn riêng sau khi bạn chọn phòng.
             </p>
           </div>
@@ -57,18 +57,18 @@ export default async function HomestaysPage({ searchParams }: { searchParams: Pr
           </aside>
 
           <section>
-            <div className="mb-5 flex flex-col justify-between gap-3 rounded-2xl border border-[#eadfd4] bg-white/82 p-4 shadow-[0_16px_45px_rgba(154,64,41,0.06)] md:flex-row md:items-center">
+            <div className="mb-5 flex flex-col justify-between gap-3 rounded-2xl border border-line-soft bg-white/82 p-4 shadow-card md:flex-row md:items-center">
               <div className="min-w-0">
-                <p className="text-sm font-bold text-[#466550]">
+                <p className="text-sm font-bold text-leaf">
                   Trang {currentPage}/{totalPages} · hiển thị {visibleHomestays.length} lựa chọn
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {appliedFilters.length ? appliedFilters.map((item) => (
-                    <span className="rounded-full bg-[#e8f0eb] px-3 py-1 text-xs font-bold text-[#466550]" key={item.key}>{item.label}</span>
-                  )) : <span className="rounded-full bg-[#f1ede8] px-3 py-1 text-xs font-bold text-[#75675f]">Chưa áp dụng bộ lọc</span>}
+                    <span className="rounded-full bg-leaf-soft px-3 py-1 text-xs font-bold text-leaf" key={item.key}>{item.label}</span>
+                  )) : <span className="rounded-full bg-sand-deep px-3 py-1 text-xs font-bold text-muted">Chưa áp dụng bộ lọc</span>}
                 </div>
               </div>
-              <span className="rounded-full bg-[#fdf9f4] px-4 py-2 text-sm font-bold text-[#466550]">
+              <span className="rounded-full bg-sand px-4 py-2 text-sm font-bold text-leaf">
                 Sắp xếp: Gợi ý phù hợp
               </span>
             </div>
@@ -94,8 +94,8 @@ export default async function HomestaysPage({ searchParams }: { searchParams: Pr
                       <Link
                         className={`grid size-11 place-items-center rounded-xl border text-sm font-black ${
                           page === currentPage
-                            ? "border-[#9a4029] bg-[#9a4029] text-white"
-                            : "border-[#dcc0ba] bg-white text-[#466550] hover:border-[#466550]"
+                            ? "border-brand bg-brand text-white"
+                            : "border-line bg-white text-leaf hover:border-leaf"
                         }`}
                         href={homestaySearchHref(filters, page)}
                         key={page}
@@ -124,6 +124,7 @@ export default async function HomestaysPage({ searchParams }: { searchParams: Pr
           </section>
         </div>
       </div>
+      <SiteFooter />
     </main>
   );
 }

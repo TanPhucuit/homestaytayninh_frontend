@@ -68,7 +68,7 @@ export default async function OwnerPage({ searchParams }: { searchParams: Promis
       </div>
       <OwnerStats homestays={homestays} bookings={bookings} />
       <section className="mt-8">
-        <h2 className="mb-4 font-heading text-3xl text-[#9a4029]">Booking cần xử lý</h2>
+        <h2 className="mb-4 font-heading text-3xl text-brand">Booking cần xử lý</h2>
         <OwnerBookingFilters keyword={params.q} status={params.status} checkInFrom={params.checkInFrom} checkInTo={params.checkInTo} />
         {canOperateBooking ? (
           <>
@@ -76,10 +76,10 @@ export default async function OwnerPage({ searchParams }: { searchParams: Promis
             <section className="mt-8">
               <div className="mb-4 flex flex-col justify-between gap-2 md:flex-row md:items-end">
                 <div>
-                  <h2 className="font-heading text-3xl text-[#9a4029]">Lịch sử booking</h2>
-                  <p className="mt-1 text-sm text-[#75675f]">Các đơn đã hoàn thành hoặc đã hủy theo bộ lọc hiện tại.</p>
+                  <h2 className="font-heading text-3xl text-brand">Lịch sử booking</h2>
+                  <p className="mt-1 text-sm text-muted">Các đơn đã hoàn thành hoặc đã hủy theo bộ lọc hiện tại.</p>
                 </div>
-                <span className="badge bg-[#e8f0eb] text-[#466550]">{historyBookings.length} đơn</span>
+                <span className="badge bg-leaf-soft text-leaf">{historyBookings.length} đơn</span>
               </div>
               <OwnerBookingHistory bookings={historyBookings} homestays={homestays} />
             </section>

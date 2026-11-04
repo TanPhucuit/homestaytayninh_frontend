@@ -62,12 +62,12 @@ export function CheckoutInfoForm({ homestay, room, defaultCheckIn, defaultCheckO
     <form action="/checkout/services" className="grid gap-6 lg:grid-cols-[1fr_390px]" method="get" onSubmit={onSubmit}>
       <input type="hidden" name="homestayId" value={homestay.id} />
       <section className="space-y-6">
-        {error && <div className="rounded-2xl border border-[#ffdad6] bg-[#fff8f7] p-4 text-sm font-semibold text-[#93000a]">{error}</div>}
+        {error && <div className="rounded-2xl border border-danger-soft bg-brand-wash p-4 text-sm font-semibold text-danger">{error}</div>}
         <div className="card p-6 md:p-8">
           <p className="eyebrow">Bước 1</p>
-          <h2 className="mt-2 font-heading text-3xl text-[#1c1c19]">Thông tin khách hàng</h2>
+          <h2 className="mt-2 font-heading text-3xl text-ink">Thông tin khách hàng</h2>
           <div className="mt-5 grid gap-3 md:grid-cols-2">
-            <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+            <label className="grid gap-2 text-sm font-semibold text-ink-soft">
               Họ tên <span className="sr-only">bắt buộc</span>
               <input
                 className="field"
@@ -82,9 +82,9 @@ export function CheckoutInfoForm({ homestay, room, defaultCheckIn, defaultCheckO
                   clearFieldError("guestName");
                 }}
               />
-              {errors.guestName && <span className="text-xs font-bold text-[#ba1a1a]">{errors.guestName}</span>}
+              {errors.guestName && <span className="text-xs font-bold text-danger">{errors.guestName}</span>}
             </label>
-            <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+            <label className="grid gap-2 text-sm font-semibold text-ink-soft">
               Số điện thoại <span className="sr-only">bắt buộc</span>
               <input
                 className="field"
@@ -100,10 +100,10 @@ export function CheckoutInfoForm({ homestay, room, defaultCheckIn, defaultCheckO
                   clearFieldError("guestPhone");
                 }}
               />
-              {errors.guestPhone && <span className="text-xs font-bold text-[#ba1a1a]">{errors.guestPhone}</span>}
+              {errors.guestPhone && <span className="text-xs font-bold text-danger">{errors.guestPhone}</span>}
             </label>
-            <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
-              Email <span className="text-xs font-medium text-[#89726c]">(không bắt buộc)</span>
+            <label className="grid gap-2 text-sm font-semibold text-ink-soft">
+              Email <span className="text-xs font-medium text-subtle">(không bắt buộc)</span>
               <input
                 className="field"
                 name="guestEmail"
@@ -117,10 +117,10 @@ export function CheckoutInfoForm({ homestay, room, defaultCheckIn, defaultCheckO
                   clearFieldError("guestEmail");
                 }}
               />
-              {errors.guestEmail && <span className="text-xs font-bold text-[#ba1a1a]">{errors.guestEmail}</span>}
+              {errors.guestEmail && <span className="text-xs font-bold text-danger">{errors.guestEmail}</span>}
             </label>
-            <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
-              Ghi chú <span className="text-xs font-medium text-[#89726c]">(không bắt buộc)</span>
+            <label className="grid gap-2 text-sm font-semibold text-ink-soft">
+              Ghi chú <span className="text-xs font-medium text-subtle">(không bắt buộc)</span>
               <textarea className="field min-h-24" name="notes" placeholder="Ví dụ: cần chuẩn bị cũi em bé, ăn chay..." />
             </label>
           </div>
@@ -128,23 +128,23 @@ export function CheckoutInfoForm({ homestay, room, defaultCheckIn, defaultCheckO
 
         <div className="card p-6 md:p-8">
           <p className="eyebrow">Lưu trú</p>
-          <h2 className="mt-2 font-heading text-3xl text-[#1c1c19]">Phòng và ngày ở</h2>
+          <h2 className="mt-2 font-heading text-3xl text-ink">Phòng và ngày ở</h2>
           <div className="mt-5 grid gap-3 md:grid-cols-2">
-            <label className="grid gap-2 text-sm font-semibold text-[#3f3530] md:col-span-2">
+            <label className="grid gap-2 text-sm font-semibold text-ink-soft md:col-span-2">
               Phòng
               <select className="field" name="roomId" defaultValue={room.id} required>
                 {homestay.rooms.map((item) => <option key={item.id} value={item.id}>{item.name} · {money(item.pricePerNight)} · tối đa {item.capacity} khách</option>)}
               </select>
             </label>
-            <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+            <label className="grid gap-2 text-sm font-semibold text-ink-soft">
               Nhận phòng
               <input className="field" name="checkIn" type="date" defaultValue={defaultCheckIn} required />
             </label>
-            <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+            <label className="grid gap-2 text-sm font-semibold text-ink-soft">
               Trả phòng
               <input className="field" name="checkOut" type="date" defaultValue={defaultCheckOut} required />
             </label>
-            <label className="grid gap-2 text-sm font-semibold text-[#3f3530]">
+            <label className="grid gap-2 text-sm font-semibold text-ink-soft">
               Số khách
               <input className="field" name="guestCount" type="number" min="1" max={room.capacity} defaultValue={defaultGuestCount} required />
             </label>
@@ -153,34 +153,34 @@ export function CheckoutInfoForm({ homestay, room, defaultCheckIn, defaultCheckO
 
         <div className="card p-6 md:p-8">
           <p className="eyebrow">Thanh toán</p>
-          <h2 className="mt-2 font-heading text-3xl text-[#1c1c19]">Phương thức thanh toán</h2>
-          <label className="mt-5 flex items-start gap-3 rounded-2xl border border-[#dcc0ba] bg-white p-4">
-            <input className="mt-1 h-5 w-5 accent-[#9a4029]" name="paymentMethod" type="radio" defaultChecked value="APIPAY" />
+          <h2 className="mt-2 font-heading text-3xl text-ink">Phương thức thanh toán</h2>
+          <label className="mt-5 flex items-start gap-3 rounded-2xl border border-line bg-white p-4">
+            <input className="mt-1 h-5 w-5 accent-brand" name="paymentMethod" type="radio" defaultChecked value="APIPAY" />
             <span>
-              <span className="block font-bold text-[#3f3530]">Thanh toán qua ApiPay</span>
-              <span className="text-sm text-[#75675f]">Sau khi xác nhận, hệ thống sẽ chuyển bạn sang cổng thanh toán bảo mật của ApiPay.</span>
+              <span className="block font-bold text-ink-soft">Thanh toán qua ApiPay</span>
+              <span className="text-sm text-muted">Sau khi xác nhận, hệ thống sẽ chuyển bạn sang cổng thanh toán bảo mật của ApiPay.</span>
             </span>
           </label>
         </div>
       </section>
 
-      <aside className="h-fit rounded-2xl bg-white p-6 shadow-[0_24px_80px_rgba(123,41,20,0.1)] lg:sticky lg:top-28">
-        <div className="overflow-hidden rounded-2xl bg-[#efe7dc]">
+      <aside className="h-fit rounded-2xl bg-white p-6 shadow-card lg:sticky lg:top-28">
+        <div className="overflow-hidden rounded-2xl bg-sand-deep">
           <div className="image-shell h-48 bg-cover bg-center" style={{ backgroundImage: `url(${homestay.imageUrl})` }} />
-          <div className="bg-[#466550] p-4 text-white">
+          <div className="bg-leaf p-4 text-white">
             <h3 className="font-heading text-2xl">{homestay.name}</h3>
             <p className="text-sm text-white/80">{room.name}</p>
           </div>
         </div>
         <div className="mt-5 space-y-3 text-sm">
-          <div className="flex justify-between gap-4"><span className="text-[#75675f]">Phòng</span><strong>{money(room.pricePerNight)} / đêm</strong></div>
-          <div className="flex justify-between gap-4"><span className="text-[#75675f]">Dịch vụ</span><span>Chọn ở bước sau</span></div>
-          <div className="flex justify-between gap-4"><span className="text-[#75675f]">Thuế/phí</span><span>Hiển thị ở bước xác nhận</span></div>
+          <div className="flex justify-between gap-4"><span className="text-muted">Phòng</span><strong>{money(room.pricePerNight)} / đêm</strong></div>
+          <div className="flex justify-between gap-4"><span className="text-muted">Dịch vụ</span><span>Chọn ở bước sau</span></div>
+          <div className="flex justify-between gap-4"><span className="text-muted">Thuế/phí</span><span>Hiển thị ở bước xác nhận</span></div>
         </div>
         <ActionButton className="btn-primary mt-6 w-full" pendingLabel="Đang chuyển sang dịch vụ...">
           Tiếp tục chọn dịch vụ
         </ActionButton>
-        <p className="mt-4 text-center text-xs text-[#75675f]">Thông tin đặt phòng được giữ xuyên suốt các bước.</p>
+        <p className="mt-4 text-center text-xs text-muted">Thông tin đặt phòng được giữ xuyên suốt các bước.</p>
       </aside>
     </form>
   );
