@@ -1,6 +1,6 @@
 # Homestay Tay Ninh Frontend
 
-Next.js frontend for Homestay Tay Ninh. Deploy this repository to Vercel.
+Next.js frontend for Homestay Tay Ninh. Deploy this repository to Render as a Web Service (`render.yaml`, see `DEPLOYMENT.md`).
 
 Backend repository: `https://github.com/TanPhucuit/homestaytayninh_backend.git`
 
@@ -11,24 +11,25 @@ npm install
 npm run build
 ```
 
-Web: `https://homestaytayninh-frontend.vercel.app`
+Web: `https://tayninhhomestay.id.vn` (Render service `homestaytayninh-frontend`)
 
 Required env:
 
 - `NEXT_PUBLIC_API_URL`: backend origin, without `/api`
 - `GOOGLE_CLIENT_ID`: Google OAuth web client id
 - `GOOGLE_CLIENT_SECRET`: Google OAuth web client secret, server-side only in Next route handlers
-- `GOOGLE_REDIRECT_URI`: exact callback URI registered in Google Cloud, `https://homestaytayninh-frontend.vercel.app/auth/callback`
+- `GOOGLE_REDIRECT_URI`: exact callback URI registered in Google Cloud, `https://tayninhhomestay.id.vn/auth/callback`
 
-## Deploy on Vercel
+## Deploy on Render
 
-- Framework: Next.js
-- Build command: `npm run build`
-- Install command: `npm install`
+- Blueprint: `render.yaml`
+- Build command: `npm ci && npm run build`
+- Start command: `npm run start`
+- Health check: `/healthz`
 - Callback URL to allow in Google Cloud OAuth client:
 
 ```text
-https://homestaytayninh-frontend.vercel.app/auth/callback
+https://tayninhhomestay.id.vn/auth/callback
 ```
 
 ## Auth

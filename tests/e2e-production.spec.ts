@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-const baseURL = process.env.E2E_BASE_URL ?? "https://homestaytayninh-frontend.vercel.app";
+const baseURL = process.env.E2E_BASE_URL ?? "https://tayninhhomestay.id.vn";
 test.setTimeout(60000);
 
 test.describe("Homestay Tây Ninh production smoke", () => {

@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: homestaytayninh-frontend
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: NODE_ENV
+        value: production
+      # Backend origin without /api. Read at build time, so redeploy after changing it.
+      - key: NEXT_PUBLIC_API_URL
+        value: https://homestaytayninh-backend.onrender.com
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_REDIRECT_URI
+        value: https://tayninhhomestay.id.vn/auth/callback

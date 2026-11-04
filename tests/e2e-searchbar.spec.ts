@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-const baseURL = process.env.E2E_BASE_URL ?? "https://homestaytayninh-frontend.vercel.app";
+const baseURL = process.env.E2E_BASE_URL ?? "https://tayninhhomestay.id.vn";
 
 test.describe("SearchBar filters", () => {
   test("home search redirects with repeated query params", async ({ page }) => {

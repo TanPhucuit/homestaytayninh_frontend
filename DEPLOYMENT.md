@@ -1,36 +1,36 @@
 # Frontend Deployment Guide
 
-This repository is frontend-only and should be deployed to Vercel.
+The frontend is a Next.js server (server components, route handlers, Google OAuth callback), so it runs as a **Render Web Service** next to the backend. `render.yaml` in this repository is the Blueprint.
 
-Recommended Vercel settings:
+## Create the service
 
-- Root Directory: repository root
-- Framework Preset: Next.js
-- Build Command: `npm run build`
-- Install Command: `npm install`
+1. Render Dashboard → **New → Blueprint** → select `TanPhucuit/homestaytayninh_frontend`.
+2. Render reads `render.yaml` and creates `homestaytayninh-frontend`. Fill the secret variables it asks for:
+   - `GOOGLE_CLIENT_ID`
+   - `GOOGLE_CLIENT_SECRET`
+3. Wait for the first deploy, then open `https://homestaytayninh-frontend.onrender.com/healthz`.
 
-Required env:
+Build: `npm ci && npm run build` · Start: `npm run start` (Next.js listens on Render's `PORT`) · Health check: `/healthz`.
 
-- `NEXT_PUBLIC_API_URL`: deployed backend origin, without `/api`
-- `GOOGLE_CLIENT_ID`: Google OAuth web client id
-- `GOOGLE_CLIENT_SECRET`: Google OAuth web client secret
-- `GOOGLE_REDIRECT_URI`: exact callback URI registered in Google Cloud
+## Environment
 
-Example:
+| Variable | Value |
+|---|---|
+| `NEXT_PUBLIC_API_URL` | `https://homestaytayninh-backend.onrender.com` (backend origin, without `/api`; inlined at build time, redeploy after changing) |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Google OAuth web client |
+| `GOOGLE_REDIRECT_URI` | `https://tayninhhomestay.id.vn/auth/callback` |
 
-```bash
-NEXT_PUBLIC_API_URL="https://homestaytayninh-backend.onrender.com"
-GOOGLE_CLIENT_ID="<google-oauth-client-id>"
-GOOGLE_CLIENT_SECRET="<google-oauth-client-secret>"
-GOOGLE_REDIRECT_URI="https://homestaytayninh-frontend.vercel.app/auth/callback"
-```
+## Custom domain
 
-Allow this callback URL in Google Cloud OAuth:
+Service → **Settings → Custom Domains**: add `tayninhhomestay.id.vn` and `www.tayninhhomestay.id.vn`, then create the DNS records Render shows (A record for the apex, CNAME `www` → `homestaytayninh-frontend.onrender.com`).
+
+Allow these callback URLs in the Google Cloud OAuth client:
 
 ```text
-https://homestaytayninh-frontend.vercel.app/auth/callback
+https://tayninhhomestay.id.vn/auth/callback
+https://homestaytayninh-frontend.onrender.com/auth/callback
 ```
 
 The web app stores only the backend-issued `htn_session` HTTP-only cookie and forwards it as a bearer token to NestJS server-side API calls.
 
-Backend lives in `https://github.com/TanPhucuit/homestaytayninh_backend.git` and should be deployed to Render or another Node host with Redis.
+Backend lives in `https://github.com/TanPhucuit/homestaytayninh_backend.git`.
