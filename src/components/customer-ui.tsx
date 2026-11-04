@@ -5,7 +5,8 @@ import { money } from "@/lib/api";
 import { canViewPaymentStatus } from "@/lib/booking-rules";
 import { getCurrentUser, homeForRole, navForRole } from "@/lib/rbac";
 import { UserRole } from "@/lib/types";
-import { CalendarDays, Check, Leaf, LogOut, MapPin, Menu, ShieldAlert, ShieldCheck, Star, Users, X } from "lucide-react";
+import { type LucideIcon, ArrowRight, ArrowUpRight, CalendarDays, Check, Leaf, LogOut, MapPin, Menu, ShieldAlert, ShieldCheck, Star, Users, X } from "lucide-react";
+import { HeaderFrame } from "./motion";
 
 const statusMeta: Record<BookingStatus, { label: string; className: string; group: string }> = {
   PENDING: { label: "Chờ xác nhận", group: "Sắp tới", className: "bg-warn-soft text-warn" },
@@ -31,29 +32,37 @@ const roleLabel: Record<UserRole, string> = {
   ADMIN: "Quản trị viên"
 };
 
-export async function AppTopBar() {
+export async function AppTopBar({ overlay = false }: { overlay?: boolean } = {}) {
   const user = await getCurrentUser();
   const signedIn = user.authenticated && !user.authorizationError;
   const navItems = signedIn
     ? navForRole(user.role)
     : [{ label: "Trang chủ", href: "/" }, { label: "Khám phá", href: "/homestays" }, { label: "Cẩm nang", href: "/articles" }];
+  // Over a hero image the header text is white until the frame turns solid on scroll.
+  const tone = "text-ink group-data-[solid=false]/header:text-white";
 
   return (
-    <header className="sticky top-0 z-30 border-b border-line-soft bg-sand/90 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 md:h-20 md:px-8">
-        <Link href="/" className="group flex min-w-0 items-center gap-2.5" aria-label="Terra & Leaf, về trang chủ">
-          <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-brand text-white shadow-cta transition group-hover:bg-brand-strong" aria-hidden="true">
-            <Leaf className="size-5" strokeWidth={2} />
+    <HeaderFrame overlay={overlay}>
+      <div className="container-page flex h-16 items-center justify-between gap-3 md:h-20">
+        <Link href="/" className={`group flex min-w-0 items-center gap-3 ${tone}`} aria-label="Terra & Leaf, về trang chủ">
+          <span className="grid size-10 shrink-0 place-items-center rounded-full bg-brand text-white shadow-cta transition duration-500 group-hover:rotate-[-12deg]" aria-hidden="true">
+            <Leaf className="size-5" strokeWidth={1.8} />
           </span>
-          <span className="min-w-0">
-            <span className="block font-heading text-xl font-bold leading-none text-brand-strong md:text-2xl">Terra & Leaf</span>
-            <span className="hidden text-[11px] font-semibold uppercase tracking-[0.16em] text-leaf sm:block">Homestay Tây Ninh</span>
+          <span className="min-w-0 leading-none">
+            <span className="block whitespace-nowrap font-heading text-lg font-semibold sm:text-xl md:text-[1.4rem]">Terra <span className="italic text-gold">&amp;</span> Leaf</span>
+            <span className="mt-1 hidden text-[10px] font-semibold uppercase tracking-[0.28em] opacity-70 sm:block">Homestay Tây Ninh</span>
           </span>
         </Link>
 
-        <nav aria-label="Điều hướng chính" className="hidden items-center gap-1 text-sm font-semibold lg:flex">
+        <nav aria-label="Điều hướng chính" className="hidden items-center gap-1 lg:flex">
           {navItems.map((item) => (
-            <Link className="rounded-lg px-3 py-2 text-ink-muted transition hover:bg-sand-deep hover:text-brand-strong" href={item.href} key={item.href}>{item.label}</Link>
+            <Link
+              className={`relative rounded-full px-4 py-2 text-sm font-medium opacity-85 transition hover:opacity-100 after:absolute after:inset-x-4 after:bottom-1 after:h-px after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-300 hover:after:scale-x-100 ${tone}`}
+              href={item.href}
+              key={item.href}
+            >
+              {item.label}
+            </Link>
           ))}
         </nav>
 
@@ -65,35 +74,35 @@ export async function AppTopBar() {
                   <ShieldAlert className="size-4" aria-hidden="true" /> Đã đăng nhập · Lỗi quyền
                 </span>
               ) : (
-                <Link className="hidden items-center gap-2 rounded-full border border-line-soft bg-white py-1.5 pl-1.5 pr-4 text-sm transition hover:border-line md:flex" href={homeForRole(user.role)}>
-                  <span className="grid size-8 place-items-center rounded-full bg-leaf-soft text-xs font-bold text-leaf-strong" aria-hidden="true">{initials(user.name)}</span>
+                <Link className="hidden items-center gap-2.5 rounded-full border border-line-soft bg-white/90 py-1 pl-1 pr-4 text-sm shadow-sm transition hover:border-line md:flex" href={homeForRole(user.role)}>
+                  <span className="grid size-9 place-items-center rounded-full bg-forest text-xs font-semibold text-gold" aria-hidden="true">{initials(user.name)}</span>
                   <span className="leading-tight">
                     <span className="block max-w-36 truncate font-semibold text-ink">{user.name}</span>
                     <span className="block text-xs text-muted">{roleLabel[user.role]}</span>
                   </span>
                 </Link>
               )}
-              <a className="btn-ghost hidden px-3 sm:inline-flex" href="/auth/logout">
+              <a className={`hidden items-center gap-2 rounded-full px-3 py-2 text-sm font-medium opacity-80 transition hover:opacity-100 sm:inline-flex ${tone}`} href="/auth/logout">
                 <LogOut className="size-4" aria-hidden="true" /> Đăng xuất
               </a>
             </>
           ) : (
             <>
-              <Link className="btn-secondary hidden md:inline-flex" href="/homestays">Đặt phòng ngay</Link>
-              <Link className="btn-primary px-4" href="/login">Đăng nhập</Link>
+              <Link className={`hidden rounded-full px-4 py-2 text-sm font-medium transition hover:opacity-80 md:inline-flex ${tone}`} href="/homestays">Đặt phòng ngay</Link>
+              <Link className="btn-primary min-h-11 px-5 text-sm" href="/login">Đăng nhập</Link>
             </>
           )}
           <details className="group relative lg:hidden">
-            <summary className="grid size-11 list-none place-items-center rounded-xl border border-line-soft bg-white text-ink-muted [&::-webkit-details-marker]:hidden" aria-label="Mở menu">
+            <summary className="grid size-11 list-none place-items-center rounded-full border border-line-soft bg-white/90 text-ink shadow-sm [&::-webkit-details-marker]:hidden" aria-label="Mở menu">
               <Menu className="size-5 group-open:hidden" aria-hidden="true" />
               <X className="hidden size-5 group-open:block" aria-hidden="true" />
             </summary>
-            <nav aria-label="Menu di động" className="animate-fade-up absolute right-0 mt-2 grid w-64 gap-1 rounded-2xl border border-line-soft bg-white p-2 shadow-lift">
+            <nav aria-label="Menu di động" className="animate-fade-up absolute right-0 mt-3 grid w-72 gap-1 rounded-3xl border border-line-soft bg-cream p-3 shadow-lift">
               {navItems.map((item) => (
-                <Link className="rounded-xl px-3 py-3 text-sm font-semibold text-ink-muted hover:bg-sand hover:text-brand-strong" href={item.href} key={item.href}>{item.label}</Link>
+                <Link className="rounded-2xl px-4 py-3 text-sm font-medium text-ink-muted transition hover:bg-sand-deep hover:text-ink" href={item.href} key={item.href}>{item.label}</Link>
               ))}
               {user.authenticated && (
-                <a className="flex items-center gap-2 rounded-xl px-3 py-3 text-sm font-semibold text-danger hover:bg-danger-soft" href="/auth/logout">
+                <a className="flex items-center gap-2 rounded-2xl px-4 py-3 text-sm font-medium text-danger hover:bg-danger-soft" href="/auth/logout">
                   <LogOut className="size-4" aria-hidden="true" /> Đăng xuất
                 </a>
               )}
@@ -101,7 +110,7 @@ export async function AppTopBar() {
           </details>
         </div>
       </div>
-    </header>
+    </HeaderFrame>
   );
 }
 
@@ -114,25 +123,30 @@ function initials(name: string) {
 
 export function SiteFooter() {
   return (
-    <footer className="mt-16 border-t border-line-soft bg-white">
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 md:grid-cols-[1.4fr_1fr_1fr] md:px-8">
+    <footer className="grain relative mt-24 overflow-hidden bg-forest text-white/80">
+      <Leaf className="pointer-events-none absolute -bottom-16 -right-10 size-80 rotate-[-18deg] text-white/[0.04]" aria-hidden="true" />
+      <div className="container-page relative grid gap-12 py-16 md:grid-cols-[1.6fr_1fr_1fr] md:py-20">
         <div>
-          <p className="font-heading text-xl font-bold text-brand-strong">Terra & Leaf</p>
-          <p className="mt-2 max-w-sm text-sm leading-6 text-muted">Homestay, lều glamping và nhà nguyên căn tại Tây Ninh. Đặt phòng trực tuyến, thanh toán VietQR qua ApiPay.</p>
+          <p className="font-heading text-3xl text-white">Terra <span className="italic text-gold">&amp;</span> Leaf</p>
+          <p className="mt-4 max-w-sm text-sm leading-7 text-white/65">Homestay, lều glamping và nhà nguyên căn giữa thiên nhiên Tây Ninh. Đặt phòng trực tuyến, thanh toán VietQR qua ApiPay.</p>
+          <Link className="btn-primary mt-7" href="/homestays">Tìm chỗ nghỉ <ArrowRight className="size-4" aria-hidden="true" /></Link>
         </div>
-        <nav aria-label="Liên kết khám phá" className="grid content-start gap-2 text-sm">
-          <p className="font-semibold text-ink">Khám phá</p>
-          <Link className="text-muted hover:text-brand" href="/homestays">Tìm homestay</Link>
-          <Link className="text-muted hover:text-brand" href="/articles">Cẩm nang Tây Ninh</Link>
-          <Link className="text-muted hover:text-brand" href="/bookings">Chuyến đi của tôi</Link>
+        <nav aria-label="Liên kết khám phá" className="grid content-start gap-3 text-sm">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">Khám phá</p>
+          <Link className="transition hover:text-white" href="/homestays">Tìm homestay</Link>
+          <Link className="transition hover:text-white" href="/articles">Cẩm nang Tây Ninh</Link>
+          <Link className="transition hover:text-white" href="/bookings">Chuyến đi của tôi</Link>
         </nav>
-        <div className="grid content-start gap-2 text-sm text-muted">
-          <p className="font-semibold text-ink">Hỗ trợ</p>
-          <p className="flex items-center gap-2"><MapPin className="size-4 text-leaf" aria-hidden="true" /> Tây Ninh, Việt Nam</p>
-          <p className="flex items-center gap-2"><ShieldCheck className="size-4 text-leaf" aria-hidden="true" /> Thanh toán bảo mật qua ApiPay</p>
+        <div className="grid content-start gap-3 text-sm">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">Hỗ trợ</p>
+          <p className="flex items-center gap-2"><MapPin className="size-4 text-gold" aria-hidden="true" /> Tây Ninh, Việt Nam</p>
+          <p className="flex items-center gap-2"><ShieldCheck className="size-4 text-gold" aria-hidden="true" /> Thanh toán bảo mật qua ApiPay</p>
         </div>
       </div>
-      <p className="border-t border-line-soft py-4 text-center text-xs text-subtle">© {new Date().getFullYear()} Terra & Leaf · tayninhhomestay.id.vn</p>
+      <div className="container-page flex flex-col justify-between gap-2 border-t border-white/10 py-6 text-xs text-white/50 sm:flex-row">
+        <p>© {new Date().getFullYear()} Terra &amp; Leaf</p>
+        <p>tayninhhomestay.id.vn</p>
+      </div>
     </footer>
   );
 }
@@ -142,17 +156,26 @@ export function PageShell({ eyebrow, title, description, children }: { eyebrow: 
     <>
       <AppTopBar />
       <main id="main" className="min-h-[70vh] text-ink">
-        <div className="mx-auto max-w-7xl px-4 py-8 md:px-8 md:py-12">
-          <header className="animate-fade-up mb-8 border-b border-line-soft pb-6 md:mb-10 md:pb-8">
-            <p className="eyebrow">{eyebrow}</p>
-            <h1 className="mt-2 font-heading text-3xl font-semibold leading-tight text-ink md:text-5xl">{title}</h1>
-            {description && <p className="mt-3 max-w-3xl text-base leading-7 text-muted">{description}</p>}
-          </header>
-          {children}
-        </div>
+        <PageBanner eyebrow={eyebrow} title={title} description={description} />
+        <div className="container-page py-10 md:py-14">{children}</div>
       </main>
       <SiteFooter />
     </>
+  );
+}
+
+export function PageBanner({ eyebrow, title, description, children }: { eyebrow: string; title: ReactNode; description?: string; children?: ReactNode }) {
+  return (
+    <section className="relative overflow-hidden border-b border-line-soft bg-cream">
+      <div className="pointer-events-none absolute -right-24 -top-24 size-[28rem] rounded-full bg-gold-soft blur-3xl" aria-hidden="true" />
+      <div className="pointer-events-none absolute -left-32 bottom-0 size-80 rounded-full bg-leaf-soft blur-3xl" aria-hidden="true" />
+      <div className="container-page relative py-12 md:py-16">
+        <p className="eyebrow animate-fade-up">{eyebrow}</p>
+        <h1 className="display animate-fade-up mt-4 max-w-4xl text-4xl text-ink [animation-delay:80ms] md:text-6xl">{title}</h1>
+        {description && <p className="animate-fade-up mt-4 max-w-2xl text-base leading-7 text-muted [animation-delay:160ms] md:text-lg">{description}</p>}
+        {children && <div className="animate-fade-up mt-6 [animation-delay:220ms]">{children}</div>}
+      </div>
+    </section>
   );
 }
 
@@ -164,21 +187,22 @@ export function PortalHero({ eyebrow, title, description, meta, links }: {
   links?: Array<{ label: string; href: string; active?: boolean }>;
 }) {
   return (
-    <header className="animate-fade-up relative overflow-hidden rounded-2xl bg-leaf-strong p-6 text-white shadow-lift md:p-8">
-      <Leaf className="pointer-events-none absolute -right-6 -top-6 size-40 rotate-12 text-white/5" aria-hidden="true" />
-      <div className="relative flex flex-col justify-between gap-5 md:flex-row md:items-end">
+    <header className="grain animate-fade-up relative overflow-hidden rounded-[28px] bg-forest p-7 text-white shadow-lift md:p-10">
+      <div className="pointer-events-none absolute -right-20 -top-20 size-72 rounded-full bg-brand/30 blur-3xl" aria-hidden="true" />
+      <Leaf className="pointer-events-none absolute -bottom-10 right-6 size-48 rotate-12 text-white/[0.05]" aria-hidden="true" />
+      <div className="relative flex flex-col justify-between gap-6 md:flex-row md:items-end">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/70">{eyebrow}</p>
-          <h1 className="mt-2 font-heading text-3xl font-semibold md:text-4xl">{title}</h1>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-white/80">{description}</p>
-          {meta && <p className="mt-3 inline-flex rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white/85">{meta}</p>}
+          <p className="eyebrow eyebrow-light">{eyebrow}</p>
+          <h1 className="display mt-3 text-3xl md:text-5xl">{title}</h1>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-white/70">{description}</p>
+          {meta && <p className="mt-4 inline-flex rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-white/80">{meta}</p>}
         </div>
         {links && links.length > 0 && (
           <nav aria-label="Điều hướng khu vực" className="flex flex-wrap gap-2">
             {links.map((link) => (
               <Link
                 aria-current={link.active ? "page" : undefined}
-                className={`inline-flex min-h-11 items-center rounded-xl px-4 text-sm font-semibold transition ${link.active ? "bg-white text-leaf-strong" : "bg-white/10 text-white hover:bg-white/20"}`}
+                className={`inline-flex min-h-11 items-center rounded-full px-5 text-sm font-medium transition ${link.active ? "bg-white text-forest" : "border border-white/20 bg-white/5 text-white hover:bg-white hover:text-forest"}`}
                 href={link.href}
                 key={link.href}
               >
@@ -189,6 +213,18 @@ export function PortalHero({ eyebrow, title, description, meta, links }: {
         )}
       </div>
     </header>
+  );
+}
+
+export function StatTile({ label, value, icon: Icon, highlight = false }: { label: string; value: ReactNode; icon: LucideIcon; highlight?: boolean }) {
+  return (
+    <div className={`group relative overflow-hidden rounded-[24px] border p-6 transition duration-500 hover:-translate-y-1 hover:shadow-lift ${highlight ? "border-transparent bg-forest text-white" : "border-line-soft bg-white shadow-card"}`}>
+      <span className={`grid size-11 place-items-center rounded-2xl transition duration-500 group-hover:scale-110 ${highlight ? "bg-gold text-forest" : "bg-leaf-soft text-leaf-strong"}`} aria-hidden="true">
+        <Icon className="size-5" />
+      </span>
+      <p className={`mt-5 text-sm ${highlight ? "text-white/70" : "text-muted"}`}>{label}</p>
+      <p className="mt-1 font-heading text-3xl md:text-4xl">{value}</p>
+    </div>
   );
 }
 
@@ -229,57 +265,51 @@ export function PaymentBadge({ status }: { status: PaymentStatus }) {
 export function HomestayCard({ homestay, href }: { homestay: Homestay; href?: string }) {
   const visibleAmenities = homestay.amenities.slice(0, 3);
   const extraAmenityCount = Math.max(0, homestay.amenities.length - visibleAmenities.length);
+  const target = href ?? `/homestays/${homestay.id}`;
 
   return (
-    <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-line-soft bg-white shadow-card transition duration-300 ease-out hover:-translate-y-1 hover:border-line hover:shadow-lift">
-      <div className="image-shell relative aspect-[4/3]">
+    <article className="hover-zoom group relative flex flex-col">
+      <div className="image-shell relative aspect-[4/5] rounded-[26px] shadow-card transition duration-500 group-hover:shadow-lift sm:aspect-[5/6]">
         {/* eslint-disable-next-line @next/next/no-img-element -- remote images from owners, unknown hosts */}
         <img
           alt={`Ảnh ${homestay.name}`}
-          className="absolute inset-0 size-full object-cover transition duration-700 ease-out group-hover:scale-[1.04]"
+          className="absolute inset-0 size-full object-cover"
           decoding="async"
           loading="lazy"
           src={homestay.imageUrl}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink/40 via-transparent to-transparent" aria-hidden="true" />
-        <span className="absolute left-3 top-3 rounded-full bg-white/95 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.1em] text-leaf-strong shadow-sm">{homestay.type}</span>
-        <span className="absolute bottom-3 left-3 inline-flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-xs font-bold text-ink shadow-sm">
-          <Star className="size-3.5 fill-amber-400 text-amber-500" aria-hidden="true" />
-          {homestay.rating}
-          <span className="sr-only">điểm đánh giá</span>
-        </span>
-      </div>
-
-      <div className="flex flex-1 flex-col gap-4 p-4 sm:p-5">
-        <div className="space-y-1">
-          <h2 className="line-clamp-1 font-heading text-[1.3rem] font-semibold leading-tight text-ink">
-            <Link className="after:absolute after:inset-0" href={href ?? `/homestays/${homestay.id}`}>{homestay.name}</Link>
+        <div className="absolute inset-0 bg-gradient-to-t from-forest/85 via-forest/10 to-transparent" aria-hidden="true" />
+        <div className="absolute inset-x-4 top-4 flex items-start justify-between gap-2">
+          <span className="rounded-full bg-forest/60 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-white backdrop-blur-md">{homestay.type}</span>
+          <span className="inline-flex items-center gap-1 rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-ink shadow-sm">
+            <Star className="size-3.5 fill-gold text-gold" aria-hidden="true" />
+            {homestay.rating}
+          </span>
+        </div>
+        <div className="absolute inset-x-5 bottom-5 text-white">
+          <p className="flex items-center gap-1.5 text-xs font-medium text-white/80"><MapPin className="size-3.5" aria-hidden="true" />{homestay.location}</p>
+          <h2 className="mt-1.5 line-clamp-2 font-heading text-2xl font-medium leading-tight">
+            <Link className="after:absolute after:inset-0 after:z-10 after:rounded-[26px]" href={target}>{homestay.name}</Link>
           </h2>
-          <p className="flex items-center gap-1 text-sm text-muted"><MapPin className="size-3.5 shrink-0 text-leaf" aria-hidden="true" /><span className="line-clamp-1">{homestay.location}</span></p>
-        </div>
-
-        <p className="line-clamp-2 min-h-12 text-sm leading-6 text-ink-muted">{homestay.description}</p>
-
-        <div className="flex flex-wrap gap-1.5">
-          {visibleAmenities.map((amenity) => (
-            <span className="rounded-full bg-sand-deep px-2.5 py-1 text-[11px] font-bold text-ink-muted" key={amenity}>{amenity}</span>
-          ))}
-          {extraAmenityCount > 0 && (
-            <span className="rounded-full bg-leaf-soft px-2.5 py-1 text-[11px] font-bold text-leaf">+{extraAmenityCount}</span>
-          )}
-        </div>
-
-        <div className="mt-auto flex items-end justify-between gap-4 border-t border-line-soft pt-4">
-          <div className="min-w-0">
-            <p className="text-xs font-semibold text-muted">Giá từ</p>
-            <p className="mt-1 whitespace-nowrap">
-              <span className="text-xl font-bold leading-none text-brand">{money(homestay.priceFrom)}</span>
-              <span className="ml-1 text-xs font-semibold text-subtle">/đêm</span>
+          <div className="mt-4 flex items-end justify-between gap-3">
+            <p>
+              <span className="block text-[11px] uppercase tracking-[0.16em] text-white/65">Giá từ</span>
+              <span className="text-lg font-semibold">{money(homestay.priceFrom)}</span>
+              <span className="text-xs text-white/70"> /đêm</span>
             </p>
-            <p className="mt-1 flex items-center gap-1 text-xs text-muted"><Users className="size-3.5" aria-hidden="true" /> Tối đa {homestay.capacity} khách</p>
+            <Link className="relative z-20 inline-flex min-h-11 items-center gap-1.5 rounded-full bg-white pl-4 pr-1.5 text-sm font-semibold text-forest transition duration-500 group-hover:bg-gold" href={target}>
+              Chi tiết
+              <span className="grid size-8 place-items-center rounded-full bg-forest text-white transition duration-500 group-hover:rotate-45" aria-hidden="true"><ArrowUpRight className="size-4" /></span>
+            </Link>
           </div>
-          <Link className="btn-primary relative z-10 min-h-10 px-4 py-2 text-sm" href={href ?? `/homestays/${homestay.id}`}>Chi tiết</Link>
         </div>
+      </div>
+      <div className="mt-3 flex flex-wrap items-center gap-1.5 px-1">
+        {visibleAmenities.map((amenity) => (
+          <span className="rounded-full border border-line-soft bg-white px-2.5 py-1 text-[11px] font-medium text-ink-muted" key={amenity}>{amenity}</span>
+        ))}
+        {extraAmenityCount > 0 && <span className="rounded-full bg-leaf-soft px-2.5 py-1 text-[11px] font-semibold text-leaf-strong">+{extraAmenityCount}</span>}
+        <span className="ml-auto inline-flex items-center gap-1 text-xs text-muted"><Users className="size-3.5" aria-hidden="true" />{homestay.capacity} khách</span>
       </div>
     </article>
   );
@@ -331,7 +361,7 @@ export function BookingTotals({ booking }: { booking: Booking }) {
 
   return (
     <section className="card p-6">
-      <h2 className="font-heading text-2xl text-brand-strong">Tóm tắt đơn hàng</h2>
+      <h2 className="font-heading text-2xl text-ink">Tóm tắt đơn hàng</h2>
       <div className="mt-4 space-y-3">
         {rows.map(([label, value], index) => (
           <div className={`flex justify-between gap-4 ${index === rows.length - 1 ? "border-t border-line pt-3 text-lg font-bold text-leaf" : "text-sm text-ink-muted"}`} key={label}>
@@ -347,7 +377,7 @@ export function BookingTotals({ booking }: { booking: Booking }) {
 export function ServicesDisplay({ includedServices, addOnServices }: { includedServices: Service[]; addOnServices: Booking["services"] }) {
   return (
     <section className="card p-6">
-      <h2 className="font-heading text-2xl text-brand-strong">Dịch vụ trong booking</h2>
+      <h2 className="font-heading text-2xl text-ink">Dịch vụ trong booking</h2>
       <div className="mt-5 grid gap-5 lg:grid-cols-2">
         <div>
           <h3 className="text-lg font-bold text-leaf">Dịch vụ đã bao gồm</h3>

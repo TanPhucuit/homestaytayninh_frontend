@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { AppTopBar, SiteFooter, HomestayCard } from "@/components/customer-ui";
+import { ArrowDownWideNarrow, ChevronLeft, ChevronRight, RotateCcw } from "lucide-react";
+import { AppTopBar, HomestayCard, PageBanner, SiteFooter } from "@/components/customer-ui";
 import { EmptyState } from "@/components/feedback-state";
 import { SearchBar } from "@/components/search-bar";
 import { getHomestays } from "@/lib/api";
@@ -28,103 +29,101 @@ export default async function HomestaysPage({ searchParams }: { searchParams: Pr
   const appliedFilters = getAppliedFilterLabels(filters);
 
   return (
-    <main id="main" className="min-h-screen text-ink">
+    <>
       <AppTopBar />
-      <div className="mx-auto max-w-7xl px-4 py-8 md:px-8 md:py-12">
-        <header className="mb-8 grid gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
-          <div>
-            <p className="eyebrow">Kết quả tìm kiếm</p>
-            <h1 className="mt-2 font-heading text-4xl text-ink md:text-5xl">
-              Tìm thấy {filteredHomestays.length} homestay tại Tây Ninh
-            </h1>
-            <p className="mt-3 max-w-2xl text-ink-muted">
-              Lọc danh sách theo số khách, loại hình, mức giá và tiện ích. Ngày lưu trú sẽ được chọn riêng sau khi bạn chọn phòng.
-            </p>
-          </div>
+      <main id="main" className="min-h-screen text-ink">
+        <PageBanner
+          eyebrow="Kết quả tìm kiếm"
+          title={<>Tìm thấy <span className="italic text-brand">{filteredHomestays.length}</span> homestay tại Tây Ninh</>}
+          description="Lọc theo số khách, loại hình, mức giá và tiện ích. Ngày lưu trú được chọn riêng sau khi bạn chọn phòng."
+        >
           <div className="flex flex-wrap gap-2">
             <Link className="btn-secondary" href="/">Trang chủ</Link>
-            <Link className="btn-secondary" href="/homestays">Xóa bộ lọc</Link>
+            <Link className="btn-secondary" href="/homestays"><RotateCcw className="size-4" aria-hidden="true" /> Xóa bộ lọc</Link>
           </div>
-        </header>
+        </PageBanner>
 
-        <div className="mb-5 lg:hidden">
-          <SearchBar initialFilters={filters} variant="mobile" />
-        </div>
+        <div className="container-page py-10 md:py-14">
+          <div className="mb-6 lg:hidden">
+            <SearchBar initialFilters={filters} variant="mobile" />
+          </div>
 
-        <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
-          <aside className="hidden h-fit lg:sticky lg:top-28 lg:block">
-            <SearchBar initialFilters={filters} variant="sidebar" />
-          </aside>
+          <div className="grid gap-8 lg:grid-cols-[300px_1fr]">
+            <aside className="hidden h-fit lg:sticky lg:top-28 lg:block">
+              <SearchBar initialFilters={filters} variant="sidebar" />
+            </aside>
 
-          <section>
-            <div className="mb-5 flex flex-col justify-between gap-3 rounded-2xl border border-line-soft bg-white/82 p-4 shadow-card md:flex-row md:items-center">
-              <div className="min-w-0">
-                <p className="text-sm font-bold text-leaf">
-                  Trang {currentPage}/{totalPages} · hiển thị {visibleHomestays.length} lựa chọn
-                </p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {appliedFilters.length ? appliedFilters.map((item) => (
-                    <span className="rounded-full bg-leaf-soft px-3 py-1 text-xs font-bold text-leaf" key={item.key}>{item.label}</span>
-                  )) : <span className="rounded-full bg-sand-deep px-3 py-1 text-xs font-bold text-muted">Chưa áp dụng bộ lọc</span>}
+            <section aria-label="Danh sách homestay">
+              <div className="mb-8 flex flex-col justify-between gap-4 border-b border-line-soft pb-5 md:flex-row md:items-center">
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-muted">
+                    Trang <span className="font-semibold text-ink">{currentPage}/{totalPages}</span> · hiển thị {visibleHomestays.length} lựa chọn
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {appliedFilters.length ? appliedFilters.map((item) => (
+                      <span className="rounded-full bg-leaf-soft px-3 py-1 text-xs font-semibold text-leaf-strong" key={item.key}>{item.label}</span>
+                    )) : <span className="rounded-full border border-line-soft bg-white px-3 py-1 text-xs font-medium text-muted">Chưa áp dụng bộ lọc</span>}
+                  </div>
                 </div>
+                <span className="inline-flex items-center gap-2 self-start rounded-full border border-line-soft bg-white px-4 py-2 text-sm font-medium text-ink-muted md:self-auto">
+                  <ArrowDownWideNarrow className="size-4 text-leaf" aria-hidden="true" /> Sắp xếp: Gợi ý phù hợp
+                </span>
               </div>
-              <span className="rounded-full bg-sand px-4 py-2 text-sm font-bold text-leaf">
-                Sắp xếp: Gợi ý phù hợp
-              </span>
-            </div>
 
-            {visibleHomestays.length ? (
-              <>
-                <div className="grid gap-6 md:grid-cols-2 xl:gap-7">
-                  {visibleHomestays.map((homestay) => (
-                    <HomestayCard homestay={homestay} href={detailHrefWithSearch(homestay.id, filters)} key={homestay.id} />
-                  ))}
-                </div>
-
-                {totalPages > 1 && (
-                  <nav className="mt-8 flex flex-wrap items-center justify-center gap-2" aria-label="Phân trang homestay">
-                    <Link
-                      aria-disabled={currentPage === 1}
-                      className={`btn-secondary px-4 py-2 ${currentPage === 1 ? "pointer-events-none opacity-50" : ""}`}
-                      href={homestaySearchHref(filters, currentPage - 1)}
-                    >
-                      Trước
-                    </Link>
-                    {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
-                      <Link
-                        className={`grid size-11 place-items-center rounded-xl border text-sm font-black ${
-                          page === currentPage
-                            ? "border-brand bg-brand text-white"
-                            : "border-line bg-white text-leaf hover:border-leaf"
-                        }`}
-                        href={homestaySearchHref(filters, page)}
-                        key={page}
-                      >
-                        {page}
-                      </Link>
+              {visibleHomestays.length ? (
+                <>
+                  <div className="grid gap-x-6 gap-y-10 sm:grid-cols-2 2xl:grid-cols-3">
+                    {visibleHomestays.map((homestay, index) => (
+                      <div className="reveal" key={homestay.id} style={{ ["--reveal-delay" as string]: `${(index % 2) * 100}ms` }}>
+                        <HomestayCard homestay={homestay} href={detailHrefWithSearch(homestay.id, filters)} />
+                      </div>
                     ))}
-                    <Link
-                      aria-disabled={currentPage === totalPages}
-                      className={`btn-secondary px-4 py-2 ${currentPage === totalPages ? "pointer-events-none opacity-50" : ""}`}
-                      href={homestaySearchHref(filters, currentPage + 1)}
-                    >
-                      Sau
-                    </Link>
-                  </nav>
-                )}
-              </>
-            ) : (
-              <EmptyState
-                actionHref="/homestays"
-                actionLabel="Xóa bộ lọc"
-                description="Thử giảm bộ lọc hoặc chọn ngày lưu trú khác."
-                title="Không tìm thấy homestay phù hợp"
-              />
-            )}
-          </section>
+                  </div>
+
+                  {totalPages > 1 && (
+                    <nav className="mt-12 flex flex-wrap items-center justify-center gap-2" aria-label="Phân trang homestay">
+                      <Link
+                        aria-disabled={currentPage === 1}
+                        className={`btn-secondary px-4 ${currentPage === 1 ? "pointer-events-none opacity-50" : ""}`}
+                        href={homestaySearchHref(filters, currentPage - 1)}
+                      >
+                        <ChevronLeft className="size-4" aria-hidden="true" /> Trước
+                      </Link>
+                      {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
+                        <Link
+                          aria-current={page === currentPage ? "page" : undefined}
+                          className={`grid size-11 place-items-center rounded-full text-sm font-semibold transition ${
+                            page === currentPage ? "bg-forest text-white" : "border border-line bg-white text-ink-muted hover:border-ink"
+                          }`}
+                          href={homestaySearchHref(filters, page)}
+                          key={page}
+                        >
+                          {page}
+                        </Link>
+                      ))}
+                      <Link
+                        aria-disabled={currentPage === totalPages}
+                        className={`btn-secondary px-4 ${currentPage === totalPages ? "pointer-events-none opacity-50" : ""}`}
+                        href={homestaySearchHref(filters, currentPage + 1)}
+                      >
+                        Sau <ChevronRight className="size-4" aria-hidden="true" />
+                      </Link>
+                    </nav>
+                  )}
+                </>
+              ) : (
+                <EmptyState
+                  actionHref="/homestays"
+                  actionLabel="Xóa bộ lọc"
+                  description="Thử giảm bộ lọc hoặc chọn ngày lưu trú khác."
+                  title="Không tìm thấy homestay phù hợp"
+                />
+              )}
+            </section>
+          </div>
         </div>
-      </div>
+      </main>
       <SiteFooter />
-    </main>
+    </>
   );
 }

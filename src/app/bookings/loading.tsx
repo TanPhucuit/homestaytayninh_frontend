@@ -2,7 +2,7 @@
 
 export default function BookingsLoading() {
   return (
-    <main id="main" className="mx-auto max-w-7xl px-4 py-8 md:px-8 md:py-12">
+    <main id="main" className="container-page py-8  md:py-12">
       <div className="skeleton-shimmer h-8 w-56 rounded-full" />
       <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {[0, 1, 2, 3].map((item) => <div className="skeleton-shimmer h-12 rounded-full" key={item} />)}

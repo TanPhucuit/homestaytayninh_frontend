@@ -1,6 +1,7 @@
 import { assignRoleInlineAction, banUserInlineAction, createAdminUserInlineAction, unbanUserInlineAction } from "@/app/admin/actions";
 import { ActionButton } from "./action-button";
-import { AppTopBar, PortalHero } from "./customer-ui";
+import { CircleCheckBig, Gauge, Receipt, Wallet } from "lucide-react";
+import { AppTopBar, PortalHero, StatTile } from "./customer-ui";
 import { ConfirmActionButton } from "./confirm-action-button";
 import { FlashMessage } from "./feedback-state";
 import { MutationForm } from "./mutation-form";
@@ -18,14 +19,6 @@ const permissionCards: Array<{ role: UserRole; title: string; permissions: strin
   { role: "ADMIN", title: "Quản trị viên", permissions: ["Bảng điều khiển toàn hệ thống", "Tạo tài khoản đối tác/nhân viên", "Phân quyền và khóa/mở tài khoản"] }
 ];
 
-function StatCard({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="card p-5">
-      <p className="text-sm text-muted">{label}</p>
-      <p className="mt-2 font-heading text-3xl font-semibold text-ink">{value}</p>
-    </div>
-  );
-}
 
 export function AdminPortal({ dashboard, users, currentUser, flash }: { dashboard: DashboardSummary; users: UserProfile[]; currentUser: SessionUser; flash?: FlashState | null }) {
   return (
@@ -43,16 +36,16 @@ export function AdminPortal({ dashboard, users, currentUser, flash }: { dashboar
         <FlashMessage flash={flash} />
 
         <section className="grid gap-4 md:grid-cols-4">
-          <StatCard label="Doanh thu đã thanh toán" value={money(dashboard.revenue)} />
-          <StatCard label="Số giao dịch" value={String(dashboard.transactions)} />
-          <StatCard label="Tỷ lệ lấp đầy" value={`${dashboard.occupancyRate}%`} />
-          <StatCard label="Booking hoàn thành" value={String(dashboard.completed)} />
+          <StatTile highlight icon={Wallet} label="Doanh thu đã thanh toán" value={money(dashboard.revenue)} />
+          <StatTile icon={Receipt} label="Số giao dịch" value={String(dashboard.transactions)} />
+          <StatTile icon={Gauge} label="Tỷ lệ lấp đầy" value={`${dashboard.occupancyRate}%`} />
+          <StatTile icon={CircleCheckBig} label="Booking hoàn thành" value={String(dashboard.completed)} />
         </section>
 
         <section className="card p-6">
           <div className="flex flex-col justify-between gap-2 md:flex-row md:items-end">
             <div>
-              <h2 className="font-heading text-2xl text-brand">Phạm vi quyền theo vai trò</h2>
+              <h2 className="font-heading text-2xl text-ink">Phạm vi quyền theo vai trò</h2>
               <p className="mt-1 text-sm text-ink-muted">Đối chiếu nhanh giao diện và quyền nghiệp vụ đã khai báo trong hệ thống.</p>
             </div>
             <span className="badge bg-leaf-soft text-leaf">5 vai trò</span>
@@ -72,7 +65,7 @@ export function AdminPortal({ dashboard, users, currentUser, flash }: { dashboar
 
         <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="card p-6">
-            <h2 className="font-heading text-2xl text-brand">Hiệu suất homestay</h2>
+            <h2 className="font-heading text-2xl text-ink">Hiệu suất homestay</h2>
             <div className="mt-5 space-y-3">
               {dashboard.homestayPerformance.map((item) => (
                 <div className="flex items-center justify-between rounded-xl bg-sand px-4 py-3" key={item.name}>
@@ -84,7 +77,7 @@ export function AdminPortal({ dashboard, users, currentUser, flash }: { dashboar
           </div>
 
           <MutationForm action={createAdminUserInlineAction} className="card p-6" resetOnSuccess>
-            <h2 className="font-heading text-2xl text-brand">Tạo tài khoản đối tác/nhân viên</h2>
+            <h2 className="font-heading text-2xl text-ink">Tạo tài khoản đối tác/nhân viên</h2>
             <div className="mt-5 grid gap-4 md:grid-cols-2">
               <label className="grid gap-2 text-sm font-semibold text-ink-soft">
                 Tên hiển thị
@@ -111,7 +104,7 @@ export function AdminPortal({ dashboard, users, currentUser, flash }: { dashboar
 
         <section className="card p-6">
           <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center">
-            <h2 className="font-heading text-2xl text-brand">Quản lý user và phân quyền</h2>
+            <h2 className="font-heading text-2xl text-ink">Quản lý user và phân quyền</h2>
             <p className="text-sm text-leaf">Admin, Staff, Owner, Owner Staff, Customer</p>
           </div>
           <div className="mt-5 overflow-x-auto">

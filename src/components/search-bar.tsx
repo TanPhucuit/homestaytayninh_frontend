@@ -2,6 +2,7 @@
 
 import { FormEvent, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { Search, SlidersHorizontal, Users } from "lucide-react";
 import {
   AMENITY_OPTIONS,
   PRICE_MAX,
@@ -63,7 +64,7 @@ export function SearchBar({ initialFilters, variant = "home" }: SearchBarProps) 
   const filterControls = (
     <div className={isSidebar || isMobile ? "grid gap-6" : "grid gap-5 border-t border-line-soft pt-5 md:grid-cols-[1fr_1fr_1fr]"}>
       <fieldset className="grid gap-3">
-        <legend className="text-xs font-black uppercase tracking-[0.14em] text-leaf">Loại hình</legend>
+        <legend className="text-xs font-semibold uppercase tracking-[0.14em] text-leaf">Loại hình</legend>
         <div className="grid gap-2">
           {TYPE_OPTIONS.map((type) => (
             <label className="check-row" key={type}>
@@ -79,7 +80,7 @@ export function SearchBar({ initialFilters, variant = "home" }: SearchBarProps) 
       </fieldset>
 
       <fieldset className="grid gap-3">
-        <legend className="text-xs font-black uppercase tracking-[0.14em] text-leaf">Tiện ích</legend>
+        <legend className="text-xs font-semibold uppercase tracking-[0.14em] text-leaf">Tiện ích</legend>
         <div className="grid gap-2">
           {AMENITY_OPTIONS.map((amenity) => (
             <label className="check-row" key={amenity}>
@@ -96,8 +97,8 @@ export function SearchBar({ initialFilters, variant = "home" }: SearchBarProps) 
 
       <div className="grid content-start gap-3">
         <div className="flex items-center justify-between gap-3">
-          <span className="text-xs font-black uppercase tracking-[0.14em] text-leaf">Giá / đêm</span>
-          <span className="rounded-full bg-leaf-soft px-3 py-1 text-xs font-black text-leaf">{priceLabel}</span>
+          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-leaf">Giá / đêm</span>
+          <span className="rounded-full bg-leaf-soft px-3 py-1 text-xs font-semibold text-leaf">{priceLabel}</span>
         </div>
         <input
           aria-label="Giá tối đa mỗi đêm"
@@ -133,10 +134,12 @@ export function SearchBar({ initialFilters, variant = "home" }: SearchBarProps) 
   return (
     <form className={panelClass} onSubmit={submit}>
       <div className={isSidebar || isMobile ? "grid gap-4" : "grid gap-3 lg:grid-cols-[1fr_auto_auto]"}>
-        <label className="grid gap-2 text-xs font-black uppercase tracking-[0.14em] text-subtle">
+        <label className="grid gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-subtle">
           Số khách
+          <span className="relative">
+          <Users className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-leaf" aria-hidden="true" />
           <input
-            className="field w-full"
+            className="field w-full pl-11"
             min="1"
             name="guests"
             onChange={(event) => setGuests(event.target.value)}
@@ -144,6 +147,7 @@ export function SearchBar({ initialFilters, variant = "home" }: SearchBarProps) 
             type="number"
             value={guests}
           />
+          </span>
         </label>
 
         <button
@@ -152,11 +156,13 @@ export function SearchBar({ initialFilters, variant = "home" }: SearchBarProps) 
           onClick={() => setFiltersOpen((open) => !open)}
           type="button"
         >
+          <SlidersHorizontal className="size-4" aria-hidden="true" />
           Bộ lọc
-          <span className="ml-2 rounded-full bg-leaf-soft px-2 py-0.5 text-xs text-leaf">{types.length + amenities.length}</span>
+          <span className="rounded-full bg-leaf-soft px-2 py-0.5 text-xs text-leaf-strong">{types.length + amenities.length}</span>
         </button>
 
-        <button className="btn-primary self-end" disabled={isPending} type="submit">
+        <button className="btn-primary self-end px-7" disabled={isPending} type="submit">
+          <Search className="size-4" aria-hidden="true" />
           {isPending ? "Đang tìm..." : isSidebar || isMobile ? "Áp dụng" : "Tìm kiếm"}
         </button>
       </div>

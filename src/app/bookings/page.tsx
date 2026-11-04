@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AccessDenied } from "@/components/access-denied";
-import { AppTopBar, SiteFooter, PaymentBadge, StatusBadge, statusGroup } from "@/components/customer-ui";
+import { ArrowRight } from "lucide-react";
+import { AppTopBar, PageBanner, SiteFooter, PaymentBadge, StatusBadge, statusGroup } from "@/components/customer-ui";
 import { EmptyState } from "@/components/feedback-state";
 import { getBookings, getHomestays, money } from "@/lib/api";
 import { canViewPaymentStatus } from "@/lib/booking-rules";
@@ -40,20 +41,14 @@ export default async function BookingsPage({ searchParams }: { searchParams: Pro
   return (
     <main id="main" className="min-h-screen text-ink">
       <AppTopBar />
-      <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
-        <header className="mb-8 grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
-          <div>
-            <p className="eyebrow">Đơn đặt của tôi</p>
-            <h1 className="mt-2 font-heading text-4xl text-brand md:text-5xl">Chuyến đi của bạn</h1>
-            <p className="mt-3 max-w-2xl text-ink-muted">Theo dõi trạng thái đặt phòng, thanh toán và các dịch vụ đã chọn.</p>
-          </div>
-          <Link className="btn-primary" href="/homestays">Đặt thêm chuyến đi</Link>
-        </header>
-
-        <div className="mb-8 grid grid-cols-2 gap-3 rounded-2xl border border-line-soft bg-white p-2 md:grid-cols-4">
+      <PageBanner eyebrow="Đơn đặt của tôi" title={<>Chuyến đi <span className="italic text-brand">của bạn</span></>} description="Theo dõi trạng thái đặt phòng, thanh toán và các dịch vụ đã chọn.">
+        <Link className="btn-primary" href="/homestays">Đặt thêm chuyến đi <ArrowRight className="size-4" aria-hidden="true" /></Link>
+      </PageBanner>
+      <div className="container-page py-10 md:py-14">
+        <div className="mb-10 grid grid-cols-2 gap-1.5 rounded-full border border-line-soft bg-white p-1.5 shadow-card max-md:rounded-3xl md:grid-cols-4">
           {groups.map((group) => (
             <Link
-              className={`rounded-xl px-4 py-3 text-center text-sm font-bold ${group === activeGroup ? "bg-brand text-white shadow-card" : "text-muted hover:bg-sand"}`}
+              className={`rounded-full px-4 py-3 text-center text-sm font-semibold transition ${group === activeGroup ? "bg-forest text-white shadow-card" : "text-muted hover:bg-cream hover:text-ink"}`}
               href={`/bookings?statusGroup=${encodeURIComponent(group)}`}
               key={group}
             >
@@ -81,7 +76,7 @@ export default async function BookingsPage({ searchParams }: { searchParams: Pro
                   ? `${booking.rooms.length} phòng: ${booking.rooms.map((room) => room.name).join(", ")}`
                   : `Phòng ${booking.roomId}`;
                 return (
-                  <article className="overflow-hidden rounded-2xl border border-line-soft bg-white shadow-card md:grid md:grid-cols-[320px_1fr]" key={booking.id}>
+                  <article className="reveal hover-zoom overflow-hidden rounded-[28px] border border-line-soft bg-white shadow-card transition duration-500 hover:shadow-lift md:grid md:grid-cols-[340px_1fr]" key={booking.id}>
                     <div className="image-shell min-h-52 md:min-h-72">
                       {imageUrl ? (
                         <img className="h-full min-h-52 w-full object-cover md:min-h-72" src={imageUrl} alt={homestay?.name ?? "Ảnh homestay"} />
@@ -100,15 +95,15 @@ export default async function BookingsPage({ searchParams }: { searchParams: Pro
                       <p className="mt-2 text-sm text-muted">{booking.checkIn} - {booking.checkOut} · {booking.guestCount} khách</p>
                       <p className="mt-1 line-clamp-2 text-sm font-semibold text-leaf">{roomSummary}</p>
                       <div className="mt-6 grid gap-4 md:grid-cols-2">
-                        <div className="rounded-2xl bg-sand p-4">
-                          <h3 className="font-heading text-xl text-brand">Thông tin khách</h3>
+                        <div className="rounded-2xl bg-cream p-4">
+                          <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-subtle">Thông tin khách</h3>
                           <p className="mt-2 text-sm text-ink-muted">Khách: {booking.guestName}</p>
                           <p className="text-sm text-ink-muted">SĐT: {booking.guestPhone}</p>
                         </div>
-                        <div className="rounded-2xl bg-sand p-4">
-                          <h3 className="font-heading text-xl text-brand">Dịch vụ & tổng tiền</h3>
+                        <div className="rounded-2xl bg-cream p-4">
+                          <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-subtle">Dịch vụ & tổng tiền</h3>
                           <p className="mt-2 text-sm text-ink-muted">{booking.services.length} dịch vụ đặt thêm</p>
-                          <p className="font-bold text-leaf">{money(booking.grandTotal)}</p>
+                          <p className="mt-1 font-heading text-2xl text-brand">{money(booking.grandTotal)}</p>
                         </div>
                       </div>
                       <div className="mt-6 flex flex-col gap-3 sm:flex-row">
@@ -120,7 +115,7 @@ export default async function BookingsPage({ searchParams }: { searchParams: Pro
                   </article>
                 );
               }) : (
-                <div className="rounded-2xl border border-dashed border-line bg-white/70 p-8 text-center text-muted">
+                <div className="rounded-[28px] border border-dashed border-line bg-white p-10 text-center text-muted">
                   <p className="font-semibold">Chưa có đơn đặt trong nhóm này.</p>
                   <div className="mt-5 flex flex-col justify-center gap-3 sm:flex-row">
                     {firstAvailableGroup && (

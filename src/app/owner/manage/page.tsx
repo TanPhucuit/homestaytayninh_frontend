@@ -26,7 +26,7 @@ export default async function OwnerManagePage({ searchParams }: { searchParams: 
       <section>
         <MutationForm action={createHomestayInlineAction} className="card p-6 md:p-8" resetOnSuccess>
           <p className="eyebrow">Homestay</p>
-          <h2 className="mt-2 font-heading text-2xl text-brand">Thêm homestay</h2>
+          <h2 className="mt-2 font-heading text-2xl text-ink">Thêm homestay</h2>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-muted">
             Tạo hồ sơ homestay trước. Sau khi homestay xuất hiện trong danh sách bên dưới, mở từng homestay để thêm phòng, giá phòng cố định và dịch vụ.
           </p>
@@ -75,7 +75,7 @@ export default async function OwnerManagePage({ searchParams }: { searchParams: 
         <div className="mb-4 flex flex-col justify-between gap-2 md:flex-row md:items-end">
           <div>
             <p className="eyebrow">Tài sản đang quản lý</p>
-            <h2 className="mt-2 font-heading text-3xl text-brand">Danh sách homestay</h2>
+            <h2 className="mt-2 font-heading text-3xl text-ink">Danh sách homestay</h2>
           </div>
           <p className="max-w-xl text-sm leading-6 text-muted">Ảnh, bảng giá theo ngày, trạng thái bán phòng và dịch vụ được chỉnh trong từng homestay bên dưới.</p>
         </div>

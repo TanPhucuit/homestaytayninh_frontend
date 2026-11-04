@@ -22,10 +22,10 @@ function CheckoutSelectionNotice({ homestayId, roomIds }: { homestayId?: string;
   return (
     <main id="main" className="min-h-screen text-ink">
       <AppTopBar />
-      <div className="mx-auto max-w-3xl px-4 py-12 md:px-8">
+      <div className="mx-auto max-w-3xl px-5 py-16 md:px-8">
         <section className="card p-6 text-center md:p-8">
           <p className="eyebrow">Checkout</p>
-          <h1 className="mt-3 font-heading text-4xl text-brand">Bắt đầu từ chọn phòng</h1>
+          <h1 className="display mt-3 text-4xl text-ink md:text-5xl">Bắt đầu từ chọn phòng</h1>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-muted">
             Vui lòng chọn phòng, ngày lưu trú và số khách trong khung đặt phòng của homestay trước khi tiếp tục thanh toán.
           </p>

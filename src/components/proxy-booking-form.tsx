@@ -62,7 +62,7 @@ export function ProxyBookingForm({ action, defaultCheckIn, defaultCheckOut, home
     <form action={action} className="grid gap-6 lg:grid-cols-[1fr_380px]">
       <section className="card p-6">
         <p className="eyebrow">Đặt hộ khách hàng</p>
-        <h2 className="mt-2 font-heading text-2xl text-brand">Thông tin booking hộ</h2>
+        <h2 className="mt-2 font-heading text-2xl text-ink">Thông tin booking hộ</h2>
         <div className="mt-5 grid gap-3 md:grid-cols-2">
           <label className="grid gap-2 text-sm font-semibold">Homestay
             <select className="field" name="homestayId" onChange={(event) => selectHomestay(event.target.value)} value={homestayId} required>
@@ -94,7 +94,7 @@ export function ProxyBookingForm({ action, defaultCheckIn, defaultCheckOut, home
 
       <aside className="card h-fit p-6">
         <p className="eyebrow">Theo homestay đã chọn</p>
-        <h2 className="mt-2 font-heading text-2xl text-brand">Dịch vụ gọi kèm</h2>
+        <h2 className="mt-2 font-heading text-2xl text-ink">Dịch vụ gọi kèm</h2>
         <p className="mt-2 text-sm leading-6 text-muted">Chỉ hiển thị dịch vụ bổ sung có tính phí. Dịch vụ đã bao gồm không cần đặt thêm cho khách.</p>
         <div className="mt-4 grid gap-3">
           {services.length ? services.map((service) => {

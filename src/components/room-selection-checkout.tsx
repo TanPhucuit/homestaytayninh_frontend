@@ -130,10 +130,10 @@ export function RoomSelectionCheckout({ homestayId, rooms, initialRoomIds, initi
   }
 
   return (
-    <section className="grid gap-8 lg:grid-cols-[1fr_390px] lg:items-start" id="rooms">
+    <section className="grid scroll-mt-28 gap-10 lg:grid-cols-[1fr_400px] lg:items-start" id="rooms">
       <div>
         <p className="eyebrow">Lựa chọn không gian</p>
-        <h2 className="mt-2 font-heading text-3xl text-ink">Chọn phòng của bạn</h2>
+        <h2 className="mt-4 font-heading text-3xl text-ink md:text-4xl">Chọn phòng của bạn</h2>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-muted">
           Có thể chọn nhiều phòng để xem tổng dự kiến, sau đó chọn dịch vụ đi kèm cho từng phòng.
         </p>
@@ -142,18 +142,18 @@ export function RoomSelectionCheckout({ homestayId, rooms, initialRoomIds, initi
             const selected = selectedRoomIds.includes(room.id);
             return (
               <article
-                className={`group grid gap-5 rounded-2xl border bg-white p-4 shadow-card transition md:grid-cols-[220px_1fr] ${
-                  selected ? "border-brand bg-brand-wash ring-2 ring-brand/12" : "border-line hover:border-brand"
+                className={`group grid gap-5 rounded-[26px] border bg-white p-4 transition duration-500 md:grid-cols-[230px_1fr] ${
+                  selected ? "border-brand bg-brand-wash shadow-lift ring-4 ring-brand/10" : "border-line-soft shadow-card hover:-translate-y-0.5 hover:shadow-lift"
                 }`}
                 data-testid={`room-card-${room.id}`}
                 key={room.id}
               >
-                <div className="image-shell aspect-[4/3] overflow-hidden rounded-xl bg-cover bg-center" style={{ backgroundImage: `url(${room.thumbnail})` }} />
+                <div className="image-shell aspect-[4/3] overflow-hidden rounded-[18px] bg-cover bg-center transition duration-700 group-hover:scale-[1.02]" style={{ backgroundImage: `url(${room.thumbnail})` }} />
                 <div className="flex min-w-0 flex-col justify-between">
                   <div>
                     <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-start">
                       <h3 className="font-heading text-2xl text-ink">{room.name}</h3>
-                      {selected && <span className="w-fit rounded-full bg-brand-tint px-3 py-1 text-xs font-bold text-brand-strong">Đã chọn</span>}
+                      {selected && <span className="w-fit rounded-full bg-brand px-3 py-1 text-xs font-semibold text-white">Đã chọn</span>}
                     </div>
                     <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm font-semibold text-muted">
                       <span>{room.capacity} khách</span>
@@ -165,7 +165,7 @@ export function RoomSelectionCheckout({ homestayId, rooms, initialRoomIds, initi
                   <div className="mt-5 flex flex-col justify-between gap-3 border-t border-line-soft pt-4 sm:flex-row sm:items-end">
                     <div>
                       <p className="text-xs font-bold uppercase text-subtle">Giá mỗi đêm</p>
-                      <p className="font-heading text-2xl font-bold text-brand">{money(room.pricePerNight)}</p>
+                      <p className="font-heading text-2xl text-ink">{money(room.pricePerNight)}</p>
                     </div>
                     <button
                       className={`${selected ? "btn-secondary border-brand/40 text-brand" : "btn-primary"} disabled:cursor-not-allowed disabled:opacity-55`}
@@ -184,10 +184,14 @@ export function RoomSelectionCheckout({ homestayId, rooms, initialRoomIds, initi
         </div>
       </div>
 
-      <aside className="h-fit rounded-2xl border border-line bg-white p-6 shadow-card lg:sticky lg:top-28">
-        <h2 className="font-heading text-2xl text-ink">Tóm tắt đặt phòng</h2>
-        <div className="mt-5 grid gap-3">
-          <label className="grid gap-2 text-xs font-black uppercase tracking-[0.12em] text-subtle">
+      <aside className="h-fit overflow-hidden rounded-[28px] border border-line-soft bg-white shadow-lift lg:sticky lg:top-28">
+        <div className="bg-forest px-6 py-5 text-white">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">Đặt phòng</p>
+          <h2 className="mt-1 font-heading text-2xl">Tóm tắt đặt phòng</h2>
+        </div>
+        <div className="p-6">
+        <div className="grid gap-3">
+          <label className="grid gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-subtle">
             Nhận phòng
             <input
               className="field disabled:cursor-not-allowed disabled:bg-sand-deep disabled:text-subtle"
@@ -198,7 +202,7 @@ export function RoomSelectionCheckout({ homestayId, rooms, initialRoomIds, initi
               value={checkIn}
             />
           </label>
-          <label className="grid gap-2 text-xs font-black uppercase tracking-[0.12em] text-subtle">
+          <label className="grid gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-subtle">
             Trả phòng
             <input
               className="field disabled:cursor-not-allowed disabled:bg-sand-deep disabled:text-subtle"
@@ -210,7 +214,7 @@ export function RoomSelectionCheckout({ homestayId, rooms, initialRoomIds, initi
               value={checkOut}
             />
           </label>
-          <label className="grid gap-2 text-xs font-black uppercase tracking-[0.12em] text-subtle">
+          <label className="grid gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-subtle">
             Số khách
             <input
               className="field disabled:cursor-not-allowed disabled:bg-sand-deep disabled:text-subtle"
@@ -228,7 +232,7 @@ export function RoomSelectionCheckout({ homestayId, rooms, initialRoomIds, initi
 
         <div className="mt-5 border-t border-line-soft pt-5">
           {selectedRooms.length === 0 ? (
-            <div className="rounded-2xl bg-sand p-4 text-sm font-semibold text-muted" data-testid="selected-empty">
+            <div className="rounded-2xl bg-cream p-4 text-sm font-semibold text-muted" data-testid="selected-empty">
               Chưa chọn phòng
               <p className="mt-1 text-xs font-medium">Chọn phòng trước, sau đó nhập ngày lưu trú và số khách.</p>
             </div>
@@ -237,7 +241,7 @@ export function RoomSelectionCheckout({ homestayId, rooms, initialRoomIds, initi
               {selectedRooms.map((room) => {
                 const total = datesValid ? room.pricePerNight * numberOfNights : 0;
                 return (
-                  <div className="rounded-2xl bg-sand p-4 text-sm" data-testid="selected-room-row" key={room.id}>
+                  <div className="rounded-2xl bg-cream p-4 text-sm" data-testid="selected-room-row" key={room.id}>
                     <div className="flex justify-between gap-3">
                       <span className="font-bold text-ink">{room.name}</span>
                       <strong className="text-brand">{money(total)}</strong>
@@ -279,6 +283,7 @@ export function RoomSelectionCheckout({ homestayId, rooms, initialRoomIds, initi
           {buttonLabel}
         </button>
         <p className="mt-4 text-center text-xs text-muted">Tổng tiền cập nhật khi chọn phòng, đổi ngày hoặc điều chỉnh số khách.</p>
+        </div>
       </aside>
     </section>
   );

@@ -126,7 +126,7 @@ export function MultiRoomServicesForm({ homestayId, rooms, services, initialSele
               <div className="flex flex-col justify-between gap-3 md:flex-row md:items-start">
                 <div>
                   <p className="eyebrow">Phòng đã chọn</p>
-                  <h2 className="mt-2 font-heading text-3xl text-brand">{room.name}</h2>
+                  <h2 className="mt-2 font-heading text-3xl text-ink">{room.name}</h2>
                   <p className="mt-2 text-sm text-muted">{money(room.pricePerNight)} / đêm x {nights} đêm</p>
                 </div>
                 <strong className="rounded-full bg-brand-tint px-4 py-2 text-sm text-brand-strong">{money(roomLineTotal)}</strong>
@@ -165,10 +165,10 @@ export function MultiRoomServicesForm({ homestayId, rooms, services, initialSele
                           />
                         </div>
                         <div className="mt-4 grid gap-2 border-t border-line-soft pt-3 sm:grid-cols-[auto_1fr]">
-                          <button className={isSelected ? "btn-secondary px-4 py-2 text-brand" : "btn-primary px-4 py-2"} disabled={!isReady} onClick={() => toggleService(room.id, service.id)} type="button">
+                          <button className={isSelected ? "btn-secondary min-w-28 px-5 text-brand" : "btn-primary min-w-28 px-5"} disabled={!isReady} onClick={() => toggleService(room.id, service.id)} type="button">
                             {isSelected ? "Bỏ chọn" : "Thêm"}
                           </button>
-                          <label className="flex items-center justify-between gap-3 rounded-xl bg-sand px-3 py-2 text-sm font-semibold text-muted">
+                          <label className="flex items-center justify-between gap-3 rounded-full bg-cream py-1 pl-4 pr-1 text-sm font-medium text-muted">
                             Số lượng
                             <input
                               aria-label={`Số lượng ${service.name} cho ${room.name}`}

@@ -45,7 +45,7 @@ export function CheckoutServicesForm({ preview, preservedEntries, backHref }: Ch
       <div className="space-y-6">
         <section className="card p-6 md:p-8">
           <p className="eyebrow">Đã bao gồm</p>
-          <h2 className="mt-2 font-heading text-3xl text-brand">Dịch vụ trong giá phòng</h2>
+          <h2 className="mt-2 font-heading text-3xl text-ink">Dịch vụ trong giá phòng</h2>
           <div className="mt-5 grid gap-4 md:grid-cols-3">
             {preview.includedServices.length ? preview.includedServices.map((service) => (
               <div className="rounded-2xl border border-leaf-soft bg-leaf-soft p-4" key={service.id}>
@@ -59,7 +59,7 @@ export function CheckoutServicesForm({ preview, preservedEntries, backHref }: Ch
 
         <section className="card p-6 md:p-8">
           <p className="eyebrow">Chọn thêm</p>
-          <h2 className="mt-2 font-heading text-3xl text-brand">Dịch vụ bổ sung</h2>
+          <h2 className="mt-2 font-heading text-3xl text-ink">Dịch vụ bổ sung</h2>
           <div className="mt-6 grid gap-4 md:grid-cols-2">
             {addOnServices.length ? addOnServices.map((service) => {
               const quantity = quantities[service.id] ?? 0;

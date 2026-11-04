@@ -58,7 +58,7 @@ export function StaffCmsPortal({ articles, flash }: { articles: Article[]; flash
       <section className="grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
         <MutationForm action={createArticleInlineAction} className="card p-6" resetOnSuccess>
           <p className="eyebrow">Tạo bài viết</p>
-          <h2 className="mt-2 font-heading text-3xl text-brand">Bài viết mới</h2>
+          <h2 className="mt-2 font-heading text-3xl text-ink">Bài viết mới</h2>
           <div className="mt-5 grid gap-3">
             <input className="field" name="title" placeholder="Tiêu đề" required />
             <input className="field" name="slug" pattern="[a-z0-9]+(-[a-z0-9]+)*" placeholder="du-lich-nui-ba-den" required />
@@ -82,7 +82,7 @@ export function StaffCmsPortal({ articles, flash }: { articles: Article[]; flash
                 <div className="flex flex-col justify-between gap-3 md:flex-row md:items-start">
                   <div>
                     <ArticleStatus status={article.status} />
-                    <h3 className="mt-3 font-heading text-2xl text-brand">{article.title}</h3>
+                    <h3 className="mt-3 font-heading text-2xl text-ink">{article.title}</h3>
                     <p className="mt-1 text-sm text-muted">/{article.slug}</p>
                   </div>
                   <div className="flex flex-wrap gap-2">
@@ -136,7 +136,7 @@ export function StaffModerationPortal({ reports, users, currentRole, flash }: { 
               <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
                 <div>
                   <span className={report.status === "OPEN" ? "badge badge-red" : "badge badge-green"}>{report.status === "OPEN" ? "Đang mở" : "Đã xử lý"}</span>
-                  <h2 className="mt-3 font-heading text-2xl text-brand">Báo cáo {report.id}</h2>
+                  <h2 className="mt-3 font-heading text-2xl text-ink">Báo cáo {report.id}</h2>
                   <p className="mt-2 text-sm text-muted">
                     Người báo cáo: {report.reporterId} · Người bị báo cáo: {report.reportedUserId}
                   </p>
@@ -154,7 +154,7 @@ export function StaffModerationPortal({ reports, users, currentRole, flash }: { 
         )}
       </section>
       <section className="card p-6">
-        <h2 className="font-heading text-3xl text-brand">Kiểm soát tài khoản</h2>
+        <h2 className="font-heading text-3xl text-ink">Kiểm soát tài khoản</h2>
         <p className="mt-2 text-sm text-muted">Nhân viên chỉ được khóa hoặc mở khóa tài khoản khách hàng khi xử lý vi phạm; Owner, Owner Staff và Admin do quản trị viên xử lý.</p>
         <div className="mt-5 grid gap-3">
           {manageableUsers.length === 0 ? (

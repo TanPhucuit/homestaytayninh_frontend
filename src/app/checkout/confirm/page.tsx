@@ -84,10 +84,10 @@ function Notice({ message, homestayId, params }: { message: string; homestayId?:
   return (
     <main id="main" className="min-h-screen text-ink">
       <AppTopBar />
-      <div className="mx-auto max-w-3xl px-4 py-12 md:px-8">
+      <div className="mx-auto max-w-3xl px-5 py-16 md:px-8">
         <section className="card p-6 text-center md:p-8">
           <p className="eyebrow">Xác nhận</p>
-          <h1 className="mt-3 font-heading text-4xl text-brand">Cần kiểm tra lại</h1>
+          <h1 className="display mt-3 text-4xl text-ink md:text-5xl">Cần kiểm tra lại</h1>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-muted">{message}</p>
           <a className="btn-primary mt-6" href={detailRoomsHref(homestayId, params)}>Quay lại chọn phòng</a>
         </section>
@@ -139,11 +139,11 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
   return (
     <main id="main" className="min-h-screen text-ink">
       <AppTopBar />
-      <div className="mx-auto max-w-7xl px-4 py-8 md:px-8">
+      <div className="container-page py-8 ">
         <div className="mb-8 grid gap-6 lg:grid-cols-[1fr_430px]">
           <div>
             <p className="eyebrow">Thanh toán</p>
-            <h1 className="mt-2 font-heading text-4xl text-brand md:text-5xl">Xác nhận đặt phòng</h1>
+            <h1 className="display mt-2 text-4xl text-ink md:text-5xl">Xác nhận đặt phòng</h1>
             <p className="mt-3 text-ink-muted">Kiểm tra thông tin phòng, dịch vụ và tổng tiền trước khi thanh toán.</p>
           </div>
           <div className="rounded-2xl bg-white p-5 shadow-card">
@@ -158,7 +158,7 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
             <FlashMessage flash={flash} />
             <section className="card p-6 md:p-8">
               <p className="eyebrow">Xác nhận</p>
-              <h2 className="mt-2 font-heading text-3xl text-brand-strong">Bảng tóm tắt đặt phòng</h2>
+              <h2 className="mt-2 font-heading text-3xl text-ink">Bảng tóm tắt đặt phòng</h2>
               <div className="mt-6 overflow-hidden rounded-2xl border border-line-soft bg-white">
                 {[
                   ["Homestay", homestay.name],
@@ -181,7 +181,7 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
 
             <section className="card p-6 md:p-8">
               <p className="eyebrow">Thông tin khách</p>
-              <h2 className="mt-2 font-heading text-3xl text-brand">Người đặt phòng</h2>
+              <h2 className="mt-2 font-heading text-3xl text-ink">Người đặt phòng</h2>
               <div className="mt-5 grid gap-3 md:grid-cols-2">
                 <label className="grid gap-2 text-sm font-semibold text-ink-soft">
                   Họ tên
@@ -203,7 +203,7 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
             </section>
 
             <section className="card p-6 md:p-8">
-              <h2 className="font-heading text-3xl text-brand">Phòng đã chọn</h2>
+              <h2 className="font-heading text-3xl text-ink">Phòng đã chọn</h2>
               <div className="mt-5 space-y-3">
                 {rooms.map((room) => (
                   <div className="rounded-2xl bg-sand p-4 text-sm" key={room.id}>
@@ -218,7 +218,7 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
             </section>
 
             <section className="card p-6 md:p-8">
-              <h2 className="font-heading text-3xl text-brand">Dịch vụ đã chọn</h2>
+              <h2 className="font-heading text-3xl text-ink">Dịch vụ đã chọn</h2>
               <div className="mt-5 space-y-3">
                 {selectedServices.length ? selectedServices.map(({ room, service, quantity, total }) => (
                   <div className="flex justify-between gap-4 rounded-2xl bg-sand p-4 text-sm" key={`${room.id}-${service.id}`}>
@@ -230,7 +230,7 @@ export default async function CheckoutConfirmPage({ searchParams }: { searchPara
             </section>
 
             <section className="card p-6 md:p-8">
-              <h2 className="font-heading text-3xl text-brand">Thanh toán qua ApiPay</h2>
+              <h2 className="font-heading text-3xl text-ink">Thanh toán qua ApiPay</h2>
               <div className="mt-5 space-y-4 text-sm leading-6 text-ink-muted">
                 <div className="rounded-2xl border border-warn-soft bg-warn-soft p-4 font-semibold text-warn">
                   Sau khi bấm thanh toán, bạn sẽ được chuyển sang trang thanh toán của ApiPay để hoàn tất giao dịch.

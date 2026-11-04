@@ -1,4 +1,5 @@
-import { Star } from "lucide-react";
+import Link from "next/link";
+import { ArrowDown, ArrowRight, ArrowUpRight, ChevronRight, Map as MapIcon, MapPin, Sparkles, Star, Users } from "lucide-react";
 import type { ReactNode } from "react";
 import { redirect } from "next/navigation";
 import { AppTopBar, SiteFooter } from "@/components/customer-ui";
@@ -122,137 +123,156 @@ export default async function HomestayDetailPage({ params, searchParams }: { par
   const addOnServices = homestay.services.filter((service) => service.active !== false && !service.included);
 
   return (
-    <main id="main" className="min-h-screen pb-24 text-ink lg:pb-0">
+    <>
       <AppTopBar />
-
-      <section className="mx-auto max-w-7xl px-4 py-8 md:px-8">
-        <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-end">
-          <div>
-            <p className="eyebrow">{homestay.type}</p>
-            <h1 className="mt-2 font-heading text-4xl leading-tight text-ink md:text-5xl">{homestay.name}</h1>
-            <p className="mt-2 flex flex-wrap gap-2 text-ink-muted">
-              <span className="inline-flex items-center gap-1"><Star className="size-4 fill-amber-400 text-amber-500" aria-hidden="true" />{homestay.rating}</span>
-              <span>·</span>
-              <span>{homestay.location}</span>
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <a className="btn-secondary" href={mapHref} rel="noreferrer" target="_blank">Xem bản đồ</a>
-            <a className="btn-primary" href="#rooms">Chọn phòng</a>
-          </div>
-        </div>
-
-        <HomestayGallery images={gallery} />
-      </section>
-
-      <section className="mx-auto max-w-7xl px-4 pb-20 md:px-8">
-        <div className="space-y-10">
-          <div className="flex flex-wrap gap-2">
-            {highlightTags.map((tag) => (
-              <span
-                className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-bold ${tag.tone === "terracotta" ? "border-brand/24 bg-brand/10 text-brand-strong" : "border-leaf/24 bg-leaf/10 text-leaf-strong"}`}
-                key={tag.label}
-              >
-                <DetailIcon name={tag.icon} />
-                {tag.label}
-              </span>
-            ))}
-          </div>
-
-          <section className="border-b border-line-soft pb-10">
-            <h2 className="font-heading text-3xl leading-tight text-ink md:text-4xl">Nơi đất sét nung gặp gỡ đại ngàn</h2>
-            <div className="mt-5 max-w-3xl space-y-4 text-base leading-8 text-ink-muted md:text-lg">
-              <p>{homestay.description}</p>
-              <p>
-                Không gian được tổ chức theo tinh thần mộc mạc của Tây Ninh: chất đất nung ấm, mảng xanh sân vườn và nhịp sống chậm để mỗi buổi sáng bắt đầu bằng ánh nắng dịu qua hiên nhà.
-              </p>
-              <p>
-                Buổi tối là thời điểm đẹp để quây quần bên khu BBQ, thưởng thức đặc sản địa phương và nghỉ ngơi trong bầu không khí yên tĩnh sau một ngày khám phá núi Bà Đen.
+      <main id="main" className="min-h-screen pb-24 text-ink lg:pb-0">
+        <section className="container-page pt-8 md:pt-10">
+          <nav aria-label="Đường dẫn" className="animate-fade-up flex items-center gap-1.5 text-sm text-muted">
+            <Link className="hover:text-ink" href="/">Trang chủ</Link>
+            <ChevronRight className="size-3.5" aria-hidden="true" />
+            <Link className="hover:text-ink" href="/homestays">Homestay</Link>
+            <ChevronRight className="size-3.5" aria-hidden="true" />
+            <span className="truncate text-ink">{homestay.name}</span>
+          </nav>
+          <div className="mb-8 mt-5 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+            <div className="animate-fade-up [animation-delay:80ms]">
+              <p className="eyebrow">{homestay.type}</p>
+              <h1 className="display mt-4 text-4xl md:text-6xl">{homestay.name}</h1>
+              <p className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-ink-muted">
+                <span className="inline-flex items-center gap-1.5 font-semibold text-ink"><Star className="size-4 fill-gold text-gold" aria-hidden="true" />{homestay.rating}</span>
+                <span className="inline-flex items-center gap-1.5"><MapPin className="size-4 text-leaf" aria-hidden="true" />{homestay.location}</span>
+                <span className="inline-flex items-center gap-1.5"><Users className="size-4 text-leaf" aria-hidden="true" />Tối đa {homestay.capacity} khách</span>
               </p>
             </div>
-            <a className="mt-5 inline-flex font-bold text-brand underline decoration-brand/40 underline-offset-4 hover:decoration-brand" href="#rooms">
-              Xem phòng
-            </a>
-          </section>
-
-          <section className="border-b border-line-soft pb-10" id="amenities">
-            <div className="flex flex-col justify-between gap-3 md:flex-row md:items-end">
-              <div>
-                <p className="eyebrow">Tiện nghi</p>
-                <h2 className="mt-2 font-heading text-3xl text-ink">Tiện ích nổi bật</h2>
-              </div>
-              {homestay.amenities.length > 0 && <p className="text-sm font-semibold text-muted">Bao gồm {homestay.amenities.length} tiện ích đang được chủ nhà công bố</p>}
+            <div className="animate-fade-up flex flex-wrap gap-2 [animation-delay:160ms]">
+              <a className="btn-secondary" href={mapHref} rel="noreferrer" target="_blank"><MapIcon className="size-4" aria-hidden="true" /> Xem bản đồ</a>
+              <a className="btn-primary" href="#rooms">Chọn phòng <ArrowDown className="size-4" aria-hidden="true" /></a>
             </div>
-            <div className="mt-6 grid gap-x-4 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
-              {featuredAmenities.map((amenity) => (
-                <div className="flex items-center gap-3 text-ink-muted" key={amenity.label}>
-                  <span className="grid size-11 shrink-0 place-items-center rounded-full bg-leaf-soft text-leaf">
-                    <DetailIcon name={amenity.icon} />
-                  </span>
-                  <span className="font-semibold">{amenity.label}</span>
-                </div>
+          </div>
+
+          <div className="animate-fade-up [animation-delay:200ms]">
+            <HomestayGallery images={gallery} />
+          </div>
+        </section>
+
+        <section className="container-page pb-20 pt-12">
+          <div className="space-y-16">
+            <div className="flex flex-wrap gap-2">
+              {highlightTags.map((tag) => (
+                <span
+                  className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium ${tag.tone === "terracotta" ? "bg-brand-wash text-brand-strong" : "bg-leaf-soft text-leaf-strong"}`}
+                  key={tag.label}
+                >
+                  <DetailIcon name={tag.icon} />
+                  {tag.label}
+                </span>
               ))}
             </div>
-            {homestay.amenities.length > 0 && (
-              <div className="mt-6 flex flex-wrap gap-2">
-                {homestay.amenities.slice(0, 8).map((amenity) => (
-                  <span className="rounded-full bg-brand-tint px-3 py-1 text-xs font-bold text-brand-strong" key={amenity}>{amenity}</span>
-                ))}
-              </div>
-            )}
-          </section>
 
-          <RoomSelectionCheckout
-            homestayId={homestay.id}
-            rooms={selectableRooms}
-            initialRoomIds={selectedRoomIds}
-            initialCheckIn={initialCheckIn}
-            initialCheckOut={initialCheckOut}
-            initialGuests={initialGuestCount}
-          />
-
-          <section className="border-b border-line-soft pb-10">
-            <h2 className="font-heading text-3xl text-ink">Dịch vụ có thể đặt thêm</h2>
-            <div className="mt-5 grid gap-3 md:grid-cols-2">
-              {addOnServices.length ? addOnServices.map((service) => (
-                <div className="rounded-2xl border border-line-soft bg-white p-4 shadow-card" key={service.id}>
-                  <p className="font-bold text-leaf">{service.name}</p>
-                  {service.description && <p className="mt-1 text-sm text-muted">{service.description}</p>}
-                  <p className="mt-3 font-bold text-brand">{money(service.unitPrice)}</p>
+            <section className="reveal grid gap-10 lg:grid-cols-[1.2fr_0.8fr]">
+              <div>
+                <p className="eyebrow">Câu chuyện nơi ở</p>
+                <h2 className="display mt-4 text-3xl md:text-5xl">Nơi đất sét nung gặp gỡ <span className="italic text-leaf">đại ngàn</span></h2>
+                <div className="mt-6 space-y-4 text-base leading-8 text-ink-muted md:text-lg">
+                  <p className="first-letter:float-left first-letter:mr-3 first-letter:font-heading first-letter:text-6xl first-letter:leading-[0.9] first-letter:text-brand">{homestay.description}</p>
+                  <p>
+                    Không gian được tổ chức theo tinh thần mộc mạc của Tây Ninh: chất đất nung ấm, mảng xanh sân vườn và nhịp sống chậm để mỗi buổi sáng bắt đầu bằng ánh nắng dịu qua hiên nhà.
+                  </p>
+                  <p>
+                    Buổi tối là thời điểm đẹp để quây quần bên khu BBQ, thưởng thức đặc sản địa phương và nghỉ ngơi trong bầu không khí yên tĩnh sau một ngày khám phá núi Bà Đen.
+                  </p>
                 </div>
-              )) : (
-                <p className="rounded-2xl bg-sand p-4 text-sm text-muted">Homestay này chưa mở bán dịch vụ bổ sung.</p>
-              )}
-            </div>
-          </section>
+                <a className="mt-6 inline-flex items-center gap-2 font-semibold text-brand underline decoration-brand/30 underline-offset-4 transition hover:decoration-brand" href="#rooms">
+                  Xem phòng <ArrowRight className="size-4" aria-hidden="true" />
+                </a>
+              </div>
 
-          <section className="border-b border-line-soft pb-10">
-            <h2 className="font-heading text-3xl text-ink">Đánh giá</h2>
-            <div className="mt-5 grid gap-4 md:grid-cols-2">
-              {homestay.reviews.length ? homestay.reviews.map((review) => (
-                <article className="rounded-2xl bg-white p-4 shadow-card" key={review.id}>
-                  <p className="font-bold text-leaf"><Star className="mr-1 inline size-4 fill-amber-400 text-amber-500" aria-hidden="true" />{review.rating}</p>
-                  <p className="mt-2 text-sm leading-6 text-ink-muted">{review.comment}</p>
-                </article>
-              )) : <p className="text-sm text-muted">Chưa có đánh giá.</p>}
-            </div>
-          </section>
+              <aside className="h-fit rounded-[28px] bg-forest p-7 text-white shadow-lift" id="amenities">
+                <p className="eyebrow eyebrow-light">Tiện nghi</p>
+                <h2 className="mt-3 font-heading text-3xl">Tiện ích nổi bật</h2>
+                {homestay.amenities.length > 0 && <p className="mt-2 text-sm text-white/60">Bao gồm {homestay.amenities.length} tiện ích đang được chủ nhà công bố</p>}
+                <ul className="mt-6 grid gap-4">
+                  {featuredAmenities.map((amenity) => (
+                    <li className="flex items-center gap-3" key={amenity.label}>
+                      <span className="grid size-10 shrink-0 place-items-center rounded-full bg-white/10 text-gold" aria-hidden="true">
+                        <DetailIcon name={amenity.icon} />
+                      </span>
+                      <span className="font-medium">{amenity.label}</span>
+                    </li>
+                  ))}
+                </ul>
+                {homestay.amenities.length > 0 && (
+                  <div className="mt-6 flex flex-wrap gap-2 border-t border-white/10 pt-6">
+                    {homestay.amenities.slice(0, 8).map((amenity) => (
+                      <span className="rounded-full border border-white/15 px-3 py-1 text-xs font-medium text-white/80" key={amenity}>{amenity}</span>
+                    ))}
+                  </div>
+                )}
+              </aside>
+            </section>
 
-          <section>
-            <h2 className="font-heading text-3xl text-ink">Vị trí</h2>
-            <p className="mt-2 text-ink-muted">{homestay.location}</p>
-            <div className="mt-4 overflow-hidden rounded-2xl border border-line-soft bg-white">
-              <div className="grid min-h-64 place-items-center bg-leaf-soft p-6 text-center">
-                <div>
-                  <p className="font-bold text-leaf">{homestay.location}</p>
-                  <a className="btn-secondary mt-4 w-fit" href={mapHref} rel="noreferrer" target="_blank">Mở Google Maps</a>
+            <RoomSelectionCheckout
+              homestayId={homestay.id}
+              rooms={selectableRooms}
+              initialRoomIds={selectedRoomIds}
+              initialCheckIn={initialCheckIn}
+              initialCheckOut={initialCheckOut}
+              initialGuests={initialGuestCount}
+            />
+
+            <section className="reveal">
+              <p className="eyebrow">Trải nghiệm thêm</p>
+              <h2 className="mt-4 font-heading text-3xl text-ink md:text-4xl">Dịch vụ có thể đặt thêm</h2>
+              <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                {addOnServices.length ? addOnServices.map((service) => (
+                  <div className="group card flex flex-col p-6 transition duration-500 hover:-translate-y-1 hover:shadow-lift" key={service.id}>
+                    <span className="grid size-11 place-items-center rounded-full bg-brand-wash text-brand transition group-hover:bg-brand group-hover:text-white" aria-hidden="true"><Sparkles className="size-5" /></span>
+                    <p className="mt-5 text-lg font-semibold text-ink">{service.name}</p>
+                    {service.description && <p className="mt-1 flex-1 text-sm leading-6 text-muted">{service.description}</p>}
+                    <p className="mt-4 font-heading text-2xl text-ink">{money(service.unitPrice)}</p>
+                  </div>
+                )) : (
+                  <p className="rounded-3xl bg-cream p-6 text-sm text-muted">Homestay này chưa mở bán dịch vụ bổ sung.</p>
+                )}
+              </div>
+            </section>
+
+            <section className="reveal grid gap-10 lg:grid-cols-2">
+              <div>
+                <p className="eyebrow">Khách đã ở</p>
+                <h2 className="mt-4 font-heading text-3xl text-ink md:text-4xl">Đánh giá</h2>
+                <div className="mt-8 grid gap-4">
+                  {homestay.reviews.length ? homestay.reviews.map((review) => (
+                    <figure className="card p-6" key={review.id}>
+                      <div className="flex gap-0.5" aria-label={`${review.rating} trên 5 sao`}>
+                        {Array.from({ length: 5 }, (_, star) => (
+                          <Star className={`size-4 ${star < Math.round(review.rating) ? "fill-gold text-gold" : "text-line"}`} aria-hidden="true" key={star} />
+                        ))}
+                      </div>
+                      <blockquote className="mt-3 font-heading text-lg italic leading-7 text-ink">“{review.comment}”</blockquote>
+                    </figure>
+                  )) : <p className="rounded-3xl bg-cream p-6 text-sm text-muted">Chưa có đánh giá.</p>}
                 </div>
               </div>
-            </div>
-          </section>
-        </div>
-      </section>
+
+              <div>
+                <p className="eyebrow">Đường đến</p>
+                <h2 className="mt-4 font-heading text-3xl text-ink md:text-4xl">Vị trí</h2>
+                <p className="mt-3 text-ink-muted">{homestay.location}</p>
+                <div className="relative mt-6 grid min-h-72 place-items-center overflow-hidden rounded-[28px] bg-forest p-8 text-center text-white">
+                  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(201,163,90,0.25),transparent_55%),radial-gradient(circle_at_80%_80%,rgba(176,72,43,0.25),transparent_50%)]" aria-hidden="true" />
+                  <div className="relative">
+                    <span className="mx-auto grid size-14 place-items-center rounded-full bg-gold text-forest shadow-lift [animation:float-soft_4s_ease-in-out_infinite]" aria-hidden="true"><MapPin className="size-6" /></span>
+                    <p className="mt-4 font-heading text-2xl">{homestay.location}</p>
+                    <a className="btn-light mx-auto mt-6 w-fit" href={mapHref} rel="noreferrer" target="_blank">Mở Google Maps <ArrowUpRight className="size-4" aria-hidden="true" /></a>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </section>
+      </main>
       <SiteFooter />
-    </main>
+    </>
   );
 }

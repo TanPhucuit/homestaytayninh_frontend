@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { ActionButton } from "./action-button";
-import { BookingCard, PageShell, StatusBadge } from "./customer-ui";
+import { BedDouble, CircleCheckBig, ClipboardList, House, Wallet } from "lucide-react";
+import { BookingCard, PageShell, StatTile, StatusBadge } from "./customer-ui";
 import { ConfirmActionButton } from "./confirm-action-button";
 import { FlashMessage } from "./feedback-state";
 import { MutationForm } from "./mutation-form";
@@ -33,25 +34,13 @@ export function OwnerStats({ homestays, bookings }: { homestays: Homestay[]; boo
   const paidRevenue = bookings.reduce((sum, booking) => sum + (booking.payment?.status === "PAID" ? booking.grandTotal : 0), 0);
   const inStay = bookings.filter((booking) => booking.status === "IN_STAY").length;
   const completed = bookings.filter((booking) => booking.status === "COMPLETED").length;
-  const stats = [
-    ["Homestay", homestays.length],
-    ["Booking", bookings.length],
-    ["Đang trải nghiệm", inStay],
-    ["Hoàn thành", completed]
-  ] as const;
-
   return (
-    <section className="grid gap-4 md:grid-cols-4">
-      {stats.map(([label, value]) => (
-        <div className="card p-5" key={label}>
-          <p className="text-sm font-semibold text-leaf">{label}</p>
-          <p className="mt-2 font-heading text-3xl font-bold text-brand">{value}</p>
-        </div>
-      ))}
-      <div className="card p-5 md:col-span-4">
-        <p className="text-sm font-semibold text-leaf">Doanh thu đã thanh toán</p>
-        <p className="mt-2 font-heading text-3xl font-bold text-brand">{money(paidRevenue)}</p>
-      </div>
+    <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <StatTile highlight icon={Wallet} label="Doanh thu đã thanh toán" value={money(paidRevenue)} />
+      <StatTile icon={House} label="Homestay" value={homestays.length} />
+      <StatTile icon={ClipboardList} label="Booking" value={bookings.length} />
+      <StatTile icon={BedDouble} label="Đang trải nghiệm" value={inStay} />
+      <StatTile icon={CircleCheckBig} label="Hoàn thành" value={completed} />
     </section>
   );
 }
@@ -109,7 +98,7 @@ export function OwnerBookingOps({ bookings, homestays }: { bookings: Booking[]; 
           <div className="flex flex-col justify-between gap-3 lg:flex-row lg:items-start">
             <div>
               <StatusBadge status={booking.status} />
-              <h3 className="mt-3 font-heading text-2xl text-brand">{homestayById.get(booking.homestayId)?.name ?? booking.homestayId}</h3>
+              <h3 className="mt-3 font-heading text-2xl text-ink">{homestayById.get(booking.homestayId)?.name ?? booking.homestayId}</h3>
               <p className="mt-1 text-sm text-muted">{booking.guestName} · {booking.checkIn} → {booking.checkOut} · {money(booking.grandTotal)}</p>
             </div>
             <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap">
@@ -153,7 +142,7 @@ export function OwnerBookingHistory({ bookings, homestays }: { bookings: Booking
                   <StatusBadge status={booking.status} />
                   <span className="rounded-full bg-sand-deep px-3 py-1 text-xs font-bold text-ink-muted">{booking.id}</span>
                 </div>
-                <h3 className="mt-3 font-heading text-2xl text-brand">{homestay?.name ?? booking.homestayId}</h3>
+                <h3 className="mt-3 font-heading text-2xl text-ink">{homestay?.name ?? booking.homestayId}</h3>
                 <p className="mt-1 text-sm leading-6 text-muted">
                   {booking.guestName} · {booking.guestPhone} · {booking.checkIn} → {booking.checkOut}
                 </p>
@@ -210,7 +199,7 @@ export function OwnerInventory({ homestays }: { homestays: Homestay[] }) {
             <div className="flex flex-col justify-between gap-4 lg:flex-row">
               <div className="min-w-0">
                 <p className="eyebrow">{homestay.type}</p>
-                <h2 className="mt-1 font-heading text-3xl text-brand">{homestay.name}</h2>
+                <h2 className="mt-1 font-heading text-3xl text-ink">{homestay.name}</h2>
                 <p className="mt-2 text-sm text-muted">{homestay.location}</p>
                 <div className="mt-4 grid gap-3 sm:grid-cols-3">
                   <div className="rounded-xl bg-sand px-4 py-3">

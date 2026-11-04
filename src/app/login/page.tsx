@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AlertCircle, ArrowLeft, ArrowRight, ChevronDown, Leaf, ShieldCheck } from "lucide-react";
 
 const demoAccounts = [
   { role: "Customer", email: "demo@gmail.com", note: "Đặt phòng và theo dõi booking" },
@@ -28,71 +29,108 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   const next = typeof params.next === "string" && params.next.startsWith("/") && !params.next.startsWith("//") ? params.next : "/";
   const googleLoginHref = next !== "/" ? `/auth/login/google?next=${encodeURIComponent(next)}` : "/auth/login/google";
 
+  // Demo accounts share a public password; never advertise them on production.
+  const showDemoLogin = process.env.SHOW_DEMO_LOGIN === "true" || process.env.NODE_ENV !== "production";
+
   return (
-    <main id="main" className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-10 text-ink">
-      <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: "url(https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1800&q=85)" }}
-      />
-      <div className="absolute inset-0 bg-ink/38" />
-      <section className="relative w-full max-w-xl rounded-2xl border border-white/40 bg-sand/94 p-7 shadow-card backdrop-blur md:p-8">
-        <div className="text-center">
-          <div className="mx-auto grid size-14 place-items-center rounded-full bg-leaf-soft font-heading text-2xl font-bold text-leaf">T</div>
-          <p className="eyebrow mt-5">Terra & Leaf</p>
-          <h1 className="mt-3 font-heading text-4xl text-brand md:text-5xl">Đăng nhập hệ thống</h1>
-          <p className="mt-3 text-sm leading-6 text-muted">
+    <main id="main" className="grid min-h-screen bg-cream text-ink lg:grid-cols-[1.05fr_1fr]">
+      <section className="relative isolate hidden overflow-hidden bg-forest text-white lg:flex lg:flex-col lg:justify-between lg:p-12">
+        {/* eslint-disable-next-line @next/next/no-img-element -- decorative static image */}
+        <img alt="" aria-hidden="true" className="ken-burns absolute inset-0 -z-20 size-full object-cover" src="/images/demo/tay-ninh-5.jpg" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-forest via-forest/50 to-forest/20" aria-hidden="true" />
+        <Link className="flex items-center gap-3" href="/">
+          <span className="grid size-11 place-items-center rounded-full bg-brand shadow-cta" aria-hidden="true"><Leaf className="size-5" /></span>
+          <span className="font-heading text-2xl">Terra <span className="italic text-gold">&amp;</span> Leaf</span>
+        </Link>
+        <div className="max-w-md">
+          <p className="eyebrow eyebrow-light">Homestay Tây Ninh</p>
+          <blockquote className="display mt-5 text-4xl xl:text-5xl">“Một buổi sáng yên bình dưới chân núi Bà Đen là đủ để <span className="italic text-gold">nạp lại năng lượng</span>.”</blockquote>
+          <p className="mt-6 flex items-center gap-2 text-sm text-white/70"><ShieldCheck className="size-4 text-gold" aria-hidden="true" /> Đăng nhập an toàn qua Google, phiên được mã hóa</p>
+        </div>
+      </section>
+
+      <section className="flex items-center justify-center px-5 py-12 md:px-10">
+        <div className="animate-fade-up w-full max-w-md">
+          <Link className="mb-10 flex items-center gap-3 lg:hidden" href="/">
+            <span className="grid size-10 place-items-center rounded-full bg-brand text-white" aria-hidden="true"><Leaf className="size-5" /></span>
+            <span className="font-heading text-xl">Terra <span className="italic text-gold">&amp;</span> Leaf</span>
+          </Link>
+          <p className="eyebrow">Chào mừng trở lại</p>
+          <h1 className="display mt-4 text-4xl md:text-5xl">Đăng nhập hệ thống</h1>
+          <p className="mt-4 text-base leading-7 text-muted">
             Truy cập đặt phòng, lịch sử booking và khu vực làm việc theo vai trò đã được cấp.
           </p>
-        </div>
 
-        {message && (
-          <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
-            {message}
-          </div>
-        )}
+          {message && (
+            <div className="mt-6 flex gap-3 rounded-2xl border border-danger/20 bg-danger-soft px-4 py-3 text-sm font-medium text-danger" role="alert">
+              <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+              {message}
+            </div>
+          )}
 
-        <a className="btn-secondary mt-7 w-full bg-white" href={googleLoginHref}>
-          Đăng nhập với Google
-        </a>
+          <a className="btn-secondary mt-8 w-full min-h-12" href={googleLoginHref}>
+            <GoogleMark />
+            Đăng nhập với Google
+          </a>
 
-        <div className="my-6 flex items-center gap-3 text-xs font-bold uppercase text-subtle">
-          <span className="h-px flex-1 bg-line" />
-          hoặc dùng tài khoản demo
-          <span className="h-px flex-1 bg-line" />
-        </div>
-
-        <form action="/auth/login/password" className="grid gap-3" method="post">
-          <input type="hidden" name="next" value={next} />
-          <label className="grid gap-2 text-sm font-semibold text-ink-soft">
-            Email
-            <input className="field" name="email" type="email" defaultValue="demo@gmail.com" autoComplete="email" required />
-          </label>
-          <label className="grid gap-2 text-sm font-semibold text-ink-soft">
-            Mật khẩu
-            <input className="field" name="password" type="password" defaultValue="demo123" autoComplete="current-password" required />
-          </label>
-          <button className="btn-primary w-full" type="submit">Đăng nhập demo</button>
-        </form>
-
-        <div className="mt-5 rounded-2xl bg-white/78 px-4 py-3 text-xs leading-5 text-muted">
-          <p className="text-center font-bold text-leaf">Mật khẩu demo chung: demo123</p>
-          <div className="mt-3 grid gap-2">
-            {demoAccounts.map((account) => (
-              <div className="rounded-xl bg-sand px-3 py-2" key={account.role}>
-                <p className="font-bold text-brand">{account.role}</p>
-                <p><strong>{account.email}</strong></p>
-                <p>{account.note}</p>
+          {showDemoLogin && (
+            <>
+              <div className="my-7 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.16em] text-subtle">
+                <span className="h-px flex-1 bg-line" />
+                hoặc dùng tài khoản demo
+                <span className="h-px flex-1 bg-line" />
               </div>
-            ))}
-          </div>
-          <p className="mt-3 text-center">
-            Có thể nhập nhanh <strong>ownerstaffdemo</strong> hoặc <strong>staffdemo</strong>, hệ thống sẽ tự đổi sang email demo đúng.
-          </p>
+
+              <form action="/auth/login/password" className="grid gap-4" method="post">
+                <input type="hidden" name="next" value={next} />
+                <label className="grid gap-2 text-sm font-medium text-ink-soft">
+                  Email
+                  <input className="field" name="email" type="email" defaultValue="demo@gmail.com" autoComplete="email" required />
+                </label>
+                <label className="grid gap-2 text-sm font-medium text-ink-soft">
+                  Mật khẩu
+                  <input className="field" name="password" type="password" defaultValue="demo123" autoComplete="current-password" required />
+                </label>
+                <button className="btn-primary mt-1 w-full min-h-12" type="submit">Đăng nhập demo <ArrowRight className="size-4" aria-hidden="true" /></button>
+              </form>
+
+              <details className="group mt-5 rounded-2xl border border-line-soft bg-white text-xs leading-5 text-muted">
+                <summary className="flex list-none items-center justify-between px-4 py-3 text-sm font-medium text-ink [&::-webkit-details-marker]:hidden">
+                  Tài khoản demo (mật khẩu chung: demo123)
+                  <ChevronDown className="size-4 transition group-open:rotate-180" aria-hidden="true" />
+                </summary>
+                <div className="grid gap-2 px-4 pb-4">
+                  {demoAccounts.map((account) => (
+                    <div className="rounded-xl bg-cream px-3 py-2" key={account.role}>
+                      <p className="font-semibold text-brand">{account.role}</p>
+                      <p><strong>{account.email}</strong></p>
+                      <p>{account.note}</p>
+                    </div>
+                  ))}
+                  <p className="mt-1">
+                    Có thể nhập nhanh <strong>ownerstaffdemo</strong> hoặc <strong>staffdemo</strong>, hệ thống sẽ tự đổi sang email demo đúng.
+                  </p>
+                </div>
+              </details>
+            </>
+          )}
+
+          <Link className="btn-ghost mt-6 w-full" href="/">
+            <ArrowLeft className="size-4" aria-hidden="true" /> Quay về trang chủ
+          </Link>
         </div>
-        <Link className="btn-secondary mt-3 w-full bg-white" href="/">
-          Quay về trang chủ
-        </Link>
       </section>
     </main>
+  );
+}
+
+function GoogleMark() {
+  return (
+    <svg aria-hidden="true" className="size-5" viewBox="0 0 48 48">
+      <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z" />
+      <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z" />
+      <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z" />
+      <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z" />
+    </svg>
   );
 }

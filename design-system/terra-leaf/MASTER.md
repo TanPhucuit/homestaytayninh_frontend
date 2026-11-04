@@ -1,46 +1,58 @@
-# Terra & Leaf – Design System (MASTER)
+# Terra & Leaf v2 – Design System (MASTER)
 
-Source of truth for every screen. Built with the `ui-ux-pro-max` skill (`.claude/skills/ui-ux-pro-max` in the TTDN workspace) on top of the BA palette.
+Source of truth for every screen. Built with the `ui-ux-pro-max` skill (`.claude/skills/ui-ux-pro-max` in the TTDN workspace).
 
-## Direction
+## Direction: "Cinematic nature luxury"
 
-| Item | Decision | Source |
+| Item | Decision | Skill source |
 |---|---|---|
-| Product type | Hotel / Hospitality, booking funnel | `--domain product "boutique hotel eco resort"` |
-| Style | Nature Distilled: muted earth, terracotta, sand, soft shadows, warm photography | `--domain style "organic natural editorial"` |
-| Landing pattern | Hero-centric + social proof, 3-step booking funnel | product + `--design-system` |
-| Palette | BA Terra & Leaf (kept; the generic travel blue from `--design-system` does not fit the brand) | BA document §6 |
-| Typography | Playfair Display (headings, has Vietnamese subset) + Be Vietnam Pro (body) | `--domain typography "elegant serif warm hospitality"`; Libre Caslon Text was dropped because it has no Vietnamese subset, so diacritics fell back to Georgia |
-| Icons | lucide-react SVG, never emoji or text glyphs (♡ ★ ✓) | skill rule §4 |
+| Page pattern | Search-first hero (Marketplace / Directory), categories, featured listings, trust, CTA | `--domain landing "hotel booking hero search"` |
+| Storytelling | Full-bleed photo hero with slow Ken Burns zoom, dark forest chapters, scroll reveal | `--domain style "immersive parallax storytelling"` |
+| Layout accents | Bento grid for destinations, asymmetric image collage | `--domain style "bento grid"` |
+| Typography | Editorial serif display (Playfair Display, italic accents) + Be Vietnam Pro body; both have Vietnamese subsets | `--domain typography "elegant serif warm hospitality"`, `--domain style "editorial luxury magazine"` |
+| Material | Glass only on navigation chips, hero stats and the search bar wrapper | `--domain style "liquid glass"`: "apply sparingly to navigation and controls" |
+| Dials | variance 8, motion 7, density 3 (bold, animated, spacious) | `--design-system --variance 8 --motion 7 --density 3` |
+| Rejected | Brutalism and navy/blue palette suggested at high variance: wrong mood for a nature homestay brand | — |
 
 ## Tokens (`src/app/globals.css` → `@theme`)
 
 | Token | Value | Use |
 |---|---|---|
-| `brand` / `brand-strong` | #9a4029 / #7b2914 | Primary CTA, links, price |
-| `brand-tint` / `brand-wash` | #ffdad2 / #fdf1ec | Selection, soft highlight |
-| `leaf` / `leaf-strong` / `leaf-soft` | #466550 / #2f4d3a / #e8f0eb | Secondary actions, success, portal header |
-| `ink` / `ink-soft` / `ink-muted` | #1c1c19 / #3f3530 / #56423d | Text hierarchy |
-| `muted` / `subtle` | #6f6158 / #7a645d | Secondary text (≥ 4.5:1 on sand) |
-| `sand` / `sand-deep` | #fdf9f4 / #f3ede6 | Page background, chips |
-| `line` / `line-soft` | #dcc0ba / #e8e1d5 | Borders |
-| `warn(-soft)`, `danger(-soft)` | #7a4a12 / #fff3d6, #93000a / #ffdad6 | Status |
-| `shadow-card`, `shadow-lift`, `shadow-cta` | layered warm shadows | Resting / hover / CTA |
-| Radius | 12px controls, 16px cards, 20px search panel | BA |
+| `forest` / `forest-soft` | #10261d / #1c3a2e | Dark chapters, footer, portal headers, summary headers |
+| `brand` / `brand-strong` | #b0482b / #8a3520 | Primary CTA, prices, italic accents |
+| `gold` / `gold-soft` | #c9a35a / #f4ead6 | Stars, focus ring, eyebrow on dark, highlights |
+| `leaf` / `leaf-strong` / `leaf-soft` | #2f5d47 / #173a2d / #e6efe9 | Secondary accents, success, chips |
+| `ink` → `subtle` | #161512 → #766c62 | Text hierarchy (all ≥ 4.5:1 on cream/sand) |
+| `cream` / `sand` / `sand-deep` | #fbf8f3 / #f7f2ea / #ede5d8 | Backgrounds |
+| `line` / `line-soft` | #d9cdbd / #e9e1d4 | Borders |
+| Radius | 14px controls, 24–32px cards and media, pill buttons | |
+| Shadows | `shadow-card`, `shadow-lift`, `shadow-cta`, `shadow-glass` | Rest / hover / CTA / glass |
 
-Rule: components use token classes (`text-brand`, `bg-sand`, `border-line-soft`). Raw hex and arbitrary `shadow-[…rgba…]` are not allowed.
+Rule: components use token classes only; no raw hex, no arbitrary `rgba` shadows.
 
-## Components (`@layer components`)
+## Motion
 
-`btn-primary`, `btn-secondary`, `btn-ghost` (min 44px, 180ms ease-out, active scale), `card`, `field` (visible label, hover/focus states, `aria-invalid`), `check-row` (checked state via `:has`), `badge` + `badge-green|sand|red`, `search-panel`, `skeleton-shimmer`, `animate-fade-up`.
-Shared React pieces in `src/components/customer-ui.tsx`: `AppTopBar` (mobile menu for every visitor, role label in Vietnamese), `SiteFooter`, `PageShell`, `PortalHero` (Admin/Staff header), `Stepper`, `HomestayCard`, `BookingCard`.
+| Effect | Where | Implementation |
+|---|---|---|
+| Scroll reveal (fade + rise, staggered via `--reveal-delay`) | Section headings, cards, grids | `.reveal` + `RevealObserver` (IntersectionObserver). Hidden only when `html.js` is set, so content never disappears without JS |
+| Ken Burns zoom | Hero and login images | `.ken-burns` (24s) |
+| Marquee | Destination ticker under hero | `.marquee`, pauses on hover |
+| Hover zoom / lift / arrow rotate | Cards, bento tiles, stat tiles | `.hover-zoom`, `group-hover:` utilities |
+| Button light sweep | `.btn-primary` | `::after` gradient |
+| Header transparent → solid | Home page | `HeaderFrame` (client) toggles `data-solid` on scroll |
+| Floating badges, pulse ring | Intro stat, map pin, payment status | `float-soft`, `animate-ping` |
 
-## Accessibility & motion checklist
+All motion is disabled under `prefers-reduced-motion`.
 
-- [x] Skip link to `#main` on every page
-- [x] Global `:focus-visible` ring (2px brand, offset 2px)
-- [x] Touch targets ≥ 44px; `cursor: pointer` on interactive elements
-- [x] Text contrast ≥ 4.5:1 (muted/subtle tokens darkened)
-- [x] `prefers-reduced-motion` disables animation and smooth scroll
-- [x] Decorative icons `aria-hidden`; images have `alt`; lazy-loaded card images
-- [x] No horizontal scroll at 375px
+## Components
+
+`AppTopBar` (overlay mode for hero pages), `SiteFooter` (forest), `PageBanner` (cream with soft colour blobs), `PageShell`, `PortalHero` (forest), `StatTile`, `HomestayCard` (image-led 5:6 card, glass type chip, price and CTA over image), `Stepper`, `BookingCard`; CSS classes `btn-primary|secondary|ghost|light`, `card`, `field`, `check-row`, `badge*`, `glass`, `eyebrow(-light)`, `display`, `container-page`, `section`.
+
+## Accessibility checklist
+
+- [x] Skip link to `#main`; gold `:focus-visible` ring everywhere
+- [x] Touch targets ≥ 44px; pill buttons min 46px
+- [x] Text contrast ≥ 4.5:1; white text on images sits on ≥ 60% forest gradient
+- [x] Decorative images and icons `aria-hidden`; content images have `alt`
+- [x] Reduced motion respected; reveal never hides content without JS
+- [x] Demo login (public password) only rendered outside production

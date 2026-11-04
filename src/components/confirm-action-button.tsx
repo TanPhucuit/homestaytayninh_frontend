@@ -55,8 +55,8 @@ export function ConfirmActionButton({
       {open && (
         <div className="fixed inset-0 z-50 grid place-items-center bg-ink/55 px-4 py-6" role="dialog" aria-modal="true">
           <div className="w-full max-w-md rounded-2xl border border-line bg-sand p-6 text-center shadow-card">
-            <div className="mx-auto grid size-12 place-items-center rounded-full bg-danger-soft text-xl font-black text-brand">!</div>
-            <h2 className="mt-5 font-heading text-2xl text-brand">Xác nhận thao tác</h2>
+            <div className="mx-auto grid size-12 place-items-center rounded-full bg-danger-soft text-xl font-semibold text-brand">!</div>
+            <h2 className="mt-5 font-heading text-2xl text-ink">Xác nhận thao tác</h2>
             <p className="mt-3 text-sm leading-6 text-ink-muted">{message}</p>
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
               <button

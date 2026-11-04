@@ -116,7 +116,7 @@ export function PageSkeleton({
   variant?: "cards" | "media" | "dashboard" | "detail";
 }) {
   return (
-    <main id="main" className="mx-auto max-w-7xl px-4 py-8 md:px-8 md:py-12">
+    <main id="main" className="container-page py-8  md:py-12">
       <div className="mb-8">
         <div className="skeleton-shimmer h-4 w-44 rounded-full" />
         <div className="skeleton-shimmer mt-4 h-10 w-full max-w-xl rounded-full" />

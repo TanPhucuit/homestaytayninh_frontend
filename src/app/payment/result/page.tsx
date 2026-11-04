@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CheckCircle2, Hourglass, Leaf, XCircle } from "lucide-react";
 import { AccessDenied } from "@/components/access-denied";
 import { PaymentBadge } from "@/components/customer-ui";
 import { PaymentStatusPoller } from "@/components/payment-status-poller";
@@ -27,23 +28,26 @@ function cleanPaymentError(value?: string) {
 function copyFor(status: PaymentStatus) {
   if (status === "PAID") {
     return {
-      icon: "OK",
-      tone: "bg-leaf-soft text-leaf",
+      icon: CheckCircle2,
+      tone: "bg-leaf-soft text-leaf-strong",
+      ring: "bg-leaf/20",
       title: "Thanh toán thành công",
       description: "Đơn đặt phòng của bạn đã được ghi nhận. Bạn có thể xem chi tiết trong Chuyến đi của tôi."
     };
   }
   if (status === "FAILED" || status === "CANCELLED") {
     return {
-      icon: "!",
+      icon: XCircle,
       tone: "bg-danger-soft text-danger",
+      ring: "bg-danger/15",
       title: "Thanh toán chưa hoàn tất",
       description: "Giao dịch chưa hoàn tất hoặc đã hết hạn. Bạn có thể thử lại từ trang chi tiết đơn đặt."
     };
   }
   return {
-    icon: "...",
+    icon: Hourglass,
     tone: "bg-warn-soft text-warn",
+    ring: "bg-gold/25",
     title: "Thanh toán đang xử lý",
     description: "Trạng thái giao dịch đang chờ xác nhận. Vui lòng kiểm tra lại sau ít phút."
   };
@@ -62,16 +66,25 @@ export default async function PaymentResultPage({ searchParams }: { searchParams
   const payment = params.bookingId ? await getPaymentStatus(params.bookingId, user?.role ?? "CUSTOMER") : null;
   const status = paymentError ? "FAILED" : (payment?.status ?? normalizePaymentStatus(params.status));
   const view = copyFor(status);
+  const StatusIcon = view.icon;
   const shouldPoll = Boolean(params.bookingId && status === "PENDING" && !paymentError);
 
   return (
-    <main id="main" className="flex min-h-screen items-center justify-center px-4 py-10 text-ink">
-      <section className="w-full max-w-2xl rounded-2xl border border-line bg-white p-8 text-center shadow-card md:p-10">
-        <div className={`mx-auto grid size-20 place-items-center rounded-full text-2xl font-bold ${view.tone}`}>
-          {view.icon}
+    <main id="main" className="relative flex min-h-screen items-center justify-center overflow-hidden bg-cream px-4 py-14 text-ink">
+      <div className="pointer-events-none absolute -left-32 -top-32 size-[30rem] rounded-full bg-gold-soft blur-3xl" aria-hidden="true" />
+      <div className="pointer-events-none absolute -bottom-40 -right-24 size-[28rem] rounded-full bg-leaf-soft blur-3xl" aria-hidden="true" />
+      <section className="animate-fade-up relative w-full max-w-2xl rounded-[32px] border border-line-soft bg-white p-8 text-center shadow-lift md:p-12">
+        <Link className="mx-auto mb-8 flex w-fit items-center gap-2 font-heading text-lg text-ink" href="/">
+          <Leaf className="size-4 text-brand" aria-hidden="true" /> Terra <span className="italic text-gold">&amp;</span> Leaf
+        </Link>
+        <div className="relative mx-auto grid size-24 place-items-center">
+          <span className={`absolute inset-0 animate-ping rounded-full opacity-60 [animation-duration:2.4s] ${view.ring}`} aria-hidden="true" />
+          <span className={`relative grid size-24 place-items-center rounded-full ${view.tone}`}>
+            <StatusIcon className={`size-11 ${status === "PENDING" || status === "INITIATED" ? "animate-pulse" : ""}`} aria-hidden="true" />
+          </span>
         </div>
         <p className="eyebrow mt-8">Kết quả thanh toán</p>
-        <h1 className="mt-3 font-heading text-4xl text-brand md:text-5xl">{view.title}</h1>
+        <h1 className="display mt-3 text-4xl text-ink md:text-5xl">{view.title}</h1>
         <p className="mx-auto mt-4 max-w-lg text-sm leading-6 text-muted">{view.description}</p>
         {status === "PENDING" && (
           <p className="mx-auto mt-3 max-w-lg text-sm font-semibold leading-6 text-warn">
@@ -88,14 +101,14 @@ export default async function PaymentResultPage({ searchParams }: { searchParams
           <PaymentBadge status={status} />
         </div>
         {payment && (
-          <div className="mx-auto mt-6 max-w-md rounded-2xl bg-sand p-5 text-sm text-ink-muted">
+          <div className="mx-auto mt-6 max-w-md rounded-2xl bg-cream p-5 text-sm text-ink-muted">
             <div className="flex justify-between gap-4"><span>Mã thanh toán</span><strong>{payment.id}</strong></div>
             <div className="mt-2 flex justify-between gap-4"><span>Số tiền</span><strong>{money(payment.amount)}</strong></div>
           </div>
         )}
         {payment?.qrUrl && status !== "PAID" && (
           <div className="mx-auto mt-6 max-w-sm rounded-2xl border border-line-soft bg-white p-5">
-            <p className="font-heading text-2xl text-brand">Quét mã để thanh toán</p>
+            <p className="font-heading text-2xl text-ink">Quét mã để thanh toán</p>
             {/* QR URL is returned dynamically by the payment provider, so next/image cannot safely whitelist it. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img className="mx-auto mt-4 h-64 w-64 rounded-xl bg-white object-contain" src={payment.qrUrl} alt="Mã QR thanh toán" />
