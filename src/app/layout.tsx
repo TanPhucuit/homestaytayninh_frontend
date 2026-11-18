@@ -10,14 +10,14 @@ const body = Be_Vietnam_Pro({ subsets: ["latin", "vietnamese"], weight: ["300", 
 export const metadata: Metadata = {
   metadataBase: new URL("https://tayninhhomestay.id.vn"),
   title: {
-    default: "Terra & Leaf – Homestay Tây Ninh",
-    template: "%s · Terra & Leaf"
+    default: "Homestay Tây Ninh – Nghỉ dưỡng giữa thiên nhiên",
+    template: "%s · Homestay Tây Ninh"
   },
   description: "Tìm và đặt homestay, lều glamping, nhà nguyên căn tại Tây Ninh. Thanh toán VietQR qua ApiPay, theo dõi đơn theo thời gian thực.",
   openGraph: {
     type: "website",
     locale: "vi_VN",
-    siteName: "Terra & Leaf – Homestay Tây Ninh",
+    siteName: "Homestay Tây Ninh",
     images: ["/images/demo/tay-ninh-5.jpg"]
   }
 };

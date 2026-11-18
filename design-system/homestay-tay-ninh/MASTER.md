@@ -1,4 +1,4 @@
-# Terra & Leaf v2 – Design System (MASTER)
+# Homestay Tây Ninh – Design System (MASTER)
 
 Source of truth for every screen. Built with the `ui-ux-pro-max` skill (`.claude/skills/ui-ux-pro-max` in the TTDN workspace).
 

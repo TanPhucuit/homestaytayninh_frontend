@@ -44,13 +44,13 @@ export async function AppTopBar({ overlay = false }: { overlay?: boolean } = {})
   return (
     <HeaderFrame overlay={overlay}>
       <div className="container-page flex h-16 items-center justify-between gap-3 md:h-20">
-        <Link href="/" className={`group flex min-w-0 items-center gap-3 ${tone}`} aria-label="Terra & Leaf, về trang chủ">
+        <Link href="/" className={`group flex min-w-0 items-center gap-3 ${tone}`} aria-label="Homestay Tây Ninh, về trang chủ">
           <span className="grid size-10 shrink-0 place-items-center rounded-full bg-brand text-white shadow-cta transition duration-500 group-hover:rotate-[-12deg]" aria-hidden="true">
             <Leaf className="size-5" strokeWidth={1.8} />
           </span>
           <span className="min-w-0 leading-none">
-            <span className="block whitespace-nowrap font-heading text-lg font-semibold sm:text-xl md:text-[1.4rem]">Terra <span className="italic text-gold">&amp;</span> Leaf</span>
-            <span className="mt-1 hidden text-[10px] font-semibold uppercase tracking-[0.28em] opacity-70 sm:block">Homestay Tây Ninh</span>
+            <span className="block whitespace-nowrap font-heading text-lg font-semibold sm:text-xl md:text-[1.4rem]">Homestay <span className="italic text-gold">Tây Ninh</span></span>
+            <span className="mt-1 hidden text-[10px] font-semibold uppercase tracking-[0.28em] opacity-70 sm:block">Nghỉ dưỡng giữa thiên nhiên</span>
           </span>
         </Link>
 
@@ -127,7 +127,7 @@ export function SiteFooter() {
       <Leaf className="pointer-events-none absolute -bottom-16 -right-10 size-80 rotate-[-18deg] text-white/[0.04]" aria-hidden="true" />
       <div className="container-page relative grid gap-12 py-16 md:grid-cols-[1.6fr_1fr_1fr] md:py-20">
         <div>
-          <p className="font-heading text-3xl text-white">Terra <span className="italic text-gold">&amp;</span> Leaf</p>
+          <p className="font-heading text-3xl text-white">Homestay <span className="italic text-gold">Tây Ninh</span></p>
           <p className="mt-4 max-w-sm text-sm leading-7 text-white/65">Homestay, lều glamping và nhà nguyên căn giữa thiên nhiên Tây Ninh. Đặt phòng trực tuyến, thanh toán VietQR qua ApiPay.</p>
           <Link className="btn-primary mt-7" href="/homestays">Tìm chỗ nghỉ <ArrowRight className="size-4" aria-hidden="true" /></Link>
         </div>
@@ -144,7 +144,7 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="container-page flex flex-col justify-between gap-2 border-t border-white/10 py-6 text-xs text-white/50 sm:flex-row">
-        <p>© {new Date().getFullYear()} Terra &amp; Leaf</p>
+        <p>© {new Date().getFullYear()} Homestay Tây Ninh</p>
         <p>tayninhhomestay.id.vn</p>
       </div>
     </footer>
@@ -378,7 +378,7 @@ export function ServicesDisplay({ includedServices, addOnServices }: { includedS
   return (
     <section className="card p-6">
       <h2 className="font-heading text-2xl text-ink">Dịch vụ trong booking</h2>
-      <div className="mt-5 grid gap-5 lg:grid-cols-2">
+      <div className="mt-5 grid gap-6">
         <div>
           <h3 className="text-lg font-bold text-leaf">Dịch vụ đã bao gồm</h3>
           <div className="mt-3 space-y-2">

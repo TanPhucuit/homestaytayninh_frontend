@@ -40,10 +40,10 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-forest via-forest/50 to-forest/20" aria-hidden="true" />
         <Link className="flex items-center gap-3" href="/">
           <span className="grid size-11 place-items-center rounded-full bg-brand shadow-cta" aria-hidden="true"><Leaf className="size-5" /></span>
-          <span className="font-heading text-2xl">Terra <span className="italic text-gold">&amp;</span> Leaf</span>
+          <span className="font-heading text-2xl">Homestay <span className="italic text-gold">Tây Ninh</span></span>
         </Link>
         <div className="max-w-md">
-          <p className="eyebrow eyebrow-light">Homestay Tây Ninh</p>
+          <p className="eyebrow eyebrow-light">Nghỉ dưỡng giữa thiên nhiên</p>
           <blockquote className="display mt-5 text-4xl xl:text-5xl">“Một buổi sáng yên bình dưới chân núi Bà Đen là đủ để <span className="italic text-gold">nạp lại năng lượng</span>.”</blockquote>
           <p className="mt-6 flex items-center gap-2 text-sm text-white/70"><ShieldCheck className="size-4 text-gold" aria-hidden="true" /> Đăng nhập an toàn qua Google, phiên được mã hóa</p>
         </div>
@@ -53,7 +53,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         <div className="animate-fade-up w-full max-w-md">
           <Link className="mb-10 flex items-center gap-3 lg:hidden" href="/">
             <span className="grid size-10 place-items-center rounded-full bg-brand text-white" aria-hidden="true"><Leaf className="size-5" /></span>
-            <span className="font-heading text-xl">Terra <span className="italic text-gold">&amp;</span> Leaf</span>
+            <span className="font-heading text-xl">Homestay <span className="italic text-gold">Tây Ninh</span></span>
           </Link>
           <p className="eyebrow">Chào mừng trở lại</p>
           <h1 className="display mt-4 text-4xl md:text-5xl">Đăng nhập hệ thống</h1>

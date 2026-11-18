@@ -40,7 +40,7 @@ export default async function BookingDetailPage({ params, searchParams }: { para
   const addOnServices = homestay.services.filter((service) => service.active !== false && !service.included);
 
   return (
-    <PageShell eyebrow="Chi tiết đơn đặt" title={`Đơn ${booking.id}`} description={`${homestay.name} · ${booking.checkIn} → ${booking.checkOut}`}>
+    <PageShell eyebrow="Chi tiết đơn đặt" title={homestay.name} description={`Mã đơn ${booking.id} · ${booking.checkIn} – ${booking.checkOut}`}>
       <div className="mb-5">
         <FlashMessage flash={flash} />
       </div>

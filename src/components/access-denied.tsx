@@ -8,7 +8,7 @@ export function AccessDenied({ description = "Bạn cần đăng nhập đúng v
       <div className="pointer-events-none absolute -bottom-40 -left-24 size-[28rem] rounded-full bg-leaf-soft blur-3xl" aria-hidden="true" />
       <section className="animate-fade-up relative w-full max-w-2xl rounded-[32px] border border-line-soft bg-white p-8 text-center shadow-lift md:p-12">
         <Link className="mx-auto mb-8 flex w-fit items-center gap-2 font-heading text-lg text-ink" href="/">
-          <Leaf className="size-4 text-brand" aria-hidden="true" /> Terra <span className="italic text-gold">&amp;</span> Leaf
+          <Leaf className="size-4 text-brand" aria-hidden="true" /> Homestay <span className="italic text-gold">Tây Ninh</span>
         </Link>
         <div className="mx-auto grid size-20 place-items-center rounded-full bg-forest text-gold shadow-lift" aria-hidden="true">
           <LockKeyhole className="size-9" />

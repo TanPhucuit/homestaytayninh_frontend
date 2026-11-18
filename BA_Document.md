@@ -57,7 +57,7 @@ Xác nhận dịch vụ: Các dịch vụ sau khi được gọi sẽ có trạn
 ## 3. Owner Staff chọn chức năng "Thêm dịch vụ", chọn món và số lượng.
 ## 4. Hệ thống tự động ghi nhận chi phí vào tổng hóa đơn của phòng đó.
 # 6. YÊU CẦU GIAO DIỆN & TRẢI NGHIỆM (UI/UX GUIDELINES)
-Dựa trên tài liệu thiết kế "Terra & Leaf", giao diện hệ thống cần tuân thủ các nguyên tắc sau để mang lại cảm giác ấm cúng, gần gũi với thiên nhiên Tây Ninh.
+Dựa trên tài liệu thiết kế giao diện Homestay Tây Ninh, giao diện hệ thống cần tuân thủ các nguyên tắc sau để mang lại cảm giác ấm cúng, gần gũi với thiên nhiên Tây Ninh.
 Link thiết kế mẫu: https://stitch.withgoogle.com/projects/9758983027199050447
 Bảng màu (Color Palette): Terracotta (#9a4029), Soft Sand (#fdf9f4), Forest Green (#466550).
 Nghệ thuật chữ (Typography): Tiêu đề (Libre Caslon Text), Nội dung (Be Vietnam Pro).

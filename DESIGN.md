@@ -1,4 +1,4 @@
-# Terra & Leaf Design System
+# Homestay Tây Ninh Design System
 
 Source: BA document and Stitch/Figma import.
 
@@ -21,5 +21,5 @@ Source: BA document and Stitch/Figma import.
 - Staff/owner/admin screens share the same shell but expose role-specific actions.
 - Buttons and form controls use `12px` radius.
 - Cards and table containers use `16px` radius.
-- Status chips can stay pill-shaped for scanability, but their colors must map back to Terra & Leaf or semantic success/error states.
+- Status chips can stay pill-shaped for scanability, but their colors must map back to the Homestay Tây Ninh palette or semantic success/error states.
 - Avoid non-token hardcoded brand colors in page components; prefer global classes `card`, `btn-primary`, `btn-secondary`, `field`, and `table-card`.

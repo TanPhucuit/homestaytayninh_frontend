@@ -121,7 +121,7 @@ export default async function HomePage() {
         {/* ---------- Editorial intro ---------- */}
         <section className="section container-page grid items-center gap-14 lg:grid-cols-2">
           <div className="reveal">
-            <p className="eyebrow">Về Terra &amp; Leaf</p>
+            <p className="eyebrow">Về Homestay Tây Ninh</p>
             <h2 className="display mt-5 text-4xl md:text-6xl">
               Nghỉ chậm lại, <span className="italic text-brand">sống trọn</span> từng khoảnh khắc
             </h2>
