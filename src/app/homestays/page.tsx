@@ -93,7 +93,7 @@ export default async function HomestaysPage({ searchParams }: { searchParams: Pr
                         <Link
                           aria-current={page === currentPage ? "page" : undefined}
                           className={`grid size-11 place-items-center rounded-full text-sm font-semibold transition ${
-                            page === currentPage ? "bg-forest text-white" : "border border-line bg-white text-ink-muted hover:border-ink"
+                            page === currentPage ? "bg-bark text-white" : "border border-line bg-white text-ink-muted hover:border-ink"
                           }`}
                           href={homestaySearchHref(filters, page)}
                           key={page}

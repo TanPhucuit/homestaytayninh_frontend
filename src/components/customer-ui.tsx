@@ -43,13 +43,13 @@ export async function AppTopBar({ overlay = false }: { overlay?: boolean } = {})
 
   return (
     <HeaderFrame overlay={overlay}>
-      <div className="container-page flex h-16 items-center justify-between gap-3 md:h-20">
+      <div className="container-page flex h-16 items-center justify-between gap-2 md:h-20">
         <Link href="/" className={`group flex min-w-0 items-center gap-3 ${tone}`} aria-label="Homestay Tây Ninh, về trang chủ">
-          <span className="grid size-10 shrink-0 place-items-center rounded-full bg-brand text-white shadow-cta transition duration-500 group-hover:rotate-[-12deg]" aria-hidden="true">
+          <span className="hidden size-10 shrink-0 place-items-center rounded-full bg-brand text-white shadow-cta min-[420px]:grid transition duration-500 group-hover:rotate-[-12deg]" aria-hidden="true">
             <Leaf className="size-5" strokeWidth={1.8} />
           </span>
           <span className="min-w-0 leading-none">
-            <span className="block whitespace-nowrap font-heading text-lg font-semibold sm:text-xl md:text-[1.4rem]">Homestay <span className="italic text-gold">Tây Ninh</span></span>
+            <span className="block whitespace-nowrap font-heading text-base font-semibold sm:text-xl md:text-[1.4rem]">Homestay <span className="italic text-brand">Tây Ninh</span></span>
             <span className="mt-1 hidden text-[10px] font-semibold uppercase tracking-[0.28em] opacity-70 sm:block">Nghỉ dưỡng giữa thiên nhiên</span>
           </span>
         </Link>
@@ -75,7 +75,7 @@ export async function AppTopBar({ overlay = false }: { overlay?: boolean } = {})
                 </span>
               ) : (
                 <Link className="hidden items-center gap-2.5 rounded-full border border-line-soft bg-white/90 py-1 pl-1 pr-4 text-sm shadow-sm transition hover:border-line md:flex" href={homeForRole(user.role)}>
-                  <span className="grid size-9 place-items-center rounded-full bg-forest text-xs font-semibold text-gold" aria-hidden="true">{initials(user.name)}</span>
+                  <span className="grid size-9 place-items-center rounded-full bg-bark text-xs font-semibold text-gold" aria-hidden="true">{initials(user.name)}</span>
                   <span className="leading-tight">
                     <span className="block max-w-36 truncate font-semibold text-ink">{user.name}</span>
                     <span className="block text-xs text-muted">{roleLabel[user.role]}</span>
@@ -89,7 +89,7 @@ export async function AppTopBar({ overlay = false }: { overlay?: boolean } = {})
           ) : (
             <>
               <Link className={`hidden rounded-full px-4 py-2 text-sm font-medium transition hover:opacity-80 md:inline-flex ${tone}`} href="/homestays">Đặt phòng ngay</Link>
-              <Link className="btn-primary min-h-11 px-5 text-sm" href="/login">Đăng nhập</Link>
+              <Link className="btn-primary min-h-10 px-3.5 text-sm sm:min-h-11 sm:px-5" href="/login">Đăng nhập</Link>
             </>
           )}
           <details className="group relative lg:hidden">
@@ -123,7 +123,7 @@ function initials(name: string) {
 
 export function SiteFooter() {
   return (
-    <footer className="grain relative mt-24 overflow-hidden bg-forest text-white/80">
+    <footer className="grain relative mt-24 overflow-hidden bg-bark text-white/80">
       <Leaf className="pointer-events-none absolute -bottom-16 -right-10 size-80 rotate-[-18deg] text-white/[0.04]" aria-hidden="true" />
       <div className="container-page relative grid gap-12 py-16 md:grid-cols-[1.6fr_1fr_1fr] md:py-20">
         <div>
@@ -187,7 +187,7 @@ export function PortalHero({ eyebrow, title, description, meta, links }: {
   links?: Array<{ label: string; href: string; active?: boolean }>;
 }) {
   return (
-    <header className="grain animate-fade-up relative overflow-hidden rounded-[28px] bg-forest p-7 text-white shadow-lift md:p-10">
+    <header className="grain animate-fade-up relative overflow-hidden rounded-[28px] bg-bark p-7 text-white shadow-lift md:p-10">
       <div className="pointer-events-none absolute -right-20 -top-20 size-72 rounded-full bg-brand/30 blur-3xl" aria-hidden="true" />
       <Leaf className="pointer-events-none absolute -bottom-10 right-6 size-48 rotate-12 text-white/[0.05]" aria-hidden="true" />
       <div className="relative flex flex-col justify-between gap-6 md:flex-row md:items-end">
@@ -202,7 +202,7 @@ export function PortalHero({ eyebrow, title, description, meta, links }: {
             {links.map((link) => (
               <Link
                 aria-current={link.active ? "page" : undefined}
-                className={`inline-flex min-h-11 items-center rounded-full px-5 text-sm font-medium transition ${link.active ? "bg-white text-forest" : "border border-white/20 bg-white/5 text-white hover:bg-white hover:text-forest"}`}
+                className={`inline-flex min-h-11 items-center rounded-full px-5 text-sm font-medium transition ${link.active ? "bg-white text-bark" : "border border-white/20 bg-white/5 text-white hover:bg-white hover:text-bark"}`}
                 href={link.href}
                 key={link.href}
               >
@@ -218,12 +218,12 @@ export function PortalHero({ eyebrow, title, description, meta, links }: {
 
 export function StatTile({ label, value, icon: Icon, highlight = false }: { label: string; value: ReactNode; icon: LucideIcon; highlight?: boolean }) {
   return (
-    <div className={`group relative overflow-hidden rounded-[24px] border p-6 transition duration-500 hover:-translate-y-1 hover:shadow-lift ${highlight ? "border-transparent bg-forest text-white" : "border-line-soft bg-white shadow-card"}`}>
-      <span className={`grid size-11 place-items-center rounded-2xl transition duration-500 group-hover:scale-110 ${highlight ? "bg-gold text-forest" : "bg-leaf-soft text-leaf-strong"}`} aria-hidden="true">
+    <div className={`group relative overflow-hidden rounded-[24px] border p-6 transition duration-500 hover:-translate-y-1 hover:shadow-lift ${highlight ? "border-transparent bg-bark text-white" : "border-line-soft bg-white shadow-card"}`}>
+      <span className={`grid size-11 place-items-center rounded-2xl transition duration-500 group-hover:scale-110 ${highlight ? "bg-gold text-bark" : "bg-leaf-soft text-leaf-strong"}`} aria-hidden="true">
         <Icon className="size-5" />
       </span>
       <p className={`mt-5 text-sm ${highlight ? "text-white/70" : "text-muted"}`}>{label}</p>
-      <p className="mt-1 font-heading text-3xl md:text-4xl">{value}</p>
+      <p className="mt-1 break-words font-heading text-2xl leading-tight md:text-[1.7rem] xl:text-3xl">{value}</p>
     </div>
   );
 }
@@ -269,47 +269,39 @@ export function HomestayCard({ homestay, href }: { homestay: Homestay; href?: st
 
   return (
     <article className="hover-zoom group relative flex flex-col">
-      <div className="image-shell relative aspect-[4/5] rounded-[26px] shadow-card transition duration-500 group-hover:shadow-lift sm:aspect-[5/6]">
+      <div className="image-shell relative aspect-[4/5] rounded-[28px] rounded-tr-[96px] shadow-card transition duration-500 group-hover:shadow-lift sm:aspect-[5/6]">
         {/* eslint-disable-next-line @next/next/no-img-element -- remote images from owners, unknown hosts */}
-        <img
-          alt={`Ảnh ${homestay.name}`}
-          className="absolute inset-0 size-full object-cover"
-          decoding="async"
-          loading="lazy"
-          src={homestay.imageUrl}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-forest/85 via-forest/10 to-transparent" aria-hidden="true" />
-        <div className="absolute inset-x-4 top-4 flex items-start justify-between gap-2">
-          <span className="rounded-full bg-forest/60 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-white backdrop-blur-md">{homestay.type}</span>
-          <span className="inline-flex items-center gap-1 rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-ink shadow-sm">
-            <Star className="size-3.5 fill-gold text-gold" aria-hidden="true" />
-            {homestay.rating}
-          </span>
-        </div>
-        <div className="absolute inset-x-5 bottom-5 text-white">
-          <p className="flex items-center gap-1.5 text-xs font-medium text-white/80"><MapPin className="size-3.5" aria-hidden="true" />{homestay.location}</p>
-          <h2 className="mt-1.5 line-clamp-2 font-heading text-2xl font-medium leading-tight">
-            <Link className="after:absolute after:inset-0 after:z-10 after:rounded-[26px]" href={target}>{homestay.name}</Link>
-          </h2>
-          <div className="mt-4 flex items-end justify-between gap-3">
-            <p>
-              <span className="block text-[11px] uppercase tracking-[0.16em] text-white/65">Giá từ</span>
-              <span className="text-lg font-semibold">{money(homestay.priceFrom)}</span>
-              <span className="text-xs text-white/70"> /đêm</span>
-            </p>
-            <Link className="relative z-20 inline-flex min-h-11 items-center gap-1.5 rounded-full bg-white pl-4 pr-1.5 text-sm font-semibold text-forest transition duration-500 group-hover:bg-gold" href={target}>
-              Chi tiết
-              <span className="grid size-8 place-items-center rounded-full bg-forest text-white transition duration-500 group-hover:rotate-45" aria-hidden="true"><ArrowUpRight className="size-4" /></span>
-            </Link>
-          </div>
-        </div>
+        <img alt={`Ảnh ${homestay.name}`} className="absolute inset-0 size-full object-cover" decoding="async" loading="lazy" src={homestay.imageUrl} />
+        <div className="absolute inset-0 bg-gradient-to-t from-bark/40 via-transparent to-transparent" aria-hidden="true" />
+        <span className="absolute left-4 top-4 rounded-full bg-cream/95 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted shadow-sm">{homestay.type}</span>
+        <span className="absolute bottom-4 left-4 inline-flex items-center gap-1 rounded-full bg-bark/80 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur-md">
+          <Star className="size-3.5 fill-gold text-gold" aria-hidden="true" />
+          {homestay.rating}
+        </span>
+        <span className="absolute bottom-4 right-4 grid size-12 place-items-center rounded-full bg-brand text-white shadow-cta transition duration-500 group-hover:rotate-45 group-hover:bg-gold group-hover:text-bark" aria-hidden="true">
+          <ArrowUpRight className="size-5" />
+        </span>
       </div>
-      <div className="mt-3 flex flex-wrap items-center gap-1.5 px-1">
-        {visibleAmenities.map((amenity) => (
-          <span className="rounded-full border border-line-soft bg-white px-2.5 py-1 text-[11px] font-medium text-ink-muted" key={amenity}>{amenity}</span>
-        ))}
-        {extraAmenityCount > 0 && <span className="rounded-full bg-leaf-soft px-2.5 py-1 text-[11px] font-semibold text-leaf-strong">+{extraAmenityCount}</span>}
-        <span className="ml-auto inline-flex items-center gap-1 text-xs text-muted"><Users className="size-3.5" aria-hidden="true" />{homestay.capacity} khách</span>
+      <div className="mt-4 px-1">
+        <p className="flex items-center gap-1.5 text-xs font-medium text-muted"><MapPin className="size-3.5 text-brand" aria-hidden="true" />{homestay.location}</p>
+        <h2 className="mt-1 line-clamp-2 font-heading text-2xl leading-tight text-ink">
+          <Link className="after:absolute after:inset-0 after:z-10 after:rounded-[28px]" href={target}>{homestay.name}</Link>
+        </h2>
+        <div className="mt-3 flex items-end justify-between gap-3 border-t border-dashed border-line pt-3">
+          <p>
+            <span className="text-xs text-muted">Giá từ </span>
+            <span className="font-heading text-xl font-medium text-brand-strong">{money(homestay.priceFrom)}</span>
+            <span className="text-xs text-muted"> /đêm</span>
+          </p>
+          <Link className="link-line relative z-20 text-sm font-semibold text-ink" href={target}>Chi tiết</Link>
+        </div>
+        <div className="mt-3 flex flex-wrap items-center gap-1.5">
+          <span className="inline-flex items-center gap-1 rounded-full bg-sand-deep px-2.5 py-1 text-[11px] font-semibold text-ink-muted"><Users className="size-3" aria-hidden="true" />{homestay.capacity} khách</span>
+          {visibleAmenities.map((amenity) => (
+            <span className="rounded-full border border-line-soft bg-cream px-2.5 py-1 text-[11px] font-medium text-ink-muted" key={amenity}>{amenity}</span>
+          ))}
+          {extraAmenityCount > 0 && <span className="rounded-full bg-leaf-soft px-2.5 py-1 text-[11px] font-semibold text-leaf-strong">+{extraAmenityCount}</span>}
+        </div>
       </div>
     </article>
   );

@@ -22,7 +22,7 @@ export default async function ArticlesPage() {
         <section className="container-page py-12 md:py-16">
           {lead ? (
             <>
-              <Link className="reveal hover-zoom group grid overflow-hidden rounded-[32px] bg-forest text-white shadow-lift md:grid-cols-[1.25fr_1fr]" href={`/articles/${lead.slug}`}>
+              <Link className="reveal hover-zoom group grid overflow-hidden rounded-[32px] bg-bark text-white shadow-lift md:grid-cols-[1.25fr_1fr]" href={`/articles/${lead.slug}`}>
                 <div className="image-shell aspect-[16/10] md:aspect-auto md:min-h-[420px]">
                   {lead.imageUrl && (
                     // eslint-disable-next-line @next/next/no-img-element -- CMS image from arbitrary hosts
@@ -31,7 +31,7 @@ export default async function ArticlesPage() {
                 </div>
                 <div className="flex flex-col justify-between gap-8 p-8 md:p-10">
                   <div>
-                    <span className="badge bg-gold text-forest">Bài nổi bật</span>
+                    <span className="badge bg-gold text-bark">Bài nổi bật</span>
                     <h2 className="display mt-5 text-3xl md:text-4xl">{lead.title}</h2>
                     <p className="mt-4 line-clamp-4 text-base leading-7 text-white/70">{lead.excerpt}</p>
                   </div>

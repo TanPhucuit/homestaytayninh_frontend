@@ -185,7 +185,7 @@ export function RoomSelectionCheckout({ homestayId, rooms, initialRoomIds, initi
       </div>
 
       <aside className="h-fit overflow-hidden rounded-[28px] border border-line-soft bg-white shadow-lift lg:sticky lg:top-28">
-        <div className="bg-forest px-6 py-5 text-white">
+        <div className="bg-bark px-6 py-5 text-white">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">Đặt phòng</p>
           <h2 className="mt-1 font-heading text-2xl">Tóm tắt đặt phòng</h2>
         </div>

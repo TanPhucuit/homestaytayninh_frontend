@@ -187,7 +187,7 @@ export default async function HomestayDetailPage({ params, searchParams }: { par
                 </a>
               </div>
 
-              <aside className="h-fit rounded-[28px] bg-forest p-7 text-white shadow-lift" id="amenities">
+              <aside className="h-fit rounded-[28px] bg-bark p-7 text-white shadow-lift" id="amenities">
                 <p className="eyebrow eyebrow-light">Tiện nghi</p>
                 <h2 className="mt-3 font-heading text-3xl">Tiện ích nổi bật</h2>
                 {homestay.amenities.length > 0 && <p className="mt-2 text-sm text-white/60">Bao gồm {homestay.amenities.length} tiện ích đang được chủ nhà công bố</p>}
@@ -259,10 +259,10 @@ export default async function HomestayDetailPage({ params, searchParams }: { par
                 <p className="eyebrow">Đường đến</p>
                 <h2 className="mt-4 font-heading text-3xl text-ink md:text-4xl">Vị trí</h2>
                 <p className="mt-3 text-ink-muted">{homestay.location}</p>
-                <div className="relative mt-6 grid min-h-72 place-items-center overflow-hidden rounded-[28px] bg-forest p-8 text-center text-white">
+                <div className="relative mt-6 grid min-h-72 place-items-center overflow-hidden rounded-[28px] bg-bark p-8 text-center text-white">
                   <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(201,163,90,0.25),transparent_55%),radial-gradient(circle_at_80%_80%,rgba(176,72,43,0.25),transparent_50%)]" aria-hidden="true" />
                   <div className="relative">
-                    <span className="mx-auto grid size-14 place-items-center rounded-full bg-gold text-forest shadow-lift [animation:float-soft_4s_ease-in-out_infinite]" aria-hidden="true"><MapPin className="size-6" /></span>
+                    <span className="mx-auto grid size-14 place-items-center rounded-full bg-gold text-bark shadow-lift [animation:float-soft_4s_ease-in-out_infinite]" aria-hidden="true"><MapPin className="size-6" /></span>
                     <p className="mt-4 font-heading text-2xl">{homestay.location}</p>
                     <a className="btn-light mx-auto mt-6 w-fit" href={mapHref} rel="noreferrer" target="_blank">Mở Google Maps <ArrowUpRight className="size-4" aria-hidden="true" /></a>
                   </div>

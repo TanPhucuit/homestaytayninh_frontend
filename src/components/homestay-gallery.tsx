@@ -48,9 +48,9 @@ export function HomestayGallery({ images }: { images: GalleryImage[] }) {
               aria-label={`Xem ảnh ${index + 1}`}
             >
               <img className="h-full w-full object-cover transition duration-[900ms] ease-out group-hover:scale-[1.06]" src={image.url} alt={image.alt} />
-              <span className="absolute inset-0 bg-gradient-to-t from-forest/30 via-transparent to-transparent opacity-60 transition duration-500 group-hover:opacity-100" />
+              <span className="absolute inset-0 bg-gradient-to-t from-bark/30 via-transparent to-transparent opacity-60 transition duration-500 group-hover:opacity-100" />
               {isLast && (
-                <span className="absolute inset-0 grid place-items-center bg-forest/55 text-center font-heading text-2xl text-white backdrop-blur-sm">
+                <span className="absolute inset-0 grid place-items-center bg-bark/55 text-center font-heading text-2xl text-white backdrop-blur-sm">
                   Xem tất cả ảnh
                 </span>
               )}
@@ -60,7 +60,7 @@ export function HomestayGallery({ images }: { images: GalleryImage[] }) {
       </div>
 
       {activeImage && (
-        <div className="animate-fade-up fixed inset-0 z-50 grid grid-rows-[auto_1fr] bg-forest/95 p-4 backdrop-blur-md md:p-8" role="dialog" aria-modal="true" aria-label="Xem ảnh homestay">
+        <div className="animate-fade-up fixed inset-0 z-50 grid grid-rows-[auto_1fr] bg-bark/95 p-4 backdrop-blur-md md:p-8" role="dialog" aria-modal="true" aria-label="Xem ảnh homestay">
           <div className="mb-4 flex items-center justify-between gap-3 text-white">
             <p className="text-sm font-bold">{activeIndex! + 1} / {images.length}</p>
             <button className="btn-light min-h-11 px-4 text-sm" onClick={() => setActiveIndex(null)} type="button">
@@ -69,7 +69,7 @@ export function HomestayGallery({ images }: { images: GalleryImage[] }) {
           </div>
           <div className="relative grid min-h-0 place-items-center">
             <button
-              className="absolute left-0 top-1/2 z-10 grid size-12 -translate-y-1/2 place-items-center rounded-full bg-white text-forest shadow-lift transition hover:bg-gold"
+              className="absolute left-0 top-1/2 z-10 grid size-12 -translate-y-1/2 place-items-center rounded-full bg-white text-bark shadow-lift transition hover:bg-gold"
               onClick={() => setActiveIndex((current) => (current === null ? 0 : (current - 1 + images.length) % images.length))}
               type="button"
               aria-label="Ảnh trước"
@@ -78,7 +78,7 @@ export function HomestayGallery({ images }: { images: GalleryImage[] }) {
             </button>
             <img className="max-h-[78vh] w-auto max-w-full rounded-3xl object-contain shadow-lift" src={activeImage.url} alt={activeImage.alt} />
             <button
-              className="absolute right-0 top-1/2 z-10 grid size-12 -translate-y-1/2 place-items-center rounded-full bg-white text-forest shadow-lift transition hover:bg-gold"
+              className="absolute right-0 top-1/2 z-10 grid size-12 -translate-y-1/2 place-items-center rounded-full bg-white text-bark shadow-lift transition hover:bg-gold"
               onClick={() => setActiveIndex((current) => (current === null ? 0 : (current + 1) % images.length))}
               type="button"
               aria-label="Ảnh tiếp theo"

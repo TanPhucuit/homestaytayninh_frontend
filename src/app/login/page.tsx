@@ -34,10 +34,10 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
 
   return (
     <main id="main" className="grid min-h-screen bg-cream text-ink lg:grid-cols-[1.05fr_1fr]">
-      <section className="relative isolate hidden overflow-hidden bg-forest text-white lg:flex lg:flex-col lg:justify-between lg:p-12">
+      <section className="relative isolate hidden overflow-hidden bg-bark text-white lg:flex lg:flex-col lg:justify-between lg:p-12">
         {/* eslint-disable-next-line @next/next/no-img-element -- decorative static image */}
         <img alt="" aria-hidden="true" className="ken-burns absolute inset-0 -z-20 size-full object-cover" src="/images/demo/tay-ninh-5.jpg" />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-forest via-forest/50 to-forest/20" aria-hidden="true" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-bark via-bark/50 to-bark/20" aria-hidden="true" />
         <Link className="flex items-center gap-3" href="/">
           <span className="grid size-11 place-items-center rounded-full bg-brand shadow-cta" aria-hidden="true"><Leaf className="size-5" /></span>
           <span className="font-heading text-2xl">Homestay <span className="italic text-gold">Tây Ninh</span></span>

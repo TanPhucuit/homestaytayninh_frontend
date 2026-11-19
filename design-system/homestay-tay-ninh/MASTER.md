@@ -1,58 +1,23 @@
-# Homestay Tây Ninh – Design System (MASTER)
+# Homestay Tây Ninh – Design System v3 "Nắng & Đất"
 
-Source of truth for every screen. Built with the `ui-ux-pro-max` skill (`.claude/skills/ui-ux-pro-max` in the TTDN workspace).
+Sinh bằng skill ui-ux-pro-max (styles: Nature Distilled + Organic Biophilic; typography: serif editorial + humanist sans).
+Hướng: sáng, ấm, thủ công, như giấy kraft và đất nung; thay cho giao diện tối "cinematic" v2.
 
-## Direction: "Cinematic nature luxury"
-
-| Item | Decision | Skill source |
+## Màu (token trong `src/app/globals.css`)
+| Token | Giá trị | Vai trò |
 |---|---|---|
-| Page pattern | Search-first hero (Marketplace / Directory), categories, featured listings, trust, CTA | `--domain landing "hotel booking hero search"` |
-| Storytelling | Full-bleed photo hero with slow Ken Burns zoom, dark forest chapters, scroll reveal | `--domain style "immersive parallax storytelling"` |
-| Layout accents | Bento grid for destinations, asymmetric image collage | `--domain style "bento grid"` |
-| Typography | Editorial serif display (Playfair Display, italic accents) + Be Vietnam Pro body; both have Vietnamese subsets | `--domain typography "elegant serif warm hospitality"`, `--domain style "editorial luxury magazine"` |
-| Material | Glass only on navigation chips, hero stats and the search bar wrapper | `--domain style "liquid glass"`: "apply sparingly to navigation and controls" |
-| Dials | variance 8, motion 7, density 3 (bold, animated, spacious) | `--design-system --variance 8 --motion 7 --density 3` |
-| Rejected | Brutalism and navy/blue palette suggested at high variance: wrong mood for a nature homestay brand | — |
+| brand | #C4542D | CTA, giá, chữ nhấn (đất nung) |
+| leaf | #5B6B2F | trạng thái tốt, biểu tượng phụ (ô-liu) |
+| bark | #2A1D14 | nền tối: chân trang, portal hero, thẻ nổi bật (nâu espresso) |
+| gold | #D9A23A | điểm nhấn trên nền tối (không dùng chữ vàng trên nền sáng) |
+| sand / cream | #F3EBDC / #FBF6EC | nền trang / mặt thẻ |
+| ink / muted | #1F1710 / #6A5B4B | chữ chính / chữ phụ (≥ 4.5:1 trên sand) |
 
-## Tokens (`src/app/globals.css` → `@theme`)
+## Chữ
+Fraunces (SOFT 100, opsz) cho tiêu đề, có bộ ký tự tiếng Việt; Be Vietnam Pro cho nội dung.
 
-| Token | Value | Use |
-|---|---|---|
-| `forest` / `forest-soft` | #10261d / #1c3a2e | Dark chapters, footer, portal headers, summary headers |
-| `brand` / `brand-strong` | #b0482b / #8a3520 | Primary CTA, prices, italic accents |
-| `gold` / `gold-soft` | #c9a35a / #f4ead6 | Stars, focus ring, eyebrow on dark, highlights |
-| `leaf` / `leaf-strong` / `leaf-soft` | #2f5d47 / #173a2d / #e6efe9 | Secondary accents, success, chips |
-| `ink` → `subtle` | #161512 → #766c62 | Text hierarchy (all ≥ 4.5:1 on cream/sand) |
-| `cream` / `sand` / `sand-deep` | #fbf8f3 / #f7f2ea / #ede5d8 | Backgrounds |
-| `line` / `line-soft` | #d9cdbd / #e9e1d4 | Borders |
-| Radius | 14px controls, 24–32px cards and media, pill buttons | |
-| Shadows | `shadow-card`, `shadow-lift`, `shadow-cta`, `shadow-glass` | Rest / hover / CTA / glass |
-
-Rule: components use token classes only; no raw hex, no arbitrary `rgba` shadows.
-
-## Motion
-
-| Effect | Where | Implementation |
-|---|---|---|
-| Scroll reveal (fade + rise, staggered via `--reveal-delay`) | Section headings, cards, grids | `.reveal` + `RevealObserver` (IntersectionObserver). Hidden only when `html.js` is set, so content never disappears without JS |
-| Ken Burns zoom | Hero and login images | `.ken-burns` (24s) |
-| Marquee | Destination ticker under hero | `.marquee`, pauses on hover |
-| Hover zoom / lift / arrow rotate | Cards, bento tiles, stat tiles | `.hover-zoom`, `group-hover:` utilities |
-| Button light sweep | `.btn-primary` | `::after` gradient |
-| Header transparent → solid | Home page | `HeaderFrame` (client) toggles `data-solid` on scroll |
-| Floating badges, pulse ring | Intro stat, map pin, payment status | `float-soft`, `animate-ping` |
-
-All motion is disabled under `prefers-reduced-motion`.
-
-## Components
-
-`AppTopBar` (overlay mode for hero pages), `SiteFooter` (forest), `PageBanner` (cream with soft colour blobs), `PageShell`, `PortalHero` (forest), `StatTile`, `HomestayCard` (image-led 5:6 card, glass type chip, price and CTA over image), `Stepper`, `BookingCard`; CSS classes `btn-primary|secondary|ghost|light`, `card`, `field`, `check-row`, `badge*`, `glass`, `eyebrow(-light)`, `display`, `container-page`, `section`.
-
-## Accessibility checklist
-
-- [x] Skip link to `#main`; gold `:focus-visible` ring everywhere
-- [x] Touch targets ≥ 44px; pill buttons min 46px
-- [x] Text contrast ≥ 4.5:1; white text on images sits on ≥ 60% forest gradient
-- [x] Decorative images and icons `aria-hidden`; content images have `alt`
-- [x] Reduced motion respected; reveal never hides content without JS
-- [x] Demo login (public password) only rendered outside production
+## Hình khối và chuyển động
+- Cửa vòm (`.arch`, `.arch-lg`) là hình khối nhận diện cho ảnh hero và biểu tượng; thẻ homestay bo góc phải trên lớn.
+- Hạt giấy toàn trang (một lớp fixed, opacity 3.5%).
+- Nút dạng viên thuốc, quét sáng khi hover; reveal khi cuộn; tôn trọng `prefers-reduced-motion`.
+- Tránh: chữ vàng trên nền sáng, glass trên nền sáng, emoji làm biểu tượng.

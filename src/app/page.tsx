@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowDown, ArrowRight, ArrowUpRight, BadgeCheck, CalendarCheck, Home, Leaf, MapPin, QrCode, ShieldCheck, Sparkles, Star, Tent, TreePine } from "lucide-react";
+import { ArrowRight, ArrowUpRight, BadgeCheck, CalendarCheck, Home, Leaf, MapPin, QrCode, ShieldCheck, Sparkles, Star, Tent, TreePine } from "lucide-react";
 import { AppTopBar, HomestayCard, SiteFooter } from "@/components/customer-ui";
 import { SearchBar } from "@/components/search-bar";
 import { getHomestays, money } from "@/lib/api";
@@ -47,67 +47,84 @@ export default async function HomePage() {
 
   return (
     <>
-      <AppTopBar overlay />
+      <AppTopBar />
       <main id="main" className="text-ink">
-        {/* ---------- Hero ---------- */}
-        <section className="relative isolate flex min-h-[680px] flex-col overflow-hidden bg-forest text-white md:h-[100svh] md:max-h-[980px]">
-          {/* eslint-disable-next-line @next/next/no-img-element -- static hero, sized by CSS */}
-          <img alt="" aria-hidden="true" className="ken-burns absolute inset-0 -z-20 size-full object-cover" fetchPriority="high" src={heroImage} />
-          <div className="absolute inset-0 -z-10 bg-gradient-to-b from-forest/55 via-forest/30 to-forest/90" aria-hidden="true" />
-          <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_left,rgba(16,38,29,0.65),transparent_60%)]" aria-hidden="true" />
-
-          <div className="container-page flex flex-1 flex-col justify-center pb-10 pt-32 md:pt-36">
-            <div className="grid items-end gap-10 lg:grid-cols-[1fr_auto]">
-              <div className="max-w-3xl">
-                <p className="animate-fade-up glass inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-medium tracking-wide">
-                  <BadgeCheck className="size-4 text-gold" aria-hidden="true" /> {homestays.length} homestay đã kiểm duyệt tại Tây Ninh
-                </p>
-                <h1 className="display animate-fade-up mt-6 text-[2.9rem] [animation-delay:80ms] sm:text-6xl md:text-[5.5rem]">
-                  Hành trình nghỉ dưỡng giữa <span className="italic text-gold">thiên nhiên</span> Tây Ninh
-                </h1>
-                <p className="animate-fade-up mt-6 max-w-xl text-lg leading-8 text-white/85 [animation-delay:160ms]">
-                  Chọn phòng, thêm dịch vụ và thanh toán VietQR trong vài phút. Đơn đặt được cập nhật trạng thái theo thời gian thực.
-                </p>
-                <div className="animate-fade-up mt-9 flex flex-col gap-3 [animation-delay:240ms] sm:flex-row">
-                  <Link className="btn-primary px-7" href="/homestays">
-                    Đặt phòng ngay <ArrowRight className="size-4" aria-hidden="true" />
-                  </Link>
-                  {signedIn ? (
-                    <Link className="btn-light px-7" href={homeForRole(user.role)}>Vào khu vực của bạn</Link>
-                  ) : user.authenticated ? (
-                    <Link className="btn-light px-7" href="/login?error=role_lookup">Kiểm tra quyền truy cập</Link>
-                  ) : (
-                    <Link className="btn-light px-7" href="/login">Đăng nhập</Link>
-                  )}
-                </div>
+        {/* ---------- Hero: editorial split with arch windows ---------- */}
+        <section className="relative overflow-hidden">
+          <div className="pointer-events-none absolute -left-40 top-20 size-[34rem] rounded-full bg-gold-soft blur-3xl" aria-hidden="true" />
+          <div className="pointer-events-none absolute -right-40 -top-20 size-[30rem] rounded-full bg-brand-wash blur-3xl" aria-hidden="true" />
+          <div className="container-page relative grid items-center gap-12 pb-28 pt-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8 lg:pb-36 lg:pt-16">
+            <div className="min-w-0">
+              <p className="animate-fade-up inline-flex items-center gap-2 rounded-full border border-line bg-cream px-4 py-2 text-xs font-semibold tracking-wide text-ink-muted">
+                <BadgeCheck className="size-4 text-leaf" aria-hidden="true" /> {homestays.length} nơi nghỉ đã kiểm duyệt tại Tây Ninh
+              </p>
+              <h1 className="display animate-fade-up mt-7 text-[2.6rem] leading-[0.98] [animation-delay:80ms] sm:text-7xl xl:text-[6.2rem]">
+                Ở lại giữa <span className="italic text-brand">thiên nhiên</span>, <span className="sm:whitespace-nowrap">chậm hơn một nhịp</span>
+              </h1>
+              <p className="animate-fade-up mt-7 max-w-xl text-lg leading-8 text-muted [animation-delay:160ms]">
+                Homestay, lều glamping và nhà nguyên căn dưới chân núi Bà Đen và ven hồ Dầu Tiếng. Chọn phòng, thêm dịch vụ và thanh toán VietQR trong vài phút.
+              </p>
+              <div className="animate-fade-up mt-9 flex flex-col gap-3 [animation-delay:240ms] sm:flex-row">
+                <Link className="btn-primary px-8" href="/homestays">
+                  Đặt phòng ngay <ArrowRight className="size-4" aria-hidden="true" />
+                </Link>
+                {signedIn ? (
+                  <Link className="btn-secondary px-8" href={homeForRole(user.role)}>Vào khu vực của bạn</Link>
+                ) : user.authenticated ? (
+                  <Link className="btn-secondary px-8" href="/login?error=role_lookup">Kiểm tra quyền truy cập</Link>
+                ) : (
+                  <Link className="btn-secondary px-8" href="/login">Đăng nhập</Link>
+                )}
               </div>
-
-              <dl className="animate-fade-up glass hidden w-72 gap-5 rounded-[28px] p-6 [animation-delay:320ms] lg:grid">
+              <dl className="animate-fade-up mt-12 flex flex-wrap gap-x-10 gap-y-5 border-t border-line pt-7 [animation-delay:320ms]">
                 <div>
-                  <dt className="text-xs uppercase tracking-[0.18em] text-white/60">Đánh giá trung bình</dt>
-                  <dd className="mt-1 flex items-center gap-2 font-heading text-4xl"><Star className="size-6 fill-gold text-gold" aria-hidden="true" />{avgRating.toFixed(1)}</dd>
+                  <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-subtle">Đánh giá</dt>
+                  <dd className="mt-1 flex items-center gap-1.5 font-heading text-3xl"><Star className="size-5 fill-gold text-gold" aria-hidden="true" />{avgRating.toFixed(1)}</dd>
                 </div>
-                <div className="h-px bg-white/15" />
                 <div>
-                  <dt className="text-xs uppercase tracking-[0.18em] text-white/60">Giá chỉ từ</dt>
-                  <dd className="mt-1 font-heading text-4xl">{money(minPrice)}</dd>
+                  <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-subtle">Giá chỉ từ</dt>
+                  <dd className="mt-1 font-heading text-3xl">{money(minPrice)}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-subtle">Thanh toán</dt>
+                  <dd className="mt-1 flex items-center gap-1.5 font-heading text-3xl"><QrCode className="size-5 text-leaf" aria-hidden="true" />VietQR</dd>
                 </div>
               </dl>
             </div>
-          </div>
 
-          <div className="container-page relative z-10 pb-8">
-            <div className="animate-fade-up rounded-[32px] bg-white/10 p-2 [animation-delay:380ms] backdrop-blur-md">
-              <SearchBar variant="home" />
+            <div className="animate-fade-up relative mx-auto w-full max-w-[34rem] [animation-delay:200ms]">
+              <div className="arch-lg image-shell relative aspect-[4/5] shadow-lift">
+                {/* eslint-disable-next-line @next/next/no-img-element -- static hero, sized by CSS */}
+                <img alt="Tượng Phật Bà trên đỉnh núi Bà Đen giữa mây" className="ken-burns absolute inset-0 size-full object-cover" fetchPriority="high" src={heroImage} />
+                <div className="absolute inset-0 bg-gradient-to-t from-bark/45 via-transparent to-transparent" aria-hidden="true" />
+                <p className="absolute inset-x-0 bottom-7 text-center text-xs font-semibold uppercase tracking-[0.3em] text-white/90">Núi Bà Đen · Tây Ninh</p>
+              </div>
+              {collage[0] && (
+                <div className="image-shell absolute -bottom-8 -left-6 hidden size-40 rounded-full border-[8px] border-sand shadow-lift sm:block md:-left-12 md:size-48">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- remote catalog image */}
+                  <img alt="Homestay giữa vườn cây" className="size-full object-cover" loading="lazy" src={collage[0]} />
+                </div>
+              )}
+              <div className="absolute -right-3 top-10 grid size-32 place-items-center rounded-full bg-brand text-white shadow-cta md:-right-8 md:size-36" aria-hidden="true">
+                <svg className="spin-slow absolute inset-0 size-full" viewBox="0 0 120 120">
+                  <defs><path id="ring" d="M60,60 m-46,0 a46,46 0 1,1 92,0 a46,46 0 1,1 -92,0" /></defs>
+                  <text className="fill-white/90 text-[10.5px] font-semibold uppercase" letterSpacing="3.2"><textPath href="#ring">Glamping · Homestay · Villa ·</textPath></text>
+                </svg>
+                <Leaf className="size-8" strokeWidth={1.5} />
+              </div>
             </div>
-            <a className="mx-auto mt-6 hidden w-fit flex-col items-center gap-2 text-xs uppercase tracking-[0.24em] text-white/60 transition hover:text-white md:flex" href="#noi-bat">
-              Khám phá <ArrowDown className="size-4 animate-bounce" aria-hidden="true" />
-            </a>
           </div>
         </section>
 
+        {/* ---------- Search floats over the hero edge ---------- */}
+        <div className="container-page relative z-10 -mt-20 lg:-mt-28">
+          <div className="animate-fade-up rounded-[32px] bg-cream p-2 shadow-lift ring-1 ring-line-soft [animation-delay:360ms]">
+            <SearchBar variant="home" />
+          </div>
+        </div>
+
         {/* ---------- Marquee ---------- */}
-        <div className="overflow-hidden border-y border-white/10 bg-forest py-5 text-white/80" aria-hidden="true">
+        <div className="mt-20 overflow-hidden bg-brand py-5 text-white" aria-hidden="true">
           <div className="marquee gap-10 pr-10">
             {[...marqueeItems, ...marqueeItems].map((item, index) => (
               <span className="flex items-center gap-10 whitespace-nowrap font-heading text-xl italic md:text-2xl" key={`${item}-${index}`}>
@@ -145,18 +162,18 @@ export default async function HomePage() {
           </div>
           <div className="reveal relative h-[460px] md:h-[560px]" style={{ ["--reveal-delay" as string]: "150ms" }}>
             {collage[0] && (
-              <div className="hover-zoom image-shell absolute left-0 top-0 h-[78%] w-[66%] rounded-[32px] shadow-lift">
+              <div className="hover-zoom image-shell arch absolute left-0 top-0 h-[78%] w-[62%] shadow-lift">
                 {/* eslint-disable-next-line @next/next/no-img-element -- remote catalog image */}
                 <img alt="Không gian homestay giữa thiên nhiên" className="size-full object-cover" loading="lazy" src={collage[0]} />
               </div>
             )}
             {collage[1] && (
-              <div className="hover-zoom image-shell absolute bottom-0 right-0 h-[58%] w-[54%] rounded-[32px] border-[6px] border-sand shadow-lift">
+              <div className="hover-zoom image-shell absolute bottom-0 right-0 h-[58%] w-[52%] rounded-[32px] rounded-tl-[96px] border-[6px] border-sand shadow-lift">
                 {/* eslint-disable-next-line @next/next/no-img-element -- remote catalog image */}
                 <img alt="Phòng nghỉ ấm cúng" className="size-full object-cover" loading="lazy" src={collage[1]} />
               </div>
             )}
-            <div className="absolute bottom-10 left-6 rounded-3xl bg-forest px-6 py-5 text-white shadow-lift [animation:float-soft_6s_ease-in-out_infinite]">
+            <div className="absolute bottom-10 left-6 rounded-3xl bg-bark px-6 py-5 text-white shadow-lift [animation:float-soft_6s_ease-in-out_infinite]">
               <p className="font-heading text-4xl text-gold">{homestays.length}+</p>
               <p className="text-sm text-white/75">nơi nghỉ đang mở bán</p>
             </div>
@@ -203,13 +220,13 @@ export default async function HomePage() {
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element -- remote catalog image */}
                   <img alt={`Homestay tại ${area}`} className="absolute inset-0 size-full object-cover" loading="lazy" src={homestay.imageUrl} />
-                  <span className="absolute inset-0 bg-gradient-to-t from-forest/85 via-forest/10 to-transparent" aria-hidden="true" />
+                  <span className="absolute inset-0 bg-gradient-to-t from-bark/85 via-bark/10 to-transparent" aria-hidden="true" />
                   <span className="absolute inset-x-6 bottom-6 flex items-end justify-between gap-3 text-white">
                     <span>
                       <span className="flex items-center gap-1.5 text-xs uppercase tracking-[0.18em] text-white/70"><MapPin className="size-3.5" aria-hidden="true" />{count} nơi nghỉ</span>
                       <span className={`mt-1 block font-heading ${index === 0 ? "text-4xl md:text-5xl" : "text-2xl"}`}>{area}</span>
                     </span>
-                    <span className="grid size-11 shrink-0 place-items-center rounded-full bg-white/15 backdrop-blur transition duration-500 group-hover:rotate-45 group-hover:bg-gold group-hover:text-forest" aria-hidden="true">
+                    <span className="grid size-11 shrink-0 place-items-center rounded-full bg-white/15 backdrop-blur transition duration-500 group-hover:rotate-45 group-hover:bg-gold group-hover:text-bark" aria-hidden="true">
                       <ArrowUpRight className="size-5" />
                     </span>
                   </span>
@@ -220,7 +237,7 @@ export default async function HomePage() {
         )}
 
         {/* ---------- How it works (dark) ---------- */}
-        <section className="grain relative overflow-hidden bg-forest text-white">
+        <section className="grain relative overflow-hidden bg-bark text-white">
           <div className="pointer-events-none absolute -left-40 top-10 size-[30rem] rounded-full bg-brand/25 blur-3xl" aria-hidden="true" />
           <div className="pointer-events-none absolute -right-32 bottom-0 size-[26rem] rounded-full bg-gold/15 blur-3xl" aria-hidden="true" />
           <div className="section container-page relative grid gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
@@ -261,12 +278,12 @@ export default async function HomePage() {
           <div className="grid gap-5 md:grid-cols-3">
             {stayTypes.map(({ label, description, icon: Icon }, index) => (
               <Link
-                className="reveal group relative overflow-hidden rounded-[28px] border border-line-soft bg-white p-8 transition duration-500 hover:-translate-y-1.5 hover:border-transparent hover:bg-forest hover:text-white hover:shadow-lift"
+                className="reveal group relative overflow-hidden rounded-[28px] border border-line-soft bg-white p-8 transition duration-500 hover:-translate-y-1.5 hover:border-transparent hover:bg-bark hover:text-white hover:shadow-lift"
                 href={`/homestays?type=${encodeURIComponent(label)}`}
                 key={label}
                 style={{ ["--reveal-delay" as string]: `${index * 110}ms` }}
               >
-                <span className="grid size-14 place-items-center rounded-2xl bg-leaf-soft text-leaf-strong transition duration-500 group-hover:bg-gold group-hover:text-forest" aria-hidden="true">
+                <span className="arch grid h-24 w-16 place-items-center bg-leaf-soft text-leaf-strong transition duration-500 group-hover:bg-gold group-hover:text-bark" aria-hidden="true">
                   <Icon className="size-7" strokeWidth={1.6} />
                 </span>
                 <span className="mt-8 block font-heading text-3xl">{label}</span>
@@ -308,10 +325,10 @@ export default async function HomePage() {
 
         {/* ---------- CTA band ---------- */}
         <section className="container-page pt-24">
-          <div className="reveal relative isolate overflow-hidden rounded-[36px] bg-forest px-8 py-16 text-center text-white md:px-16 md:py-24">
+          <div className="reveal relative isolate overflow-hidden rounded-[36px] bg-bark px-8 py-16 text-center text-white md:px-16 md:py-24">
             {/* eslint-disable-next-line @next/next/no-img-element -- static decorative image */}
             <img alt="" aria-hidden="true" className="absolute inset-0 -z-10 size-full object-cover opacity-35" loading="lazy" src={heroImage} />
-            <div className="absolute inset-0 -z-10 bg-gradient-to-t from-forest via-forest/70 to-forest/30" aria-hidden="true" />
+            <div className="absolute inset-0 -z-10 bg-gradient-to-t from-bark via-bark/70 to-bark/30" aria-hidden="true" />
             <p className="eyebrow eyebrow-light justify-center">Sẵn sàng lên đường?</p>
             <h2 className="display mx-auto mt-5 max-w-3xl text-4xl md:text-6xl">Kỳ nghỉ tiếp theo của bạn bắt đầu <span className="italic text-gold">từ đây</span></h2>
             <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">

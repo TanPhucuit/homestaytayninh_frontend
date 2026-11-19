@@ -48,7 +48,7 @@ export default async function BookingsPage({ searchParams }: { searchParams: Pro
         <div className="mb-10 grid grid-cols-2 gap-1.5 rounded-full border border-line-soft bg-white p-1.5 shadow-card max-md:rounded-3xl md:grid-cols-4">
           {groups.map((group) => (
             <Link
-              className={`rounded-full px-4 py-3 text-center text-sm font-semibold transition ${group === activeGroup ? "bg-forest text-white shadow-card" : "text-muted hover:bg-cream hover:text-ink"}`}
+              className={`rounded-full px-4 py-3 text-center text-sm font-semibold transition ${group === activeGroup ? "bg-bark text-white shadow-card" : "text-muted hover:bg-cream hover:text-ink"}`}
               href={`/bookings?statusGroup=${encodeURIComponent(group)}`}
               key={group}
             >

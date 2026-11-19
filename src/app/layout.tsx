@@ -1,10 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Be_Vietnam_Pro, Playfair_Display } from "next/font/google";
+import { Be_Vietnam_Pro, Fraunces } from "next/font/google";
 import { RevealObserver } from "@/components/motion";
 import "./globals.css";
 
-// Playfair Display ships a Vietnamese subset, so headings keep their diacritics in one typeface.
-const heading = Playfair_Display({ subsets: ["latin", "vietnamese"], weight: ["400", "500", "600", "700"], style: ["normal", "italic"], variable: "--font-playfair", display: "swap" });
+// Fraunces: soft, warm variable serif with a Vietnamese subset, so headings keep their diacritics.
+const heading = Fraunces({ subsets: ["latin", "vietnamese"], axes: ["SOFT", "opsz"], style: ["normal", "italic"], variable: "--font-fraunces", display: "swap" });
 const body = Be_Vietnam_Pro({ subsets: ["latin", "vietnamese"], weight: ["300", "400", "500", "600", "700"], variable: "--font-bevietnam", display: "swap" });
 
 export const metadata: Metadata = {
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#10261d"
+  themeColor: "#f3ebdc"
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
