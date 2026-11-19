@@ -169,9 +169,9 @@ export function PageBanner({ eyebrow, title, description, children }: { eyebrow:
     <section className="relative overflow-hidden border-b border-line-soft bg-cream">
       <div className="pointer-events-none absolute -right-24 -top-24 size-[28rem] rounded-full bg-leaf-soft blur-3xl" aria-hidden="true" />
       <div className="pointer-events-none absolute -left-32 bottom-0 size-80 rounded-full bg-leaf-soft blur-3xl" aria-hidden="true" />
-      <div className="container-page relative py-12 md:py-16">
+      <div className="container-page relative py-8 md:py-12">
         <p className="eyebrow animate-fade-up">{eyebrow}</p>
-        <h1 className="display animate-fade-up mt-4 max-w-4xl text-4xl text-ink [animation-delay:80ms] md:text-6xl">{title}</h1>
+        <h1 className="display animate-fade-up mt-3 max-w-4xl text-3xl text-ink [animation-delay:80ms] md:text-5xl">{title}</h1>
         {description && <p className="animate-fade-up mt-4 max-w-2xl text-base leading-7 text-muted [animation-delay:160ms] md:text-lg">{description}</p>}
         {children && <div className="animate-fade-up mt-6 [animation-delay:220ms]">{children}</div>}
       </div>
@@ -273,8 +273,8 @@ export function HomestayCard({ homestay, href }: { homestay: Homestay; href?: st
         {/* eslint-disable-next-line @next/next/no-img-element -- remote images from owners, unknown hosts */}
         <img alt={`Ảnh ${homestay.name}`} className="absolute inset-0 size-full object-cover" decoding="async" loading="lazy" src={homestay.imageUrl} />
         <div className="absolute inset-0 bg-gradient-to-t from-bark/40 via-transparent to-transparent" aria-hidden="true" />
-        <span className="absolute left-4 top-4 rounded-full bg-cream/95 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted shadow-sm">{homestay.type}</span>
-        <span className="absolute bottom-4 left-4 inline-flex items-center gap-1 rounded-full bg-bark/80 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur-md">
+        <span className="absolute left-4 top-4 rounded-full bg-cream/95 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.1em] text-ink-muted shadow-sm">{homestay.type}</span>
+        <span className="absolute bottom-4 left-4 inline-flex items-center gap-1 rounded-full bg-bark/80 px-3 py-1.5 text-sm font-semibold text-white backdrop-blur-md">
           <Star className="size-3.5 fill-gold text-gold" aria-hidden="true" />
           {homestay.rating}
         </span>
@@ -283,24 +283,24 @@ export function HomestayCard({ homestay, href }: { homestay: Homestay; href?: st
         </span>
       </div>
       <div className="mt-4 px-1">
-        <p className="flex items-center gap-1.5 text-xs font-medium text-muted"><MapPin className="size-3.5 text-brand" aria-hidden="true" />{homestay.location}</p>
+        <p className="flex items-center gap-1.5 text-sm font-medium text-muted"><MapPin className="size-4 text-brand" aria-hidden="true" />{homestay.location}</p>
         <h2 className="mt-1 line-clamp-2 font-heading text-2xl leading-tight text-ink">
           <Link className="after:absolute after:inset-0 after:z-10 after:rounded-[28px]" href={target}>{homestay.name}</Link>
         </h2>
         <div className="mt-3 flex items-end justify-between gap-3 border-t border-dashed border-line pt-3">
           <p>
-            <span className="text-xs text-muted">Giá từ </span>
-            <span className="font-heading text-xl font-medium text-brand-strong">{money(homestay.priceFrom)}</span>
-            <span className="text-xs text-muted"> /đêm</span>
+            <span className="text-sm text-muted">Giá từ </span>
+            <span className="font-heading text-2xl text-brand-strong">{money(homestay.priceFrom)}</span>
+            <span className="text-sm text-muted"> /đêm</span>
           </p>
-          <Link className="link-line relative z-20 text-sm font-semibold text-ink" href={target}>Chi tiết</Link>
+          <Link className="relative z-20 inline-flex min-h-10 items-center gap-1.5 rounded-full bg-brand-wash px-4 text-sm font-semibold text-brand-strong transition hover:bg-brand hover:text-white" href={target}>Chi tiết <ArrowRight className="size-4" aria-hidden="true" /></Link>
         </div>
         <div className="mt-3 flex flex-wrap items-center gap-1.5">
-          <span className="inline-flex items-center gap-1 rounded-full bg-sand-deep px-2.5 py-1 text-[11px] font-semibold text-ink-muted"><Users className="size-3" aria-hidden="true" />{homestay.capacity} khách</span>
+          <span className="inline-flex items-center gap-1 rounded-full bg-sand-deep px-3 py-1.5 text-xs font-semibold text-ink-muted"><Users className="size-3.5" aria-hidden="true" />{homestay.capacity} khách</span>
           {visibleAmenities.map((amenity) => (
-            <span className="rounded-full border border-line-soft bg-cream px-2.5 py-1 text-[11px] font-medium text-ink-muted" key={amenity}>{amenity}</span>
+            <span className="rounded-full border border-line-soft bg-cream px-3 py-1.5 text-xs font-medium text-ink-muted" key={amenity}>{amenity}</span>
           ))}
-          {extraAmenityCount > 0 && <span className="rounded-full bg-leaf-soft px-2.5 py-1 text-[11px] font-semibold text-leaf-strong">+{extraAmenityCount}</span>}
+          {extraAmenityCount > 0 && <span className="rounded-full bg-leaf-soft px-3 py-1.5 text-xs font-semibold text-leaf-strong">+{extraAmenityCount}</span>}
         </div>
       </div>
     </article>

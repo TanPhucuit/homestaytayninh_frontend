@@ -133,8 +133,14 @@ export function SearchBar({ initialFilters, variant = "home" }: SearchBarProps) 
 
   return (
     <form className={panelClass} onSubmit={submit}>
-      <div className={isSidebar || isMobile ? "grid gap-4" : "grid gap-3 lg:grid-cols-[1fr_auto_auto]"}>
-        <label className="grid gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-subtle">
+      <div className={isSidebar || isMobile ? "grid gap-4" : "grid items-end gap-3 lg:grid-cols-[1fr_14rem_auto_auto] lg:gap-4"}>
+        {variant === "home" && (
+          <div className="px-2 pb-1 lg:pb-3">
+            <p className="font-heading text-xl text-ink">Tìm nơi nghỉ phù hợp</p>
+            <p className="mt-1 text-sm text-muted">Chọn số khách, lọc loại hình, tiện ích và mức giá.</p>
+          </div>
+        )}
+        <label className="grid gap-2 text-xs font-bold uppercase tracking-[0.12em] text-subtle">
           Số khách
           <span className="relative">
           <Users className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-leaf" aria-hidden="true" />

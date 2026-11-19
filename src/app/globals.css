@@ -77,6 +77,7 @@ h1,
 h2,
 h3 {
   font-family: var(--font-heading);
+  font-weight: 700;
   letter-spacing: -0.025em;
   text-wrap: balance;
 }
@@ -120,6 +121,12 @@ select {
   border-radius: 8px;
 }
 
+@layer base {
+  .font-heading {
+    font-weight: 700;
+  }
+}
+
 @layer components {
   .skip-link {
     position: absolute;
@@ -153,12 +160,12 @@ select {
   }
 
   .section {
-    padding-block: 5rem;
+    padding-block: 4rem;
   }
 
   @media (min-width: 768px) {
     .section {
-      padding-block: 7rem;
+      padding-block: 6rem;
     }
   }
 
@@ -166,8 +173,8 @@ select {
   .display {
     font-family: var(--font-heading);
     font-weight: 800;
-    line-height: 1.06;
-    letter-spacing: -0.035em;
+    line-height: 1.12;
+    letter-spacing: -0.03em;
   }
 
   /* Accent words: emerald → ocean gradient (solid gold stays solid on dark panels) */
@@ -216,9 +223,9 @@ select {
     align-items: center;
     gap: 0.6rem;
     color: var(--color-brand);
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.22em;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
   }
 

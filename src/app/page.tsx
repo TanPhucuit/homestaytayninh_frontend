@@ -53,7 +53,7 @@ export default async function HomePage() {
         <section className="relative overflow-hidden">
           <div className="pointer-events-none absolute -left-40 top-20 size-[34rem] rounded-full bg-leaf-soft blur-3xl" aria-hidden="true" />
           <div className="pointer-events-none absolute -right-40 -top-20 size-[30rem] rounded-full bg-brand-wash blur-3xl" aria-hidden="true" />
-          <div className="container-page relative grid items-center gap-12 pb-28 pt-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8 lg:pb-36 lg:pt-16">
+          <div className="container-page relative grid items-center gap-12 pb-14 pt-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10 lg:pb-20 lg:pt-12">
             <div className="min-w-0">
               <p className="animate-fade-up inline-flex items-center gap-2 rounded-full border border-line bg-cream px-4 py-2 text-xs font-semibold tracking-wide text-ink-muted">
                 <BadgeCheck className="size-4 text-leaf" aria-hidden="true" /> {homestays.length} nơi nghỉ đã kiểm duyệt tại Tây Ninh
@@ -76,18 +76,18 @@ export default async function HomePage() {
                   <Link className="btn-secondary px-8" href="/login">Đăng nhập</Link>
                 )}
               </div>
-              <dl className="animate-fade-up mt-12 flex flex-wrap gap-x-10 gap-y-5 border-t border-line pt-7 [animation-delay:320ms]">
+              <dl className="animate-fade-up mt-10 flex flex-wrap lg:max-w-[26rem] gap-x-10 gap-y-5 border-t border-line pt-7 [animation-delay:320ms]">
                 <div>
-                  <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-subtle">Đánh giá</dt>
-                  <dd className="mt-1 flex items-center gap-1.5 font-heading text-3xl"><Star className="size-5 fill-gold text-gold" aria-hidden="true" />{avgRating.toFixed(1)}</dd>
+                  <dt className="text-xs font-bold uppercase tracking-[0.14em] text-subtle">Đánh giá</dt>
+                  <dd className="mt-1 flex items-center gap-1.5 font-heading text-2xl md:text-3xl"><Star className="size-5 fill-gold text-gold" aria-hidden="true" />{avgRating.toFixed(1)}</dd>
                 </div>
                 <div>
                   <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-subtle">Giá chỉ từ</dt>
-                  <dd className="mt-1 font-heading text-3xl">{money(minPrice)}</dd>
+                  <dd className="mt-1 font-heading text-2xl md:text-3xl">{money(minPrice)}</dd>
                 </div>
                 <div>
                   <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-subtle">Thanh toán</dt>
-                  <dd className="mt-1 flex items-center gap-1.5 font-heading text-3xl"><QrCode className="size-5 text-leaf" aria-hidden="true" />VietQR</dd>
+                  <dd className="mt-1 flex items-center gap-1.5 font-heading text-2xl md:text-3xl"><QrCode className="size-5 text-leaf" aria-hidden="true" />VietQR</dd>
                 </div>
               </dl>
             </div>
@@ -120,14 +120,14 @@ export default async function HomePage() {
         </section>
 
         {/* ---------- Search floats over the hero edge ---------- */}
-        <div className="container-page relative z-10 -mt-20 lg:-mt-28">
+        <div className="container-page relative z-10 -mt-6 lg:-mt-8">
           <div className="animate-fade-up rounded-[32px] bg-cream p-2 shadow-lift ring-1 ring-line-soft [animation-delay:360ms]">
             <SearchBar variant="home" />
           </div>
         </div>
 
         {/* ---------- Marquee ---------- */}
-        <div className="mt-20 overflow-hidden bg-brand py-5 text-white" aria-hidden="true">
+        <div className="mt-16 overflow-hidden bg-brand py-5 text-white" aria-hidden="true">
           <div className="marquee gap-10 pr-10">
             {[...marqueeItems, ...marqueeItems].map((item, index) => (
               <span className="flex items-center gap-10 whitespace-nowrap font-heading text-xl italic md:text-2xl" key={`${item}-${index}`}>
@@ -315,7 +315,7 @@ export default async function HomePage() {
                         <Star className={`size-4 ${star < Math.round(review.rating) ? "fill-gold text-gold" : "text-line"}`} aria-hidden="true" key={star} />
                       ))}
                     </div>
-                    <blockquote className="mt-5 flex-1 font-heading text-xl italic leading-8 text-ink">“{review.comment}”</blockquote>
+                    <blockquote className="mt-5 flex-1 font-heading text-xl font-medium italic leading-8 text-ink">“{review.comment}”</blockquote>
                     <figcaption className="mt-6 border-t border-line-soft pt-4 text-sm text-muted">
                       Lưu trú tại <Link className="font-semibold text-ink underline-offset-4 hover:underline" href={`/homestays/${review.homestay.id}`}>{review.homestay.name}</Link>
                     </figcaption>

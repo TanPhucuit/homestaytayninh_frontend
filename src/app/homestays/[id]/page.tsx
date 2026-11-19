@@ -174,7 +174,7 @@ export default async function HomestayDetailPage({ params, searchParams }: { par
                 <p className="eyebrow">Câu chuyện nơi ở</p>
                 <h2 className="display mt-4 text-3xl md:text-5xl">Nơi đất sét nung gặp gỡ <span className="italic text-leaf">đại ngàn</span></h2>
                 <div className="mt-6 space-y-4 text-base leading-8 text-ink-muted md:text-lg">
-                  <p className="first-letter:float-left first-letter:mr-3 first-letter:font-heading first-letter:text-6xl first-letter:leading-[0.9] first-letter:text-brand">{homestay.description}</p>
+                  <p className="text-lg leading-8 text-ink-soft">{homestay.description}</p>
                   <p>
                     Không gian được tổ chức theo tinh thần mộc mạc của Tây Ninh: chất đất nung ấm, mảng xanh sân vườn và nhịp sống chậm để mỗi buổi sáng bắt đầu bằng ánh nắng dịu qua hiên nhà.
                   </p>
