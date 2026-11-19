@@ -71,7 +71,7 @@ export default async function PaymentResultPage({ searchParams }: { searchParams
 
   return (
     <main id="main" className="relative flex min-h-screen items-center justify-center overflow-hidden bg-cream px-4 py-14 text-ink">
-      <div className="pointer-events-none absolute -left-32 -top-32 size-[30rem] rounded-full bg-gold-soft blur-3xl" aria-hidden="true" />
+      <div className="pointer-events-none absolute -left-32 -top-32 size-[30rem] rounded-full bg-leaf-soft blur-3xl" aria-hidden="true" />
       <div className="pointer-events-none absolute -bottom-40 -right-24 size-[28rem] rounded-full bg-leaf-soft blur-3xl" aria-hidden="true" />
       <section className="animate-fade-up relative w-full max-w-2xl rounded-[32px] border border-line-soft bg-white p-8 text-center shadow-lift md:p-12">
         <Link className="mx-auto mb-8 flex w-fit items-center gap-2 font-heading text-lg text-ink" href="/">

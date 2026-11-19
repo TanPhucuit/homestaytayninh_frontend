@@ -51,15 +51,15 @@ export default async function HomePage() {
       <main id="main" className="text-ink">
         {/* ---------- Hero: editorial split with arch windows ---------- */}
         <section className="relative overflow-hidden">
-          <div className="pointer-events-none absolute -left-40 top-20 size-[34rem] rounded-full bg-gold-soft blur-3xl" aria-hidden="true" />
+          <div className="pointer-events-none absolute -left-40 top-20 size-[34rem] rounded-full bg-leaf-soft blur-3xl" aria-hidden="true" />
           <div className="pointer-events-none absolute -right-40 -top-20 size-[30rem] rounded-full bg-brand-wash blur-3xl" aria-hidden="true" />
           <div className="container-page relative grid items-center gap-12 pb-28 pt-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8 lg:pb-36 lg:pt-16">
             <div className="min-w-0">
               <p className="animate-fade-up inline-flex items-center gap-2 rounded-full border border-line bg-cream px-4 py-2 text-xs font-semibold tracking-wide text-ink-muted">
                 <BadgeCheck className="size-4 text-leaf" aria-hidden="true" /> {homestays.length} nơi nghỉ đã kiểm duyệt tại Tây Ninh
               </p>
-              <h1 className="display animate-fade-up mt-7 text-[2.6rem] leading-[0.98] [animation-delay:80ms] sm:text-7xl xl:text-[6.2rem]">
-                Ở lại giữa <span className="italic text-brand">thiên nhiên</span>, <span className="sm:whitespace-nowrap">chậm hơn một nhịp</span>
+              <h1 className="display animate-fade-up mt-7 text-[2.5rem] leading-[1.04] [animation-delay:80ms] sm:text-6xl xl:text-[5.4rem]">
+                Ở lại giữa <span className="italic text-brand">thiên nhiên</span>, <span>chậm hơn một nhịp</span>
               </h1>
               <p className="animate-fade-up mt-7 max-w-xl text-lg leading-8 text-muted [animation-delay:160ms]">
                 Homestay, lều glamping và nhà nguyên căn dưới chân núi Bà Đen và ven hồ Dầu Tiếng. Chọn phòng, thêm dịch vụ và thanh toán VietQR trong vài phút.
@@ -97,7 +97,10 @@ export default async function HomePage() {
                 {/* eslint-disable-next-line @next/next/no-img-element -- static hero, sized by CSS */}
                 <img alt="Tượng Phật Bà trên đỉnh núi Bà Đen giữa mây" className="ken-burns absolute inset-0 size-full object-cover" fetchPriority="high" src={heroImage} />
                 <div className="absolute inset-0 bg-gradient-to-t from-bark/45 via-transparent to-transparent" aria-hidden="true" />
-                <p className="absolute inset-x-0 bottom-7 text-center text-xs font-semibold uppercase tracking-[0.3em] text-white/90">Núi Bà Đen · Tây Ninh</p>
+                <div className="absolute bottom-5 left-5 right-5 flex items-center justify-between gap-3 rounded-2xl border border-white/40 bg-white/25 px-4 py-3 text-white shadow-glass backdrop-blur-xl sm:left-40 md:left-44">
+                  <span className="flex items-center gap-2 text-sm font-semibold"><MapPin className="size-4" aria-hidden="true" />Núi Bà Đen · Tây Ninh</span>
+                  <span className="flex items-center gap-1 text-sm font-bold"><Star className="size-4 fill-gold text-gold" aria-hidden="true" />{avgRating.toFixed(1)}</span>
+                </div>
               </div>
               {collage[0] && (
                 <div className="image-shell absolute -bottom-8 -left-6 hidden size-40 rounded-full border-[8px] border-sand shadow-lift sm:block md:-left-12 md:size-48">
@@ -168,7 +171,7 @@ export default async function HomePage() {
               </div>
             )}
             {collage[1] && (
-              <div className="hover-zoom image-shell absolute bottom-0 right-0 h-[58%] w-[52%] rounded-[32px] rounded-tl-[96px] border-[6px] border-sand shadow-lift">
+              <div className="hover-zoom image-shell absolute bottom-0 right-0 h-[58%] w-[52%] rounded-[32px] rounded-tl-[72px] border-[6px] border-sand shadow-lift">
                 {/* eslint-disable-next-line @next/next/no-img-element -- remote catalog image */}
                 <img alt="Phòng nghỉ ấm cúng" className="size-full object-cover" loading="lazy" src={collage[1]} />
               </div>

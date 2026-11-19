@@ -167,7 +167,7 @@ export function PageShell({ eyebrow, title, description, children }: { eyebrow: 
 export function PageBanner({ eyebrow, title, description, children }: { eyebrow: string; title: ReactNode; description?: string; children?: ReactNode }) {
   return (
     <section className="relative overflow-hidden border-b border-line-soft bg-cream">
-      <div className="pointer-events-none absolute -right-24 -top-24 size-[28rem] rounded-full bg-gold-soft blur-3xl" aria-hidden="true" />
+      <div className="pointer-events-none absolute -right-24 -top-24 size-[28rem] rounded-full bg-leaf-soft blur-3xl" aria-hidden="true" />
       <div className="pointer-events-none absolute -left-32 bottom-0 size-80 rounded-full bg-leaf-soft blur-3xl" aria-hidden="true" />
       <div className="container-page relative py-12 md:py-16">
         <p className="eyebrow animate-fade-up">{eyebrow}</p>
@@ -269,7 +269,7 @@ export function HomestayCard({ homestay, href }: { homestay: Homestay; href?: st
 
   return (
     <article className="hover-zoom group relative flex flex-col">
-      <div className="image-shell relative aspect-[4/5] rounded-[28px] rounded-tr-[96px] shadow-card transition duration-500 group-hover:shadow-lift sm:aspect-[5/6]">
+      <div className="image-shell relative aspect-[4/5] rounded-[28px] rounded-tr-[64px] shadow-card transition duration-500 group-hover:shadow-lift sm:aspect-[5/6]">
         {/* eslint-disable-next-line @next/next/no-img-element -- remote images from owners, unknown hosts */}
         <img alt={`Ảnh ${homestay.name}`} className="absolute inset-0 size-full object-cover" decoding="async" loading="lazy" src={homestay.imageUrl} />
         <div className="absolute inset-0 bg-gradient-to-t from-bark/40 via-transparent to-transparent" aria-hidden="true" />

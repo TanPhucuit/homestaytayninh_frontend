@@ -1,23 +1,24 @@
-# Homestay Tây Ninh – Design System v3 "Nắng & Đất"
+# Design System v4 "Hồ Xanh"
 
-Sinh bằng skill ui-ux-pro-max (styles: Nature Distilled + Organic Biophilic; typography: serif editorial + humanist sans).
-Hướng: sáng, ấm, thủ công, như giấy kraft và đất nung; thay cho giao diện tối "cinematic" v2.
+Generated with the ui-ux-pro-max skill (styles: Bento Box Grid + soft Glassmorphism; palette: emerald + ocean blue on airy mint).
 
-## Màu (token trong `src/app/globals.css`)
-| Token | Giá trị | Vai trò |
+## Palette (semantic tokens in `globals.css` `@theme`)
+| Token | Hex | Use |
 |---|---|---|
-| brand | #C4542D | CTA, giá, chữ nhấn (đất nung) |
-| leaf | #5B6B2F | trạng thái tốt, biểu tượng phụ (ô-liu) |
-| bark | #2A1D14 | nền tối: chân trang, portal hero, thẻ nổi bật (nâu espresso) |
-| gold | #D9A23A | điểm nhấn trên nền tối (không dùng chữ vàng trên nền sáng) |
-| sand / cream | #F3EBDC / #FBF6EC | nền trang / mặt thẻ |
-| ink / muted | #1F1710 / #6A5B4B | chữ chính / chữ phụ (≥ 4.5:1 trên sand) |
+| brand / strong / tint / wash | #0A7D5C / #065C44 / #BDEEDD / #DEF7EE | CTA, links, prices, accents |
+| leaf / strong / soft | #1767B0 / #0F4C88 / #DBEAFA | ocean-blue secondary accent, icons, eyebrows |
+| bark / soft | #062C33 / #0C4048 | deep teal dark panels, footer |
+| gold | #FFC94A | highlight on dark panels only |
+| sand / cream | #EDF8F5 / #FBFFFE | page background / cards |
+| line / line-soft | #B6D9D1 / #D6EBE6 | borders |
 
-## Chữ
-Fraunces (SOFT 100, opsz) cho tiêu đề, có bộ ký tự tiếng Việt; Be Vietnam Pro cho nội dung.
+## Typography
+Plus Jakarta Sans (headings, weight 800, tight tracking, Vietnamese subset) + Be Vietnam Pro (body).
+Accent words in `.display` use an emerald→ocean gradient (`.italic` / `em` inside `.display`).
 
-## Hình khối và chuyển động
-- Cửa vòm (`.arch`, `.arch-lg`) là hình khối nhận diện cho ảnh hero và biểu tượng; thẻ homestay bo góc phải trên lớn.
-- Hạt giấy toàn trang (một lớp fixed, opacity 3.5%).
-- Nút dạng viên thuốc, quét sáng khi hover; reveal khi cuộn; tôn trọng `prefers-reduced-motion`.
-- Tránh: chữ vàng trên nền sáng, glass trên nền sáng, emoji làm biểu tượng.
+## Shapes and motion
+Rounded frames (`.arch` 32px, `.arch-lg` 56px with a 160px lower-left corner), pill buttons, glass chips
+(`backdrop-blur-xl`, white/25) on the hero image, soft mint/blue mesh background, scroll reveal, ken-burns hero.
+
+## Anti-patterns
+No raw hex in components, no emoji icons, no hover-only affordances, keep contrast >= 4.5:1, respect reduced motion.

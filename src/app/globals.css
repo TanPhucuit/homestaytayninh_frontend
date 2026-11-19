@@ -1,54 +1,53 @@
 @import "tailwindcss";
 
 /*
-  Homestay Tây Ninh – "Nắng & Đất" – warm earthy editorial (Nature Distilled + Organic Biophilic: terracotta, sand, olive, arch shapes, paper grain).
-  Built with the ui-ux-pro-max skill: Marketplace/Directory pattern (search-first hero),
-  Parallax Storytelling sections, Bento grid, editorial serif display type,
-  glass material only on navigation and the search bar.
+  Homestay Tây Ninh – "Hồ Xanh" – fresh aqua editorial (Bento Grid + soft Glassmorphism, emerald & ocean blue on airy mint).
+  Built with the ui-ux-pro-max skill: Marketplace/Directory pattern (search-first hero), Bento destinations,
+  geometric sans display type (Plus Jakarta Sans), glass only on navigation, search and floating hero chips.
   Components use semantic tokens (text-brand, bg-bark, border-line…), never raw hex.
 */
 @theme {
-  --color-brand: #c4542d;
-  --color-brand-strong: #9c3d1c;
-  --color-brand-tint: #f4d3c3;
-  --color-brand-wash: #faeae0;
+  --color-brand: #0a7d5c;
+  --color-brand-strong: #065c44;
+  --color-brand-tint: #bdeedd;
+  --color-brand-wash: #def7ee;
 
-  --color-leaf: #5b6b2f;
-  --color-leaf-strong: #3d4a1d;
-  --color-leaf-soft: #e8ecd5;
+  --color-leaf: #1767b0;
+  --color-leaf-strong: #0f4c88;
+  --color-leaf-soft: #dbeafa;
 
-  --color-bark: #2a1d14;
-  --color-bark-soft: #3b2a1e;
-  --color-gold: #d9a23a;
-  --color-gold-soft: #f8ebc9;
+  --color-bark: #062c33;
+  --color-bark-soft: #0c4048;
+  --color-gold: #ffc94a;
+  --color-gold-soft: #fff0c4;
 
-  --color-ink: #1f1710;
-  --color-ink-soft: #35291f;
-  --color-ink-muted: #55473a;
-  --color-muted: #6a5b4b;
-  --color-subtle: #76665a;
+  --color-ink: #07211f;
+  --color-ink-soft: #17332f;
+  --color-ink-muted: #37524e;
+  --color-muted: #4a6561;
+  --color-subtle: #587270;
 
-  --color-cream: #fbf6ec;
-  --color-sand: #f3ebdc;
-  --color-sand-deep: #e8dcc6;
-  --color-line: #d6c6aa;
-  --color-line-soft: #e6dbc6;
+  --color-cream: #fbfffe;
+  --color-sand: #edf8f5;
+  --color-sand-deep: #d3ece6;
+  --color-line: #b6d9d1;
+  --color-line-soft: #d6ebe6;
 
   --color-warn: #7a4a12;
   --color-warn-soft: #fff1d1;
   --color-danger: #93000a;
   --color-danger-soft: #ffdad6;
 
-  --font-heading: var(--font-fraunces), Georgia, serif;
+  --font-heading: var(--font-jakarta), var(--font-bevietnam), system-ui, sans-serif;
   --font-sans: var(--font-bevietnam), system-ui, sans-serif;
 
   --radius-control: 16px;
   --radius-card: 28px;
 
-  --shadow-card: 0 1px 2px rgba(42, 29, 20, 0.05), 0 12px 32px -8px rgba(42, 29, 20, 0.12);
-  --shadow-lift: 0 2px 6px rgba(42, 29, 20, 0.07), 0 32px 64px -16px rgba(42, 29, 20, 0.3);
-  --shadow-cta: 0 12px 28px -8px rgba(196, 84, 45, 0.55);
-  --shadow-glass: 0 20px 60px -15px rgba(42, 29, 20, 0.5);
+  --shadow-card: 0 1px 2px rgba(6, 44, 51, 0.05), 0 12px 32px -8px rgba(6, 44, 51, 0.12);
+  --shadow-lift: 0 2px 6px rgba(6, 44, 51, 0.07), 0 32px 64px -16px rgba(6, 44, 51, 0.3);
+  --shadow-cta: 0 12px 28px -8px rgba(10, 125, 92, 0.5);
+  --shadow-glass: 0 20px 60px -15px rgba(6, 44, 51, 0.5);
 
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
@@ -62,6 +61,10 @@ html {
 
 body {
   background: var(--color-sand);
+  background-image:
+    radial-gradient(60rem 40rem at 10% -10%, rgba(23, 103, 176, 0.13), transparent 60%),
+    radial-gradient(50rem 36rem at 100% 0%, rgba(10, 125, 92, 0.14), transparent 60%);
+  background-attachment: fixed;
   color: var(--color-ink);
   font-family: var(--font-sans);
   line-height: 1.6;
@@ -69,22 +72,12 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  pointer-events: none;
-  opacity: 0.035;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
 
 h1,
 h2,
 h3 {
   font-family: var(--font-heading);
-  font-variation-settings: "SOFT" 100;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
   text-wrap: balance;
 }
 
@@ -172,19 +165,33 @@ select {
   /* ---------- Typography ---------- */
   .display {
     font-family: var(--font-heading);
-    font-weight: 400;
-    font-variation-settings: "SOFT" 100, "opsz" 144;
-    line-height: 1.02;
-    letter-spacing: -0.025em;
+    font-weight: 800;
+    line-height: 1.06;
+    letter-spacing: -0.035em;
   }
 
-  /* Arch window: the signature shape of the brand (cửa vòm của nhà vườn) */
+  /* Accent words: emerald → ocean gradient (solid gold stays solid on dark panels) */
+  .display .italic,
+  .display em {
+    font-style: normal;
+    background: linear-gradient(100deg, var(--color-brand), var(--color-leaf));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .display .italic.text-gold {
+    background: none;
+    color: var(--color-gold);
+  }
+
+  /* Soft rounded frames; .arch-lg adds the wave-like large lower-left corner (signature shape) */
   .arch {
-    border-radius: 999px 999px 28px 28px;
+    border-radius: 32px;
   }
 
   .arch-lg {
-    border-radius: 999px 999px 40px 40px;
+    border-radius: 56px 56px 56px 160px;
   }
 
   .blob {
